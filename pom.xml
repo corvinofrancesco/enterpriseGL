@@ -1,0 +1,50 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>unisalento.fcorvino</groupId>
+    <artifactId>enterpriseGL</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>enterpriseGL</name>
+  
+    <organization>
+        <name>fcorvino</name>
+        <url>corvinofrancesco.altervista.org</url>    
+    </organization>
+    
+    <scm>
+        <connection>scm:svn:https://corvinof.dyndns-server.com</connection>
+        <developerConnection>scm:svn:https://corvinof.dyndns-server.com</developerConnection>        
+    </scm>
+      
+    <developers>
+        <developer>
+            <name>Francesco Corvino</name>
+            <email>corvinofrancesco@alice.it</email>            
+        </developer>
+        <developer>
+            <name>Sara Giacovelli</name>
+            <email>saragiacovelli@libero.it</email> 
+        </developer>
+    </developers>
+    
+    <modules>
+        <module>enterpriseGL-client</module>
+        <module>enterpriseGL-server</module>
+    </modules>
+  
+    <build>
+        
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>      
+</project>
