@@ -1,5 +1,6 @@
 function EnvModel(){
-    ;
+    this.idVertexShader = "SIMPLE_VERTEX_SHADER";
+    this.idFragmentShader = "SIMPLE_FRAGMENT_SHADER";
 }
  
 EnvModel.prototype = {
@@ -11,41 +12,20 @@ EnvModel.prototype = {
 		/*************************************************************/
  
 		/*************************************************************/
-		var simpleVsrc = sglNodeText("SIMPLE_VERTEX_SHADER"); 
-		var simpleFsrc = sglNodeText("SIMPLE_FRAGMENT_SHADER"); 
+		var simpleVsrc = sglNodeText(this.idVertexShader); 
+		var simpleFsrc = sglNodeText(this.idFragmentShader); 
 		var simpleProg = new SglProgram(gl, [simpleVsrc], [simpleFsrc]); 
 		this.simpleProg = simpleProg;
 		/*************************************************************/
  
 		/*************************************************************/ 
-		var boxPositions = new Float32Array ([
-			-0.5, -0.5, 0.5,	0.5, -0.5, 0.5,
-			-0.5, 0.5, 0.5,		0.5, 0.5, 0.5,
-			-0.5, -0.5, -0.5, 	0.5, -0.5, -0.5,
-			-0.5, 0.5, -0.5,	0.5, 0.5, -0.5 ]);
-		var boxColors = new Float32Array ([
-			0.0, 0.0, 1.0, 		1.0, 0.0, 1.0,
-			0.0, 1.0, 1.0, 		1.0, 1.0, 1.0,
-			0.0, 0.0, 0.0, 		1.0, 0.0, 0.0,
-			0.0, 1.0, 0.0, 		1.0, 1.0, 0.0]);
-		var boxTrianglesIndices = new Uint16Array ([
-			0, 1, 2, 2, 1, 3, // front 
-			5, 4, 7, 7, 4, 6, // back 
-			4, 0, 6, 6, 0, 2, // left
-			1, 5, 3, 3, 5, 7, // right
-			2, 3, 6, 6, 3, 7, // top
-			4, 5, 0, 0, 5, 1]); // bottom
-		var boxEdgesIndices = new Uint16Array([
-			0, 1, 1, 3, 3, 2, 2, 0, // front
-			5, 4, 4, 6, 6, 7, 7, 5, // back 
-			0, 4, 1, 5, 3, 7, 2, 6 ]); // middle
-		var box = new SglMeshGL(gl);
-		box.addVertexAttribute("position", 3, boxPositions); 
-		box.addVertexAttribute("color", 3, boxColors); 
-		box.addArrayPrimitives("vertices", gl.POINTS, 0, 8); 
-		box.addIndexedPrimitives("triangles", gl.TRIANGLES, boxTrianglesIndices); 
-		box.addIndexedPrimitives("edges", gl.LINES, boxEdgesIndices); 
-		this.boxMesh = box; 
+                // TODO initialize the model
+		//box.addVertexAttribute("position", 3, boxPositions); 
+		//box.addVertexAttribute("color", 3, boxColors); 
+		//box.addArrayPrimitives("vertices", gl.POINTS, 0, 8); 
+		//box.addIndexedPrimitives("triangles", gl.TRIANGLES, boxTrianglesIndices); 
+		//box.addIndexedPrimitives("edges", gl.LINES, boxEdgesIndices); 
+		//this.boxMesh = box; 
 		/*************************************************************/
 	},
  
