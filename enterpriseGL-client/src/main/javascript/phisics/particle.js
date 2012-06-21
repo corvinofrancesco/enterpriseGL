@@ -1,12 +1,22 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 function Particle(id){
+    /** origin position for new particles */
     this.x = 0;
     this.y = 0;
     this.z = 0;
+    
+    /** starting velocity of particle */
+    this.velocity = {x:0,y:0,z:0};
+    
+    /** color of particles */
+    this.color = 0;
+    
+    /** initial energy */
+    this.energy = 1;
+    
+    /** size of particles */
+    this.size = 1;
+    
+    /** description and identification of particle */
     this.id = id;
     this.propertyCallBack = null;
 }

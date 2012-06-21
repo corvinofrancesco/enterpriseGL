@@ -59,7 +59,7 @@ describe('Testing class Node',function(){
                 expect(n.z).toBe(10);                
             });
             
-            if('Control successive moviment', function(){
+            it('Control successive moviment', function(){
                 n.move(0,0,10);
                 expect(n.z).toBe(20);
             });

@@ -16,7 +16,7 @@ describe('Testing distribution of Nodes',function(){
             var nodeNumbers = 0, graph,commDistance;
             
             // TODO initialize graph
-            graph = new Graph();
+            // graph = new Graph();
             
             // TODO add Nodes
             
