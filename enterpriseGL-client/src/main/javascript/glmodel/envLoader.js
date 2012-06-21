@@ -1,6 +1,10 @@
 function EnvModel(){
     this.idVertexShader = "SIMPLE_VERTEX_SHADER";
     this.idFragmentShader = "SIMPLE_FRAGMENT_SHADER";
+    this.modelLoader = new SimulSystem();
+    this.psystem = new ParticleSystem();
+    // TODO initialize the model
+    
 }
  
 EnvModel.prototype = {
@@ -20,12 +24,23 @@ EnvModel.prototype = {
  
 		/*************************************************************/ 
                 // TODO initialize the model
-		//box.addVertexAttribute("position", 3, boxPositions); 
-		//box.addVertexAttribute("color", 3, boxColors); 
-		//box.addArrayPrimitives("vertices", gl.POINTS, 0, 8); 
-		//box.addIndexedPrimitives("triangles", gl.TRIANGLES, boxTrianglesIndices); 
-		//box.addIndexedPrimitives("edges", gl.LINES, boxEdgesIndices); 
-		//this.boxMesh = box; 
+                var positions = new Float32Array(this.psystem.particlesVertex());
+                var edgesIndices = new Uint16Array(this.psystem.particlesEdges());
+                // TODO get the inizialized forces (directions, velocities and accelerations)
+                var directions = new Float32Array();
+                var velocities = new Float32Array();
+                var accelerations = new Float32Array();
+                
+                var particleSys = new SglMeshGL(gl);
+                    particleSys.addVertexAttribute("position", 3, positions);
+                    particleSys.addVertexAttribute("direction", 3, directions);
+                    particleSys.addVertexAttribute("velocity", 3, velocities);
+                    particleSys.addVertexAttribute("acceleration", 3, accelerations);
+                    particleSys.addArrayPrimitives("vertices", gl.POINTS, 0, this.psystem.size());
+                    particleSys.addIndexedPrimitives("edges", gl.LINES, edgesIndices);
+                    particleSys.primitives = "vertices";
+                    this.particleSys = particleSys;
+                
 		/*************************************************************/
 	},
  
