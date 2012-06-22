@@ -1,18 +1,32 @@
 function EnvModel(){
+    this.idCanvas = "SGL_CANVAS1";
     this.idVertexShader = "SIMPLE_VERTEX_SHADER";
     this.idFragmentShader = "SIMPLE_FRAGMENT_SHADER";
     this.modelLoader = new SimulSystem();
-    this.psystem = new ParticleSystem();
+    this.psystem = new ParticleSystem();    
     // TODO initialize the model
     
 }
  
 EnvModel.prototype = {
+        setup: function(idCanvas, idVSh, idFSh, modelLoader, pSystem){
+            // control attributes initialisation
+            if(idCanvas) this.idCanvas = idCanvas;
+            if(idVSh) this.idVertexShader = idVSh;
+            if(idFSh) this.idFragmentShader = idFSh;
+            // start particles system
+            this.modelLoader.createPart(this.psystem, 20);
+            this.modelLoader.createRel(this.psystem, 30);
+            
+            alert("init visualitation");
+            // register Canvas
+            sglRegisterCanvas(this.idCanvas, this, 60.0);                
+        },
+        
 	load : function(gl){
 		 /*************************************************************/
  		this.xform = new SglTransformStack(); 
 		this.angle = 0.0;
-		this.primitives = "triangles";
 		/*************************************************************/
  
 		/*************************************************************/
@@ -72,13 +86,9 @@ EnvModel.prototype = {
 		this.xform.model.scale(1.5, 1.5, 1.5);
 		gl.enable(gl.DEPTH_TEST);
 		gl.enable(gl.CULL_FACE);
-		var boxUniforms = { u_mvp : this.xform.modelViewProjectionMatrix };
-		sglRenderMeshGLPrimitives(this.boxMesh, this.primitives, this.simpleProg, null, boxUniforms);
+		var pSysUniforms = { u_mvp : this.xform.modelViewProjectionMatrix };
+		sglRenderMeshGLPrimitives(this.particleSys, "vertices", this.simpleProg, null, pSysUniforms);
 		gl.disable(gl.DEPTH_TEST);
 		gl.disable(gl.CULL_FACE);
 	}
 }; 
- 
-function EnvLoader(id){
-    sglRegisterCanvas(id, new EnvModel(), 60.0);    
-}
