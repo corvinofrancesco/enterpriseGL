@@ -24,18 +24,20 @@ SimulSystem.prototype = {
     
     createRel: function(sys, numRel) {
         rels  = new Array();
-        // aggiungere numRel relazioni tra le particelle inserite in sys mettendo a random sorgente e destinazione
+        // aggiunge numRel relazioni tra le particelle inserite in sys mettendo a random sorgente e destinazione
         for(j=0; j<numRel; ){
             idS = this.randNum(0, numRel);
             idD = this.randNum(0, numRel);
             // controllo che sorgente e destinazione non siano uguali
             if(idS!=idD){
-                // controllo che non esista già una relazione con gli stessi sorgente e destinazione, anche scambiati,
-                // usando la funzione isIndexIn di relation.js
-
-                // crea la nuova relazione con idS e idD e incrementa j
-                rels[j] = new Relation(idS, idD);
-                j++;
+                for(t=0; t<rels.length; t++) {
+                    // controllo che non esista già una relazione tra le stessa particelle
+                    if(!rels[t].areIndexIn(idS, idD)) {
+                            // crea la nuova relazione con idS e idD e incrementa j
+                            rels[j] = new Relation(idS, idD);
+                            j++;
+                    }
+                }
             }
         }
         sys.relations = rels;
