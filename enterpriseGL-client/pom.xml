@@ -31,9 +31,16 @@
                 <directory>src/main/javascript</directory>
                 <filtering>true</filtering>
             </resource>
+            <!-- Folder for a simple implementation of page visualitation -->
             <resource>
                 <directory>src/main/html</directory>
                 <filtering>true</filtering>
+            </resource>
+            <!-- Folder for fragment and vertex shaders -->
+            <resource>
+                <directory>src/main/glsl</directory>
+                <filtering>true</filtering>
+                <targetPath>shaders</targetPath>
             </resource>
         </resources>
 
@@ -112,7 +119,9 @@
                             </includes>
                             <excludes>
                                 <exclude>test/**</exclude>
-                                <exclued>lib/**</exclued>
+                                <exclude>lib/**</exclude>
+                                <exclude>html/**</exclude>
+                                <exclude>glsl/**</exclude>
                             <!-- files to exclude, path relative to output's directory
                             <exclude>**/*.pack.js</exclude>
                             <exclude>**/compressed.css</exclude>
