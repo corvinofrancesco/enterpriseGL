@@ -25,18 +25,25 @@ SimulSystem.prototype = {
     createRel: function(sys, numRel) {
         rels  = new Array();
         // aggiunge numRel relazioni tra le particelle inserite in sys mettendo a random sorgente e destinazione
+        var tentativi = 0;
         for(j=0; j<numRel; ){
             idS = this.randNum(0, numRel);
             idD = this.randNum(0, numRel);
             // controllo che sorgente e destinazione non siano uguali
             if(idS!=idD){
-                for(t=0; t<rels.length; t++) {
-                    // controllo che non esista già una relazione tra le stessa particelle
-                    if(!rels[t].areIndexIn(idS, idD)) {
-                            // crea la nuova relazione con idS e idD e incrementa j
-                            rels[j] = new Relation(idS, idD);
-                            j++;
-                    }
+                var exist = false;
+                // controllo che non esista già una relazione tra le stessa particelle
+                rels.forEach(function(relation){
+                    if(relation.areIndexIn(idS.idD)) exist = true;
+                });
+                if(!exist) {
+                    // crea la nuova relazione con idS e idD e incrementa j
+                    rels[j] = new Relation(idS, idD);
+                    j++;
+                    tentativi = 0;
+                } else {
+                    tentativi ++;
+                    if(tentativi>20) break;
                 }
             }
         }
