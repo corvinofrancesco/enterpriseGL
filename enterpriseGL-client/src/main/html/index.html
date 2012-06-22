@@ -5,22 +5,188 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
+        <!--
         <script id="SIMPLE_VERTEX_SHADER" type="text/x-vertex" src="shaders/vertexShBase" ></script>
         <script id="SIMPLE_FRAGMENT_SHADER" type="text/x-fragment" src="shaders/fragmentShBase"></script>
+        -->
         
-        <script type="text/javascript" src="spiderGL.js"></script>
+<script id="PARTICLE_VERTEX_SHADER" type="x-shader/x-vertex">
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform   mat4 u_mvp;
+uniform   float timeShader;
+
+attribute vec3 a_position;
+attribute vec3 a_direction;
+attribute vec3 a_velocity;
+attribute vec3 a_acceleration;
+
+varying   vec3 v_color;
+
+void main(void)
+{
+    //Simulation  
+    float life = a_acceleration.x-timeShader*0.25*a_acceleration.y;  
+    life = life>0.0?life:0.0;
+
+    //Color
+	v_color    = (vec3(1.0,0.95,0.2)*life+(1.0-life)*vec3(1.0,0.2,0.1))*life;
+	
+	//Position Simulation
+	vec3 dir = normalize(a_direction);
+	vec3 vel = normalize(a_velocity);
+	vec3 workPos = a_position+dir*(a_acceleration.z*timeShader*timeShader*0.5)+1.0*vel*timeShader;
+
+	gl_Position = u_mvp * vec4(workPos, 1.0);
+	gl_PointSize = min(1.0/(life+0.01),10.0) + 10.5;
+}
+</script>
+
+<script id="PARTICLE_FRAGMENT_SHADER" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+
+varying vec3 v_color;
+
+void main(void)
+{
+	gl_FragData[0] = vec4(v_color, 1.0);
+}
+</script>        
+        
+        <script type="text/javascript" src="lib/jquery-1.4.4.min"></script>
+        <script type="text/javascript" src="lib/spiderGL.js"></script>
         <script type="text/javascript" src="${project.build.finalName}.js"></script>
         <script type="text/javascript">
             /** 
              * Javascript code for enviroment configurations
              **/
-            
+            var enviroment = new EnvModel();
+            enviroment.idVertexShader = "PARTICLE_VERTEX_SHADER";
+            enviroment.idFragmentShader = "PARTICLE_FRAGMENT_SHADER";
+            enviroment.setup();
+
+function SpiderGLParticles() {
+	;
+}
+
+SpiderGLParticles.prototype = {
+
+	load : function(gl) {
+
+		/*************************************************************/
+		// roughly install GL_POINT_SIZE on the gl context
+		gl.VERTEX_PROGRAM_POINT_SIZE = 0x8642;
+		/*************************************************************/
+
+
+		/*************************************************************/
+		this.xform     = new SglTransformStack();
+		this.timeShader = 0.0;
+		this.primitives = "vertices";
+		/*************************************************************/
+
+
+		/*************************************************************/
+		var simpleVsrc = sglNodeText("PARTICLE_VERTEX_SHADER");
+		var simpleFsrc = sglNodeText("PARTICLE_FRAGMENT_SHADER");
+		var simpleProg = new SglProgram(gl, [simpleVsrc], [simpleFsrc]);
+		this.simpleProg = simpleProg;
+		/*************************************************************/
+
+
+		/*************************************************************/
+		var num = 50; //100000;
+		var positions = new Float32Array(3*num);
+		var i;
+		tot = 3*num;
+		for(i=0;i<=tot;i++){
+		    positions[i]=0.0;
+		}
+		
+        //directions		
+		var directions = new Float32Array(3*num);
+		var i;
+		for(i=0;i<=tot;i++){
+		    directions[i]=(sglRandom01()-0.5)*2.0;
+		}
+		
+        //velocities		
+		var velocities = new Float32Array(3*num);
+		var i;
+		for(i=0;i<=tot;i++){
+		    velocities[i]=(sglRandom01()-0.5)*2.0;
+		}		
+		
+        //starting life		
+		var liveDeathAccelerations = new Float32Array(3*num);
+		var i;
+		for(i=0;i<=tot;i+=3){
+		    liveDeathAccelerations[i]=sglRandom01()*0.9+0.1;
+		    liveDeathAccelerations[i+1]=sglRandom01()*0.5+0.5;
+		    liveDeathAccelerations[i+2]=sglRandom01()*2+0.1;
+		}
+
+	    var particleSys = new SglMeshGL(gl);
+		particleSys.addVertexAttribute("position", 3, positions);
+		particleSys.addVertexAttribute("direction", 3, directions);
+		particleSys.addVertexAttribute("velocity", 3, velocities);
+		particleSys.addVertexAttribute("acceleration", 3, liveDeathAccelerations);
+		particleSys.addArrayPrimitives("vertices", gl.POINTS, 0, num);
+		particleSys.primitives = "vertices";
+		this.particleSys = particleSys;
+		/*************************************************************/
+	},
+
+	update : function(gl, dt) {
+	    this.timeShader += 0.50 * dt; 
+	    if(this.timeShader>4)
+	        this.timeShader=0.0;	        
+	},
+
+	draw : function(gl) {
+		var w = this.ui.width;
+		var h = this.ui.height;
+
+		gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+
+		gl.viewport(0, 0, w, h);
+
+		this.xform.projection.loadIdentity();
+		this.xform.projection.perspective(sglDegToRad(60.0), w/h, 0.1, 100.0);
+
+		this.xform.view.loadIdentity();
+		this.xform.view.lookAt(0.0, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+		this.xform.model.loadIdentity();
+		this.xform.model.rotate(sglDegToRad(0.0), 0.0, 1.0, 0.0);
+		this.xform.model.scale(1.5, 1.5, 1.5);
+
+		gl.enable(gl.VERTEX_PROGRAM_POINT_SIZE);
+		gl.enable(gl.BLEND);
+		gl.blendFunc(gl.ONE,gl.ONE);
+		
+		var pSysUniforms = { u_mvp : this.xform.modelViewProjectionMatrix, timeShader : this.timeShader};
+		sglRenderMeshGLPrimitives(this.particleSys, this.primitives, this.simpleProg, null, pSysUniforms);
+
+		gl.disable(gl.VERTEX_PROGRAM_POINT_SIZE);
+		gl.disable(gl.BLEND);
+	}
+};
+
+sglRegisterCanvas("SGL_CANVAS2", new SpiderGLParticles(), 60.0);            
         </script>
+        
         <div>
             Session for visualitation of WebGL scene. <br/>
             
             <canvas id="SGL_CANVAS1" width="800" height="420"></canvas>
             
+            <canvas id="SGL_CANVAS2" width="800" height="420"></canvas>
         </div>
     </body>
 </html>

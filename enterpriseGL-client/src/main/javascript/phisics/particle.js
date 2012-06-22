@@ -7,6 +7,10 @@ function Particle(id){
     /** starting velocity of particle */
     this.velocity = {x:0,y:0,z:0};
     
+    this.directions = {x:0,y:0,z:0};
+    
+    this.accelerations = {x:0, y:0, z:0};
+    
     /** color of particles */
     this.color = 0;
     
@@ -27,6 +31,7 @@ Particle.prototype = {
         this.x += x;
         this.y += y;
         this.z += z;
+        return this;
     },
     
     quadDistance : function(n){
@@ -51,6 +56,22 @@ Particle.prototype = {
      */
     getProperty: function(name){    
         // TODO getProperty
-    }
+    },
+    
+    dirArray : function(){
+        return new Array(
+        this.directions.x,this.directions.y,this.directions.z);
+    },
+    
+    velArray : function(){
+        return new Array(
+        this.velocity.x,this.velocity.y,this.velocity.z);
+    },
+    
+    accArray : function(){
+        return new Array(
+        this.accelerations.x,this.accelerations.y,this.accelerations.z);
+    },
+    
        
 }

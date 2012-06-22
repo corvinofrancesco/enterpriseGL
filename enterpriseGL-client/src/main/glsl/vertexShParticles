@@ -1,0 +1,31 @@
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform   mat4 u_mvp;
+uniform   float timeShader;
+
+attribute vec3 a_position;
+attribute vec3 a_direction;
+attribute vec3 a_velocity;
+attribute vec3 a_liveDeathAcceleration;
+
+varying   vec3 v_color;
+
+void main(void)
+{
+    //Simulation  
+    float life = a_liveDeathAcceleration.x-timeShader*0.25*a_liveDeathAcceleration.y;  
+    life = life>0.0?life:0.0;
+
+    //Color
+	v_color    = (vec3(1.0,0.95,0.2)*life+(1.0-life)*vec3(1.0,0.2,0.1))*life;
+	
+	//Position Simulation
+	vec3 dir = normalize(a_direction);
+	vec3 vel = normalize(a_velocity);
+	vec3 workPos = a_position+dir*(a_liveDeathAcceleration.z*timeShader*timeShader*0.5)+1.0*vel*timeShader;
+
+	gl_Position = u_mvp * vec4(workPos, 1.0);
+	gl_PointSize = min(1.0/(life+0.01),10.0) + 10.5;
+}

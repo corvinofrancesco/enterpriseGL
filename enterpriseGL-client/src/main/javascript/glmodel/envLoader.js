@@ -18,14 +18,19 @@ EnvModel.prototype = {
             this.modelLoader.createPart(this.psystem, 20);
             this.modelLoader.createRel(this.psystem, 30);
             
-            alert("init visualitation");
             // register Canvas
             sglRegisterCanvas(this.idCanvas, this, 60.0);                
         },
         
 	load : function(gl){
-		 /*************************************************************/
+		/*************************************************************/
+		// roughly install GL_POINT_SIZE on the gl context
+		gl.VERTEX_PROGRAM_POINT_SIZE = 0x8642;
+		/*************************************************************/
+
+                /*************************************************************/
  		this.xform = new SglTransformStack(); 
+		this.timeShader = 0.0;
 		this.angle = 0.0;
 		/*************************************************************/
  
@@ -37,14 +42,12 @@ EnvModel.prototype = {
 		/*************************************************************/
  
 		/*************************************************************/ 
-                // TODO initialize the model
                 var positions = new Float32Array(this.psystem.particlesVertex());
                 var edgesIndices = new Uint16Array(this.psystem.particlesEdges());
                 // TODO get the inizialized forces (directions, velocities and accelerations)
-                var directions = new Float32Array();
-                var velocities = new Float32Array();
-                var accelerations = new Float32Array();
-                
+                var directions = new Float32Array(this.psystem.particlesDirections());
+                var velocities = new Float32Array(this.psystem.particlesVelocities());
+                var accelerations = new Float32Array(this.psystem.particlesAccelerations());
                 var particleSys = new SglMeshGL(gl);
                     particleSys.addVertexAttribute("position", 3, positions);
                     particleSys.addVertexAttribute("direction", 3, directions);
@@ -69,12 +72,14 @@ EnvModel.prototype = {
  
 	update : function(gl, dt) {
 		this.angle += 90.0 * dt;
+                this.timeShader += 0.50 * dt; 
+                if(this.timeShader>4) this.timeShader=0.0;	        
 	},
  
 	draw : function(gl){
 		var w = this.ui.width;
 		var h = this.ui.height;
-		gl.clearColor(0.2, 0.2, 0.6, 1.0);
+		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
 		gl.viewport(0, 0, w, h);
 		this.xform.projection.loadIdentity();
@@ -84,11 +89,18 @@ EnvModel.prototype = {
 		this.xform.model.loadIdentity();
 		this.xform.model.rotate(sglDegToRad(this.angle), 0.0, 1.0, 0.0);
 		this.xform.model.scale(1.5, 1.5, 1.5);
-		gl.enable(gl.DEPTH_TEST);
-		gl.enable(gl.CULL_FACE);
-		var pSysUniforms = { u_mvp : this.xform.modelViewProjectionMatrix };
+
+                gl.enable(gl.VERTEX_PROGRAM_POINT_SIZE);
+		gl.enable(gl.BLEND);
+		gl.blendFunc(gl.ONE,gl.ONE);
+		//gl.enable(gl.DEPTH_TEST);
+		//gl.enable(gl.CULL_FACE);
+		var pSysUniforms = { u_mvp : this.xform.modelViewProjectionMatrix , timeShader: this.timeShader};
 		sglRenderMeshGLPrimitives(this.particleSys, "vertices", this.simpleProg, null, pSysUniforms);
-		gl.disable(gl.DEPTH_TEST);
-		gl.disable(gl.CULL_FACE);
+                sglRenderMeshGLPrimitives(this.particleSys, "edges", this.simpleProg, null, pSysUniforms);
+                gl.disable(gl.VERTEX_PROGRAM_POINT_SIZE);
+		gl.disable(gl.BLEND);
+		//gl.disable(gl.DEPTH_TEST);
+		//gl.disable(gl.CULL_FACE);
 	}
 }; 
