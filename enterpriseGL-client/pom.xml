@@ -22,7 +22,7 @@
     
     <properties>
         <project.version>1.0-SNAPSHOT</project.version>
-        <client.libraries>src/lib</client.libraries>
+        <client.libraries>src/main/lib</client.libraries>
     </properties>
         
     <organization>
@@ -50,7 +50,7 @@
                 <targetPath>shaders</targetPath>
             </resource>
             <resource>
-                <directory>${client.library}</directory>
+                <directory>${client.libraries}</directory>
                 <filtering>false</filtering>
                 <targetPath>lib</targetPath>
             </resource>
@@ -82,8 +82,8 @@
                     <jsSrcDir>src/main/javascript</jsSrcDir>
                     <jsTestSrcDir>src/test/javascript</jsTestSrcDir>
                     <preloadSources>
-                        <preloadSource>lib/jquery-1.4.4.min.js</preloadSource>
-                        <preloadSource>lib/spidergl.js</preloadSource>
+                        <preloadSource>${client.libraries}/jquery-1.4.4.min.js</preloadSource>
+                        <preloadSource>${client.libraries}/spidergl.js</preloadSource>
                     </preloadSources>
                 </configuration>
             </plugin>
