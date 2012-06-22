@@ -17,13 +17,20 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>unisalento.fcorvino</groupId>
     <artifactId>egl-client</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${project.version}</version>
     <name>enterpriseGL-client</name>
-
+    
+    <properties>
+        <project.version>1.0-SNAPSHOT</project.version>
+        <client.libraries>src/lib</client.libraries>
+    </properties>
+        
     <organization>
         <name>fcorvino</name>
         <url>http://corvinofrancesco.altervista.org</url>        
     </organization>
+    
+    
 
     <build>
         <resources>
@@ -41,6 +48,11 @@
                 <directory>src/main/glsl</directory>
                 <filtering>true</filtering>
                 <targetPath>shaders</targetPath>
+            </resource>
+            <resource>
+                <directory>${client.library}</directory>
+                <filtering>false</filtering>
+                <targetPath>lib</targetPath>
             </resource>
         </resources>
 
