@@ -3,11 +3,16 @@ function SimulSystem(){
 }
 
 SimulSystem.prototype = {
-    // funzioni e proprietà come proprietà: function(argomenti) {corpo funzione}
     
     // creazione di numPart nel sistema sys
     createPart: function(sys, numPart) {
-        // aggiungere particelle con un for
+        parts = new Array();
+        // aggiunge all'array creato un numero di particelle pari a numPart
+        for(i=0; i<numPart; i++){
+            parts[i] = new Particle(i);
+        }
+        // aggiunge le particelle al sistema passato
+        sys.particles = parts;
     },
     
     createRel: function(sys, numRel) {
