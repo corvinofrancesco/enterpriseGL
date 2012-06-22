@@ -20,4 +20,18 @@ describe('Testing simulation', function(){
        })
     });
     
+    describe('Control verify indices', function() {
+        sSystem.createPart(sys, 10);
+        rels = new Array();
+        rels[0] = new Relation(1,2);
+        rels[1] = new Relation(4,6);
+        rels[2] = new Relation(3,5);
+        rels[3] = new Relation(7,2);
+        
+        it('Control function areIndexIn', function(){
+            expect(rels[1].areIndexIn(4,3).toBe(false));
+            expect(rels[2].areIndexIn(5,3).toBe(true));
+        });
+    })
+    
 });
