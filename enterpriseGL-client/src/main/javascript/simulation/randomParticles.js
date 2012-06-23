@@ -9,11 +9,14 @@ SimulSystem.prototype = {
         parts = new Array();
         // aggiunge all'array creato un numero di particelle pari a numPart
         for(i=0; i<numPart; i++){
-            parts[i] = new Particle(i).move(this.randNum(-1,1)+0.1,this.randNum(-1,1)+0.1,this.randNum(-1,1)+0.1);
+            parts[i] = new Particle(i).move(
+                this.randNum(-1,1)+0.1,
+                this.randNum(-1,1)+0.1,
+                this.randNum(-1,1)+0.1);
             parts[i].accelerations = {
                 x : this.randNum(-10,10)+0.1,
-                y : this.randNum(-10,10)+0.1,
-                z : this.randNum(-10,10)+0.1
+                y : this.randNum(1,10)+0.1,
+                z : this.randNum(1,10)+0.1
             };
         }
         // aggiunge le particelle al sistema passato
@@ -21,10 +24,7 @@ SimulSystem.prototype = {
     },
     
     randNum: function(min,max){
-        var m = min;
-        var n = max;
-        var r = m + Math.round(Math.random()*n); 
-        return(r); 
+        return min + Math.random()*max; 
     },
     
     createRel: function(sys, numRel) {
@@ -32,8 +32,8 @@ SimulSystem.prototype = {
         // aggiunge numRel relazioni tra le particelle inserite in sys mettendo a random sorgente e destinazione
         var tentativi = 0;
         for(j=0; j<numRel; ){
-            idS = this.randNum(0, numRel);
-            idD = this.randNum(0, numRel);
+            idS = Math.round(this.randNum(0, numRel-1));
+            idD = Math.round(this.randNum(0, numRel-1));
             // controllo che sorgente e destinazione non siano uguali
             if(idS!=idD){
                 var exist = false;
