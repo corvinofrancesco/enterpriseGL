@@ -1,22 +1,21 @@
 function EnvModel(){
     this.idCanvas = "SGL_CANVAS1";
     this.idVertexShader = "SIMPLE_VERTEX_SHADER";
-    this.idFragmentShader = "SIMPLE_FRAGMENT_SHADER";
-    this.modelLoader = new SimulSystem();
-    this.psystem = new ParticleSystem();    
+    this.idFragmentShader = "SIMPLE_FRAGMENT_SHADER";   
     // TODO initialize the model
+    this.models = new EntGraphics();
     
 }
  
 EnvModel.prototype = {
-        setup: function(idCanvas, idVSh, idFSh, modelLoader, pSystem){
+        setup: function(idCanvas, idVSh, idFSh){
             // control attributes initialisation
             if(idCanvas) this.idCanvas = idCanvas;
             if(idVSh) this.idVertexShader = idVSh;
             if(idFSh) this.idFragmentShader = idFSh;
             // start particles system
-            this.modelLoader.createPart(this.psystem, 100);
-            this.modelLoader.createRel(this.psystem, 80);
+            this.modelLoader.createPart(this.psystem, 5);
+            this.modelLoader.createRel(this.psystem, 5);
             
             // register Canvas
             sglRegisterCanvas(this.idCanvas, this, 60.0);                
@@ -43,25 +42,14 @@ EnvModel.prototype = {
 		/*************************************************************/
  
 		/*************************************************************/ 
-                var positions = new Float32Array(this.psystem.particlesVertex());
-                var edgesIndices = new Uint16Array(this.psystem.particlesEdges());
-                //var edgesIndices = new Uint16Array([0,1,1,3,3, 2, 2, 0,5, 4, 4, 6, 6, 7, 7, 5,0, 4, 1, 5, 3, 7, 2, 6]);
-                // get the inizialized forces (directions, velocities and accelerations)
-                var directions = new Float32Array(this.psystem.particlesDirections());
-                var velocities = new Float32Array(this.psystem.particlesVelocities());
-                var accelerations = new Float32Array(this.psystem.particlesAccelerations());
-                // get the inizialized particles attributes (colors)
-		var colors = new Float32Array(this.psystem.particlesColors());                
-                var particleSys = new SglMeshGL(gl);
-                    particleSys.addVertexAttribute("position", 3, positions);
-                    particleSys.addVertexAttribute("color", 3, colors);
-                    particleSys.addVertexAttribute("direction", 3, directions);
-                    particleSys.addVertexAttribute("velocity", 3, velocities);
-                    particleSys.addVertexAttribute("acceleration", 3, accelerations);
-                    particleSys.addArrayPrimitives("vertices", gl.POINTS, 0, this.psystem.size());
-                    particleSys.addIndexedPrimitives("edges", gl.LINES, edgesIndices);
-                    particleSys.primitives = "vertices";
-                    this.particleSys = particleSys;
+                // load particles primitives
+                this.models.load();
+
+                // setup point of view and interaction objects
+		var eye = sglNormalizedV3([5.0, 4.0, 5.0]);
+		eye = sglMulSV3(4.0, eye);		
+		this.viewMatrix = sglLookAtM4C(eye[0], eye[1], eye[2], 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
+                this.trackball = new SglTrackball();
                 
 		/*************************************************************/
 	},
@@ -80,12 +68,42 @@ EnvModel.prototype = {
                             break;
                         case "m":
                             this.psystem.updatePosition();
-                            alert("moved");
+                            this.particleSys.removeVertexAttribute("position"); 
+                               var positions = new Float32Array(this.psystem.particlesVertex());
+                               this.particleSys.addVertexAttribute("position", 3, positions);  
                             break;
 			default : break;
 	 	}
 	},
- 
+        
+	mouseMove : function(gl, x, y){
+		var ui = this.ui;
+
+		var ax1 = (x / (ui.width  - 1)) * 2.0 - 1.0;
+		var ay1 = (y / (ui.height - 1)) * 2.0 - 1.0;
+
+		var action = SGL_TRACKBALL_NO_ACTION;
+		if ((ui.mouseButtonsDown[0] && ui.keysDown[17]) || ui.mouseButtonsDown[1]) {
+			action = SGL_TRACKBALL_PAN;
+		} else if (ui.mouseButtonsDown[0]) {
+			action = SGL_TRACKBALL_ROTATE;
+		}
+
+		this.trackball.action = action;
+		this.trackball.track(this.viewMatrix, ax1, ay1, 0.0);
+		this.trackball.action = SGL_TRACKBALL_NO_ACTION;
+	},
+
+	mouseWheel: function(gl, wheelDelta, x, y)
+	{
+		var action = (this.ui.keysDown[16]) ? (SGL_TRACKBALL_DOLLY) : (SGL_TRACKBALL_SCALE);
+		var factor = (action == SGL_TRACKBALL_DOLLY) ? (wheelDelta * 0.3) : ((wheelDelta < 0.0) ? (1.10) : (0.90));
+
+		this.trackball.action = action;
+		this.trackball.track(this.viewMatrix, 0.0, 0.0, factor);
+		this.trackball.action = SGL_TRACKBALL_NO_ACTION;
+	},
+        
 	update : function(gl, dt) {
                 this.timeShader += 0.50 * dt; 
                 if(this.rotation) this.angle += 90.0 * dt;
