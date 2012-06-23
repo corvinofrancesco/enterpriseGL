@@ -183,4 +183,16 @@
             </plugin>
         </plugins>
     </reporting>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <id>searls-maven-releases</id>
+            <url>http://searls-maven-repository.googlecode.com/svn/trunk/releases</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>searls-maven-snapshots</id>
+            <url>http://searls-maven-repository.googlecode.com/svn/trunk/snapshots</url>
+        </pluginRepository>
+    </pluginRepositories>
+        
 </project>
