@@ -14,7 +14,29 @@ describe('Testing particles system', function(){
         it('Control if number of vertex matrix is equal to 3 * num of particles created',function(){
             expect(vertices.length).toBe(numPar*3);
         });
-      
+            
+    });
+    
+    describe('Control system update method', function(){
+        var a = {x:1.0,y:0,z:2.0};
+        sys.particles[0].accelerations = a;
+        
+        it('Control update afther 1 s', function(){
+           var pres = {
+               x: sys.particles[0].x + a.x + 
+                  sys.particles[0].velocity.x,
+               y: sys.particles[0].y + a.y + 
+                  sys.particles[0].velocity.y,
+               z: sys.particles[0].z + a.z + 
+                  sys.particles[0].velocity.z
+           };
+           sys.updatePosition(1);
+           
+           expect(sys.particles[0].x).toBe(pres.x);
+           expect(sys.particles[0].y).toBe(pres.y);
+           expect(sys.particles[0].z).toBe(pres.z);
+        });
+        
     });
         
 });

@@ -8,16 +8,18 @@ function ParticleSystem(){
 
 ParticleSystem.prototype = {
     
-    /**
-     * Calculate the four vertex for a particle in the array
-     */
-    particleVertex : function(idParticle) {
-        //TODO project particle position on camera axis
-        //TODO calculate particle's 4 vertex 
-    },
-    
     size : function() {
         return this.particles.length;
+    },
+    
+    updatePosition: function(dtime){
+        this.particles.forEach(function(p){
+          for(var axis in p.accelerations){
+              p[axis] += 
+                  dtime*dtime* p.accelerations[axis] +
+                  dtime* p.velocity[axis];
+          }  
+        });
     },
     
     /**

@@ -78,6 +78,10 @@ EnvModel.prototype = {
 			case "s": 
                             this.rotation = !this.rotation; 
                             break;
+                        case "m":
+                            this.psystem.updatePosition();
+                            alert("moved");
+                            break;
 			default : break;
 	 	}
 	},
