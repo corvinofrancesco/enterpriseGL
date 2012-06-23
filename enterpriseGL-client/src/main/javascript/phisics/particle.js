@@ -12,7 +12,7 @@ function Particle(id){
     this.accelerations = {x:0, y:0, z:0};
     
     /** color of particles */
-    this.color = 0;
+    this.color = {r:0,g:1,b:0.5};
     
     /** initial energy */
     this.energy = 1;
@@ -73,5 +73,9 @@ Particle.prototype = {
         this.accelerations.x,this.accelerations.y,this.accelerations.z);
     },
     
-       
+    colArray : function(){
+        return new Array(
+        this.color.r,this.color.g,this.color.b);
+    },
+           
 }

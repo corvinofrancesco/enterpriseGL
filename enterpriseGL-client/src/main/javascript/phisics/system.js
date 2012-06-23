@@ -55,16 +55,23 @@ ParticleSystem.prototype = {
         });
         return accelerations;                
     },
-            
+
+    particlesColors : function() {
+        var colors = new Array();
+        this.particles.forEach(function(p){
+            colors = colors.concat(p.colArray());
+        });
+        return colors;                
+    },
+    
     /**
      * Returns an Array of all particles relations
      */
     particlesEdges : function() {
         var edges = new Array();
-        for(var j =0;j<this.relations.length;j++){
-            /// use getArray property for Relation object
-            edges = edges.concat(this.relations[j].getArray());
-        }
-        return edges;
+        this.relations.forEach(function(r){
+            edges = edges.concat(r.getArray());
+        });
+        return edges;                
     }
 }
