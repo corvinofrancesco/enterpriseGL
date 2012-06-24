@@ -22,7 +22,7 @@ describe('Testing simulation', function(){
     
     describe('Control verify indices', function() {
         sSystem.createPart(sys, numPar);
-        rels = new Array();
+        var rels = new Array();
         rels[0] = new Relation(1,2);
         rels[1] = new Relation(4,6);
         rels[2] = new Relation(3,5);
@@ -30,7 +30,10 @@ describe('Testing simulation', function(){
         
         it('Control function areIndexIn', function(){
             expect(rels[1].areIndexIn(4,3)).toBe(false);
+            expect(rels[2].idD).toBe(5);
+            expect(rels[2].idS).toBe(3);            
             expect(rels[2].areIndexIn(5,3)).toBe(true);
+            expect(rels[2].areIndexIn(3,5)).toBe(true);
         });
     })
     
