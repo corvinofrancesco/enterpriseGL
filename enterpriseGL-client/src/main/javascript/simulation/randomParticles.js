@@ -53,5 +53,13 @@ SimulSystem.prototype = {
             }
         }
         sys.relations = rels;
+    },
+    
+    /**
+     *  start particles system
+     */
+    popolate: function(sys) {
+        this.createPart(sys, 5);
+        this.createRel(sys, 5);        
     }
 }
