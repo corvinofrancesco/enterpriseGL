@@ -1,3 +1,6 @@
+/**
+ * This class manage whole sistem of particles (interaction and forces)
+ */
 
 function ParticleSystem(){
     this.particles = [];
