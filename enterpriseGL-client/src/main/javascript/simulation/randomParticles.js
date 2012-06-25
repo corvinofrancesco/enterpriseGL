@@ -39,7 +39,7 @@ SimulSystem.prototype = {
                 var exist = false;
                 // controllo che non esista già una relazione tra le stessa particelle
                 rels.forEach(function(relation){
-                    if(relation.areIndexIn(idS.idD)) exist = true;
+                    if(relation.areIndexIn(idS,idD)) exist = true;
                 });
                 if(!exist) {
                     // crea la nuova relazione con idS e idD e incrementa j

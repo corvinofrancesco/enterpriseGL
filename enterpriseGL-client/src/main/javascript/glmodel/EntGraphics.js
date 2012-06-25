@@ -70,20 +70,22 @@ EntGraphics.prototype = {
 function ParticlePrimitive(p) {
     this.xyz = new Array(p.x,p.y,p.z);
     this.colors = new Array(p.color.r,p.color.g,p.color.b);    
+    this.p = p;
 }
 
 ParticlePrimitive.prototype = {
     draw: function(gl,t){
+        
         var pMesh = new SglMeshGL(gl);
+        pMesh.primitives = "vertices" + this.p.id;
         pMesh.addVertexAttribute("position",3,new Float32Array(this.xyz));
         pMesh.addVertexAttribute("color",3,new Float32Array(this.color));
-        pMesh.addArrayPrimitives("vertices", gl.POINTS, 0, 1);
-        pMesh.primitives = "vertices";
-        sglRenderMeshGLPrimitives(pMesh, "vertices", gl, null, t.uniform);        
+        pMesh.addArrayPrimitives(pMesh.primitives, gl.POINTS, 0, 1);
+        sglRenderMeshGLPrimitives(pMesh, pMesh.primitives, t.simpleProg, null, t.uniform);        
     },
     
     animate: function(){
-        
+        this.xyz.forEach(function(v){if(v<10) v+=0.2; else v=-1.3;})
     }
     
 }
@@ -105,12 +107,12 @@ function RelationPrimitive(p1,p2) {
 RelationPrimitive.prototype = {
     draw: function(gl,t){
         var rMesh = new SglMeshGL(gl);
-        rMesh.addVertexAttribute("position",3,new Float32Array(this.xyz));
-        rMesh.addVertexAttribute("color",3,new Float32Array(this.color));
+        rMesh.addVertexAttribute("position",3,new Float32Array(this.vertices));
+        rMesh.addVertexAttribute("color",3,new Float32Array(this.colors));
         rMesh.addArrayPrimitives("vertices", gl.POINTS, 0, 2);
         rMesh.addIndexedPrimitives("edges", gl.LINES, new Uint16Array([0,1]));
         rMesh.primitives = "edges";
-        sglRenderMeshGLPrimitives(rMesh, "edges", gl, null, t.uniform);        
+        sglRenderMeshGLPrimitives(rMesh, "edges", t.simpleProg, null, t.uniform);        
     },
     
     animate: function() {

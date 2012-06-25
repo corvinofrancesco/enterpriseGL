@@ -40,6 +40,110 @@ EnvModel.prototype = {
         this.simpleProg = simpleProg;
         /*************************************************************/
  
+        /*************************************************************/
+        var texVsrc = sglNodeText("TEX_VERTEX_SHADER");
+        var texFsrc = sglNodeText("TEX_FRAGMENT_SHADER");
+        var texProg = new SglProgram(gl, [texVsrc], [texFsrc]);
+        this.texProg = texProg;
+        /*************************************************************/ 
+ 
+        /*************************************************************/
+        var quadPositions = new Float32Array
+        ([
+                -1.0, -1.0,
+                 1.0, -1.0,
+                -1.0,  1.0,
+                 1.0,  1.0
+        ]);
+
+        var quadTexcoords = new Float32Array
+        ([
+                0.0, 0.0,
+                1.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0
+        ]);
+
+        var quad = new SglMeshGL(gl);
+        quad.addVertexAttribute("position", 2, quadPositions);
+        quad.addVertexAttribute("texcoord", 2, quadTexcoords);
+        quad.addArrayPrimitives("tristrip", gl.TRIANGLE_STRIP, 0, 4);
+        this.quadMesh = quad;
+        /*************************************************************/
+                
+        /*************************************************************/
+        var texOpt = {
+                generateMipmap : true,
+                minFilter      : gl.LINEAR_MIPMAP_LINEAR,
+                onload         : this.ui.requestDraw
+        };
+        var tex = new SglTexture2D(gl, "star.gif", texOpt);
+        this.tex = tex;
+        /*************************************************************/
+
+ 
+ 
+ 
+ 
+        /*************************************************************/
+        var boxPositions = new Float32Array
+        ([
+                -0.5, -0.5,  0.5,
+                 0.5, -0.5,  0.5,
+                -0.5,  0.5,  0.5,
+                 0.5,  0.5,  0.5,
+                -0.5, -0.5, -0.5,
+                 0.5, -0.5, -0.5,
+                -0.5,  0.5, -0.5,
+                 0.5,  0.5, -0.5
+        ]);
+
+        var boxColors = new Float32Array
+        ([
+                0.0, 0.0, 1.0,
+                1.0, 0.0, 1.0,
+                0.0, 1.0, 1.0,
+                1.0, 1.0, 1.0,
+                0.0, 0.0, 0.0,
+                1.0, 0.0, 0.0,
+                0.0, 1.0, 0.0,
+                1.0, 1.0, 0.0
+        ]);
+
+        var boxTrianglesIndices = new Uint16Array
+        ([
+                0, 1, 2,  2, 1, 3,  // front
+                5, 4, 7,  7, 4, 6,  // back
+                4, 0, 6,  6, 0, 2,  // left
+                1, 5, 3,  3, 5, 7,  // right
+                2, 3, 6,  6, 3, 7,  // top
+                4, 5, 0,  0, 5, 1   // bottom
+        ]);
+
+        var boxEdgesIndices = new Uint16Array
+        ([
+                0, 1, 1, 3, 3, 2, 2, 0,  // front
+                5, 4, 4, 6, 6, 7, 7, 5,  // back
+                0, 4, 1, 5, 3, 7, 2, 6   // middle
+        ]);
+
+        var box = new SglMeshGL(gl);
+        box.addVertexAttribute("position", 3, boxPositions);
+        box.addVertexAttribute("color",    3, boxColors);
+        box.addArrayPrimitives("vertices", gl.POINTS, 0, 8);
+        box.addIndexedPrimitives("triangles", gl.TRIANGLES, boxTrianglesIndices);
+        box.addIndexedPrimitives("edges",     gl.LINES,    boxEdgesIndices);
+        this.boxMesh = box;
+        /*************************************************************/
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
         /*************************************************************/ 
         // load particles primitives
 //        this.models.gl = gl;
@@ -56,6 +160,15 @@ EnvModel.prototype = {
  
     keyPress : function(gl, keyCode, keyString) {
         switch (keyString) {
+
+
+
+			case "1": this.primitives = "triangles"; break;
+			case "2": this.primitives = "edges";     break;
+			case "3": this.primitives = "vertices";  break;
+
+
+
             /** rotation */
             case "a":
                 this.angle -= 15.0 ;
@@ -114,39 +227,98 @@ EnvModel.prototype = {
     draw : function(gl){
         var w = this.ui.width;
         var h = this.ui.height;
-        gl.clearColor(0.8, 0.65, 0.33, 1.0);
+        gl.clearColor(0, 0, 0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
         gl.viewport(0, 0, w, h);
         
-        //gl.enable(gl.VERTEX_PROGRAM_POINT_SIZE);
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.ONE,gl.ONE);
-        //gl.enable(gl.DEPTH_TEST);
-        //gl.enable(gl.CULL_FACE);
-
 
         this.xform.projection.push();
         this.xform.projection.loadIdentity();
         this.xform.projection.perspective(sglDegToRad(45.0), w/h, 0.1, 100.0);
                 
-        //this.xform.view.push();
-        //this.xform.view.load(this.viewMatrix);
+        this.xform.view.push();
+        this.xform.view.load(this.viewMatrix);
+        this.xform.view.multiply(this.trackball.matrix);
         
-        //this.xform.model.push();
-        //this.xform.model.multiply(this.trackball.matrix);
-
         this.uniform = {
             u_mvp : this.xform.modelViewProjectionMatrix , 
             timeShader: this.timeShader
             };
-            
-        this.models.update();
-        this.models.draw(gl,this);
-        this.xform.model.pop();
-                
-        //gl.disable(gl.VERTEX_PROGRAM_POINT_SIZE);
-        gl.disable(gl.BLEND);
-        //gl.disable(gl.DEPTH_TEST);
-        //gl.disable(gl.CULL_FACE);
+//            
+//        gl.enable(gl.VERTEX_PROGRAM_POINT_SIZE);
+//        gl.enable(gl.BLEND);
+//        gl.blendFunc(gl.ONE,gl.ONE);
+//        
+//        this.xform.model.push();
+//        this.models.update();
+//        
+//        this.models.draw(gl,this);
+//        this.xform.model.pop();
+//
+//        gl.disable(gl.VERTEX_PROGRAM_POINT_SIZE);
+//        gl.disable(gl.BLEND);
+
+          for(var i in this.models.psystem.particles){
+              var p = this.models.psystem.particles[i];
+              this.xform.model.push();
+              this.xform.model.loadIdentity();
+              this.xform.model.translate(p.x,p.y,p.z);
+              this.xform.model.scale(0.1,0.1,0.1);
+              this.drawCube(gl,p.x,p.y,p.z);
+              this.xform.model.pop();
+          }  
+          
+          for(var i in this.models.psystem.relations) {
+              var r = this.models.psystem.relations[i];
+              var p1 = this.models.psystem.particles[r.idS];
+              var p2 = this.models.psystem.particles[r.idD];
+              this.xform.model.push();
+              this.xform.model.loadIdentity();
+              this.drawRelation(gl,new RelationPrimitive(p1,p2)); 
+              this.xform.model.pop();
+          }
+
+    },
+    
+    drawCube : function(gl,px,py,pz){
+
+
+        //this.xform.model.loadIdentity();
+        if (this.tex.isValid) {
+                var quadUniforms = { u_mvp : this.xform.modelViewProjectionMatrix };
+                var quadSamplers = { s_texture : this.tex };
+                sglRenderMeshGLPrimitives(this.quadMesh, "tristrip", this.texProg, null, quadUniforms, quadSamplers);
+        }
+
+
+
+//        gl.enable(gl.VERTEX_PROGRAM_POINT_SIZE);
+//        gl.enable(gl.BLEND);
+//        gl.blendFunc(gl.ONE,gl.ONE);
+//
+//        var pMesh = new SglMeshGL(gl);
+//        pMesh.primitives = "vertices";
+//        pMesh.addVertexAttribute("position",3,new Float32Array([0,0,0]));
+//        pMesh.addVertexAttribute("color",3,new Float32Array([1,0,0]));
+//        pMesh.addArrayPrimitives(pMesh.primitives, gl.POINTS, 0, 1);
+//        sglRenderMeshGLPrimitives(pMesh, pMesh.primitives, this.simpleProg, null, this.uniform);        
+//
+//        gl.disable(gl.VERTEX_PROGRAM_POINT_SIZE);
+//        gl.disable(gl.BLEND);
+        
+//        gl.enable(gl.DEPTH_TEST);
+//        gl.enable(gl.CULL_FACE);
+//
+//        var boxUniforms = { u_mvp : this.xform.modelViewProjectionMatrix };
+//        sglRenderMeshGLPrimitives(this.boxMesh, this.primitives, this.simpleProg, null, boxUniforms);
+//
+//
+//        gl.disable(gl.DEPTH_TEST);
+//        gl.disable(gl.CULL_FACE);
+    },
+    
+    drawRelation: function(gl,r) {
+        r.draw(gl,this);
     }
+    
 }; 
