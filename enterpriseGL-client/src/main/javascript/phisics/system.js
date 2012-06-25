@@ -19,8 +19,9 @@ ParticleSystem.prototype = {
         this.particles.forEach(function(p){
           for(var axis in p.accelerations){
               p[axis] += 
-                  dtime*dtime* p.accelerations[axis] +
+                  0.5* dtime*dtime* p.accelerations[axis] +
                   dtime* p.velocity[axis];
+              p.velocity[axis] += dtime * p.accelerations[axis];
           }  
         });
     },
