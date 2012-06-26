@@ -24,6 +24,13 @@ BarnesHut.prototype = {
     getForceFor : function (element){
         // richiama la proprietà della particella
         element.computeForce(this.root,this.root.range * 2);
+    },
+    
+    /**
+     * Se richiamata si occupa di configurare i valori dell'algoritmo.
+     */
+    configureFor : function (force) {
+        
     }
 }
 

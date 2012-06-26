@@ -14,9 +14,28 @@ ParticleSystem.events = {
 function ParticleSystem(){
     this.particles = {};
     this.relations = [];
-    this.forces = {};
+    this.forces = {barneshut:new Force(), relAttr: new Force()};
+    this.numparticles = 0;    
+    
+    /// basrnes-hut
+    this.forces.barneshut.type = Force.types.GLOBAL;
     this.globalAlg = new BarnesHut();
-    this.numparticles = 0;
+    
+    /// atraction between particles in relation
+    var particles = this.particles;
+    this.forces.relAttr.force = function(r){
+        var sPart = particles[r.idS];//this.particles[r.idS];
+        var dPart = particles[r.idD];//this.particles[r.idD];
+        var dir = {
+            x: sPart.x - dPart.x,
+            y: sPart.y - dPart.y,
+            z: sPart.z - dPart.z
+        };
+        sPart.acceleration = {x:-dir.x, y:-dir.y, z: -dir.z}; // -dir
+        dPart.acceleration = dir;   // dir
+    };
+    this.forces.relAttr.type = Force.types.ONRELATIONS;
+    
 }
 
 ParticleSystem.prototype = {

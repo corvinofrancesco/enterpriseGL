@@ -11,9 +11,10 @@ function EntGraphics() {
 EntGraphics.prototype = {
     retrivePrimitives : function() {
         var primitives = [];
-        this.psystem.particles.forEach( function(p){
-           primitives.concat(new ParticlePrimitive(p));
-        });
+        for(var i in this.psystem.particles){
+            var p = this.psystem.particles[i];
+            primitives.concat(new ParticlePrimitive(p));
+        }
         var particles = this.psystem.particles;
         this.psystem.relations.forEach( function(r){
             primitives.concat(new RelationPrimitive(

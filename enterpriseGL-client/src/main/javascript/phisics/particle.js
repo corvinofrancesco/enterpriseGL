@@ -122,15 +122,16 @@ Particle.prototype = {
         dry = node.y - this.y;
         drz = node.z - this.z;
         drsq = drx * drx + dry * dry + drz * drz;
+        var thisParticle = this;
         
         // la distanza non è sufficiente per considerare le particelle come un unico corpo
         if (drsq < dsq) {
             // se il nodo è una regione si calcolano le forze dei childs
             if(node instanceof Region) {
                 dsq *= 0.25;
-                this.childs.forEach(function(ch){
+                node.childs.forEach(function(ch){
                     if(ch != undefined) {
-                        recurseForce(ch, dsq);
+                        thisParticle.recurseForce(ch, dsq);
                     }
                 });
             } else { // se il nodo è una particella si calcolano le forze
