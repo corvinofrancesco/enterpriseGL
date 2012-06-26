@@ -75,31 +75,35 @@ Region.prototype = {
             return this.nodes[this.indexIds[id]];
     },
     
-    // range è il lato del cubo rappresentante la regione
-    insert: function(part, range){
+    /**
+     * Inserisce nella regione this la particella 
+     * passata con il parametro part 
+     */ 
+    insert: function(part){
         var i=0, rx=0, ry=0, rz=0;
         if(this.x < part.x) {
             i = 1;
-            rx = range;
+            rx = 2 * this.range;
         }
         if(this.y < part.y) {
             i += 2;
-            ry = range;
+            ry = 2 * this.range;
         }
         if(this.z < part.z) {
             i += 4;
-            rz = range;
+            rz = 2 * this.range;
         }
         
         if(this.childs[i] == undefined){
             this.childs[i] = part;
             this.testVar = true;
         } else if(this.childs[i] instanceof Region) {
-            this.childs[i].insert(part, 0.5*range);
+            this.childs[i].insert(part, this.range);
         } else {
-            var newRange = 0.5*range;
+            var newRange = this.range;
             var newRegion = new Region(this.x - newRange + rx, this.y - newRange + ry, 
                 this.z - newRange + rz);
+            newRegion.range = 0.5 * newRange;
             newRegion.insert(part, newRange);
             newRegion.insert(this.childs[i], newRange);
             this.childs[i] = newRegion;

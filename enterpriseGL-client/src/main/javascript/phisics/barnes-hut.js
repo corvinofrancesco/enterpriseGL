@@ -4,12 +4,14 @@
  */
 
 function BarnesHut(){
-    
+    this.root = new Region(0,0,0);
+    this.root.range = 100;
+    // TODO: controllare l'algoritmo di inserimento delle particelle
 }
 
 BarnesHut.prototype = {
     insert : function (element){
-        
+        this.root.insert(element);
     },
     
     getForceFor : function (element){
