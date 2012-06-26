@@ -16,3 +16,11 @@ BarnesHut.prototype = {
         
     }
 }
+
+function BarnesHutConfig(){
+    var config = {
+        dtime : 0.025,
+        dthf : 0.5 * config.dtime,
+    };
+    return config;
+}
