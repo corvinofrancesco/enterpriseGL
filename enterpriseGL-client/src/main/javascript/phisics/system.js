@@ -16,12 +16,13 @@ function ParticleSystem(){
     this.relations = [];
     this.forces = {};
     this.globalAlg = new BarnesHut();
+    this.numparticles = 0;
 }
 
 ParticleSystem.prototype = {
     
     size : function() {
-        return this.particles.length;
+        return this.numparticles;
     },
     
     updatePosition: function(dtime){
@@ -85,6 +86,7 @@ ParticleSystem.prototype = {
         } else {
             // TODO effettuare l'insert nell'algoritmo globale
             this.globalAlg.insert(p);
+            this.numparticles ++;
         }
         this.particles[p.id] = p;
         if(relations) {
@@ -104,6 +106,7 @@ ParticleSystem.prototype = {
             this.particles[id] = undefined;
             // TODO make something with globalAlg
             this.event(ParticleSystem.events.REMOVE, {particle:p})
+            this.numparticles--;
         }
         this.event(ParticleSystem.events.ERROR,{particle:p});
     },

@@ -6,21 +6,19 @@ SimulSystem.prototype = {
     
     // creazione di numPart nel sistema sys
     createPart: function(sys, numPart) {
-        parts = new Array();
         // aggiunge all'array creato un numero di particelle pari a numPart
         for(i=0; i<numPart; i++){
-            parts[i] = new Particle(i).move(
+            var part = new Particle(i).move(
                 this.randNum(-1,1)+0.1,
                 this.randNum(-1,1)+0.1,
                 this.randNum(-1,1)+0.1);
-            parts[i].accelerations = {
+            part.accelerations = {
                 x : this.randNum(-10,10)+0.1,
                 y : this.randNum(1,10)+0.1,
                 z : this.randNum(1,10)+0.1
             };
+            sys.add(part,null);
         }
-        // aggiunge le particelle al sistema passato
-        sys.particles = parts;
     },
     
     randNum: function(min,max){

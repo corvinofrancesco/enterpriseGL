@@ -10,12 +10,20 @@ function BarnesHut(){
 }
 
 BarnesHut.prototype = {
+
+    /**
+     * Inserisce un elemento nella regione principale.
+     */
     insert : function (element){
         this.root.insert(element);
     },
     
+    /**
+     * 
+     */
     getForceFor : function (element){
-        
+        // richiama la proprietà della particella
+        element.computeForce(this.root,this.root.range * 2);
     }
 }
 

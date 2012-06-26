@@ -144,7 +144,10 @@ EnvModel.prototype = {
         
     update : function(gl, dt) {
         if(this.rotation) this.angle += 90.0 * dt;
-        if(this.running) this.models.psystem.updatePosition(0.1);
+        if(this.running){
+            this.models.psystem.updateAccelerations();
+            this.models.psystem.updatePosition(0.1);            
+        }
     },
  
     draw : function(gl){

@@ -5,16 +5,16 @@ describe('Testing particles system', function(){
     var numPar = sys.size();
     
     describe('Verify system management of particles', function(){
-        var vertices = sys.particlesVertex();
-        
-        it('Control if function returns valid array vertices', function(){
-            expect(vertices instanceof Array).toBe(true);
-        });
-
-        it('Control if number of vertex matrix is equal to 3 * num of particles created',function(){
-            expect(vertices.length).toBe(numPar*3);
-        });
-            
+//        var vertices = sys.particlesVertex();
+//        
+//        it('Control if function returns valid array vertices', function(){
+//            expect(vertices instanceof Array).toBe(true);
+//        });
+//
+//        it('Control if number of vertex matrix is equal to 3 * num of particles created',function(){
+//            expect(vertices.length).toBe(numPar*3);
+//        });
+//            
     });
     
     describe('Control system update method', function(){
