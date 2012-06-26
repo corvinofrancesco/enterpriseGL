@@ -99,6 +99,7 @@ Particle.prototype = {
         this.velocity.z = velhz + dvelz;
     }, 
     
+    // size è il diametro della regione root
     computeForce: function(root, size) {
         var ax, ay, az;
         ax = this.accelerations.x;
