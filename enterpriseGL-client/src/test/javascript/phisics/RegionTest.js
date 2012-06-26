@@ -9,7 +9,9 @@ describe('Testing region', function(){
     var p8 = new Particle(8);
     p1.move(15,15,15);
     p2.move(12,8,8);
+    p2.mass = 4;
     p3.move(8,12,8);
+    p3.mass = 4;
     p4.move(12,12,8);
     p5.move(8,8,12);
     p6.move(12,8,12);
@@ -64,21 +66,29 @@ describe('Testing region', function(){
 
     describe('Control two childs', function(){
         var r2 = new Region(10,10,10);
-       r2.insert(p2,20);       
+        r2.insert(p2,20);       
         r2.insert(p3,20);       
-       it('Control child defined', function(){
-           expect(r2.childs[1]).not.toBe(undefined);
-       }); 
-       it('Control child position', function(){
-           expect(r2.childs[1].x).toBe(p2.x);
-       });        
+        it('Control child defined', function(){
+            expect(r2.childs[1]).not.toBe(undefined);
+        }); 
+        it('Control child position', function(){
+            expect(r2.childs[1].x).toBe(p2.x);
+        });        
 
-       it('Control child defined', function(){
-           expect(r2.childs[2]).not.toBe(undefined);
-       }); 
-       it('Control child position', function(){
-           expect(r2.childs[2].x).toBe(p3.x);
-       });        
+        it('Control child defined', function(){
+             expect(r2.childs[2]).not.toBe(undefined);
+        }); 
+        it('Control child position', function(){
+            expect(r2.childs[2].x).toBe(p3.x);
+        });  
+        it('Control center of mass', function(){
+            var rr = r2.computeCenterOfMass();
+            expect(rr.mass).toBe(8);
+            expect(rr.x).toBe(10);
+            expect(rr.y).toBe(10);
+            expect(rr.z).toBe(8);
+        });  
+        
 
     });
        

@@ -17,10 +17,11 @@ BarnesHut.prototype = {
     }
 }
 
-function BarnesHutConfig(){
-    var config = {
+var BarnesHutConfig = {
         dtime : 0.025,
-        dthf : 0.5 * config.dtime,
-    };
-    return config;
+        dthf : function(){return 0.5 * BarnesHutConfig.dtime;},
+        tol: 0.5,
+        itolsq : function(){ return 1 / (BarnesHutConfig.tol * BarnesHutConfig.tol);},
+        eps: 0.05,
+        epssq: function(){ return BarnesHutConfig.eps * BarnesHutConfig.eps; } 
 }

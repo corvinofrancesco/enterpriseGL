@@ -17,8 +17,8 @@ function Particle(id){
     /** initial energy */
     this.energy = 1;
     
-    /** size of particles */
-    this.size = 1;
+    /** mass of particles */
+    this.mass = 1;
     
     /** description and identification of particle */
     this.id = id;
@@ -77,5 +77,81 @@ Particle.prototype = {
         return new Array(
         this.color.r,this.color.g,this.color.b);
     },
+    
+    advance: function() {
+        var dvelx, dvely, dvelz;
+	var velhx, velhy, velhz;
+        
+        dvelx = this.accelerations.x * BarnesHutConfig.dthf();
+        dvely = this.accelerations.y * BarnesHutConfig.dthf();
+        dvelz = this.accelerations.z * BarnesHutConfig.dthf();
+        
+        velhx = this.velocity.x + dvelx;
+        velhy = this.velocity.y + dvely;
+        velhz = this.velocity.z + dvelz;
+        
+        this.x += velhx * BarnesHutConfig.dtime;
+        this.y += velhy * BarnesHutConfig.dtime;
+        this.z += velhz * BarnesHutConfig.dtime;
+        
+        this.velocity.x = velhx + dvelx;
+        this.velocity.y = velhy + dvely;
+        this.velocity.z = velhz + dvelz;
+    }, 
+    
+    computeForce: function(root, size) {
+        var ax, ay, az;
+        ax = this.accelerations.x;
+        ay = this.accelerations.y;
+        az = this.accelerations.z;
+        this.accelerations.x = 0;
+        this.accelerations.y = 0;
+        this.accelerations.z = 0;
+        
+        this.recurseForce(root, size*size*BarnesHutConfig.itolsq());
+        
+        this.velocity.x += (this.accelerations.x - ax) * BarnesHutConfig.dthf();
+        this.velocity.y += (this.accelerations.y - ay) * BarnesHutConfig.dthf();
+        this.velocity.z += (this.accelerations.z - az) * BarnesHutConfig.dthf();
+    },
+    
+    recurseForce: function(node, dsq) {
+        var drx, dry, drz, drsq, nphi, scale, idr;
+        drx = node.x - this.x;
+        dry = node.y - this.y;
+        drz = node.z - this.z;
+        drsq = drx * drx + dry * dry + drz * drz;
+        
+        // la distanza non è sufficiente per considerare le particelle come un unico corpo
+        if (drsq < dsq) {
+            // se il nodo è una regione si calcolano le forze dei childs
+            if(node instanceof Region) {
+                dsq *= 0.25;
+                this.childs.forEach(function(ch){
+                    if(ch != undefined) {
+                        recurseForce(ch, dsq);
+                    }
+                });
+            } else { // se il nodo è una particella si calcolano le forze
+                if(node != this) {
+                    drsq += BarnesHutConfig.epssq();
+                    idr = 1 / Math.sqrt(drsq);
+                    nphi = node.mass * idr;
+                    scale = nphi * idr * idr;
+                    this.accelerations.x += drx * scale;
+                    this.accelerations.y += dry * scale;
+                    this.accelerations.z += drz * scale;
+                }
+            }
+        } else { // la distanza è sufficiente per considerare le particelle come un unico corpo
+            drsq += BarnesHutConfig.epssq();
+            idr = 1 / Math.sqrt(drsq);
+            nphi = node.mass * idr;
+            scale = nphi * idr * idr;
+            this.accelerations.x += drx * scale;
+            this.accelerations.y += dry * scale;
+            this.accelerations.z += drz * scale;
+        }
+    }
            
 }
