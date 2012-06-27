@@ -14,11 +14,13 @@ ParticleSystem.events = {
 function ParticleSystem(){
     this.particles = {};
     this.relations = [];
-    this.forces = {barneshut:new Force(), relAttr: new Force()};
+    this.forces = {
+        //barneshut:new Force(), 
+        relAttr: new Force()};
     this.numparticles = 0;    
     
     /// basrnes-hut
-    this.forces.barneshut.type = Force.types.GLOBAL;
+    //this.forces.barneshut.type = Force.types.GLOBAL;
     this.globalAlg = new BarnesHut();
     
     /// atraction between particles in relation
@@ -31,8 +33,10 @@ function ParticleSystem(){
             y: sPart.y - dPart.y,
             z: sPart.z - dPart.z
         };
+        if(dir.x*dir.x + dir.y*dir.y + dir.z*dir.z>1){
         sPart.accelerations = {x:-dir.x, y:-dir.y, z: -dir.z}; // -dir
         dPart.accelerations = dir;   // dir
+        }
     };
     this.forces.relAttr.type = Force.types.ONRELATIONS;
     
@@ -61,6 +65,9 @@ ParticleSystem.prototype = {
      * the system.
      */
     updateAccelerations : function() {
+        for(var p in this.particles){
+            this.particles[p].accelerations = {x:0,y:0,z:0};
+        }
         for(var findex in this.forces){
             // funzione che calcola la forza da applicare
             var force = this.forces[findex].force;
