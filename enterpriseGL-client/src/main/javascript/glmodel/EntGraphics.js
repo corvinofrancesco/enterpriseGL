@@ -5,23 +5,9 @@ function EntGraphics() {
     this.modelLoader = new SimulSystem();
     this.psystem = new ParticleSystem();  
     this.modelLoader.popolate(this.psystem);
-    this.primitives = this.retrivePrimitives();
 }
 
 EntGraphics.prototype = {
-    retrivePrimitives : function() {
-        var primitives = [];
-        for(var i in this.psystem.particles){
-            var p = this.psystem.particles[i];
-            primitives.concat(new ParticlePrimitive(p));
-        }
-        var particles = this.psystem.particles;
-        this.psystem.relations.forEach( function(r){
-            primitives.concat(new RelationPrimitive(
-                particles[r.idS], particles[r.idD]));
-        });        
-        return primitives;
-    }
     
 }
 

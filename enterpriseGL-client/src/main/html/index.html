@@ -139,7 +139,19 @@ void main(void)
             enviroment.idVertexShader = "SIMPLE_VERTEX_SHADER";
             enviroment.idFragmentShader = "SIMPLE_FRAGMENT_SHADER";
             enviroment.setup();
-            
+
+            function log(msg,elem,override){
+                var idLog = "LOG";
+                if(elem) idLog = elem;
+                if(override) {
+                    document.getElementById(idLog).
+                        innerHTML = (msg + "\n");                    
+                } else {
+                    document.getElementById(idLog).
+                        innerHTML += (msg + "\n");                    
+                }
+            }
+
         </script>
         
         <div>
@@ -148,18 +160,16 @@ void main(void)
             <canvas id="SGL_CANVAS1" width="800" height="420"></canvas>
             
             <div>
-                <span>Particles edges:</span><br/>
-                <script>
-                    //document.write(enviroment.psystem.particlesEdges());
-                </script>
+                <span>Graphics data:</span><br/>
+                <dir id="VIEWMATRIX">
+                </dir>
             </div>
-
             <div>
-                <span>Particles vertices:</span><br/>
-                <script>
-                    //document.write(enviroment.psystem.particlesVertex());
-                </script>
+                <span>Log Messages:</span><br/>
+                <dir id="LOG">
+                </dir>
             </div>
+            
         </div>
     </body>
 </html>

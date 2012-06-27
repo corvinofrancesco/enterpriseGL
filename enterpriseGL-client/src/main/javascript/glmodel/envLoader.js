@@ -148,6 +148,7 @@ EnvModel.prototype = {
             this.models.psystem.updateAccelerations();
             this.models.psystem.updatePosition(0.1);            
         }
+        log(this.trackball.matrix,"VIEWMATRIX",true);
     },
  
     draw : function(gl){
@@ -172,7 +173,7 @@ EnvModel.prototype = {
         for(var i in this.models.psystem.particles){
           var p = this.models.psystem.particles[i];
           this.xform.model.push();
-          this.xform.model.loadIdentity();
+          this.xform.model.load(this.xform.viewMatrix);//loadIdentity();
           this.xform.model.translate(p.x,p.y,p.z);
           //this.xform.model.scale(0.1,0.1,0.1);
           this.drawCube(gl,p.x,p.y,p.z);
