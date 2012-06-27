@@ -9,7 +9,7 @@ describe('Testing forces', function(){
     sys.add(p2,r1);
     
     describe('Testing function attractionForce()', function(){
-        var f = attractionForce(sys.particles, 5);
+        var f = attractionForce(sys.particles, 5,0.1);
         f.force(r1);
         it('control acceleration p1.y after force', function(){
            expect(p1.accelerations.y).not.toBe(0); 
