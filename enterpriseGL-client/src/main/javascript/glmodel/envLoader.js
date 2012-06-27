@@ -52,39 +52,13 @@ EnvModel.prototype = {
         var texProg = new SglProgram(gl, [texVsrc], [texFsrc]);
         this.texProg = texProg;
         /*************************************************************/ 
- 
-        /*************************************************************/
-        var quadPositions = new Float32Array ([
-                -1.0, -1.0,
-                 1.0, -1.0,
-                -1.0,  1.0,
-                 1.0,  1.0
-        ]);
-
-        var quadTexcoords = new Float32Array ([
-                0.0, 0.0,
-                1.0, 0.0,
-                0.0, 1.0,
-                1.0, 1.0
-        ]);
-
-        var quad = new SglMeshGL(gl);
-        quad.addVertexAttribute("position", 2, quadPositions);
-        quad.addVertexAttribute("texcoord", 2, quadTexcoords);
-        quad.addArrayPrimitives("tristrip", gl.TRIANGLE_STRIP, 0, 4);
-        this.quadMesh = quad;
-        /*************************************************************/
-                
-        /*************************************************************/
-        var texOpt = {
-                generateMipmap : true,
-                minFilter      : gl.LINEAR_MIPMAP_LINEAR,
-                onload         : this.ui.requestDraw
-        };
-        var tex = new SglTexture2D(gl, "star.gif", texOpt);
-        this.tex = tex;
-        /*************************************************************/
- 
+        
+        /// carica i modelli delle primitive
+        for(var m in this.models.primitives){
+            this.models.primitives[m].load(gl,this);
+            this.models.primitives[m].textureShaders = texProg;
+        }
+  
         /*************************************************************/ 
         // setup point of view and interaction objects
         var eye = sglNormalizedV3([5.0, 4.0, 5.0]);
@@ -177,7 +151,7 @@ EnvModel.prototype = {
           
           this.xform.model.translate(p.x,p.y,p.z);
           //this.xform.model.scale(0.1,0.1,0.1);
-          this.drawCube(gl,p.x,p.y,p.z);
+          this.models.primitives.starParticles.draw(gl,this);
           this.xform.model.pop();
         }  
         
@@ -194,16 +168,7 @@ EnvModel.prototype = {
         }
 
     },
-    
-    drawCube : function(gl,px,py,pz){
-
-        if (this.tex.isValid) {
-                var quadUniforms = {u_mvp : this.xform.modelViewProjectionMatrix};
-                var quadSamplers = {s_texture : this.tex};
-                sglRenderMeshGLPrimitives(this.quadMesh, "tristrip", this.texProg, null, quadUniforms, quadSamplers);
-        }
-    },
-    
+        
     drawRelation: function(gl,r) {
         r.draw(gl,this);
     }

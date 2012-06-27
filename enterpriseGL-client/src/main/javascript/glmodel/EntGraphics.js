@@ -5,6 +5,10 @@ function EntGraphics() {
     this.modelLoader = new SimulSystem();
     this.psystem = new ParticleSystem();  
     this.modelLoader.popolate(this.psystem);
+    this.primitives = {
+        starParticles : new ParticlePrimitive()
+        
+    };
 }
 
 EntGraphics.prototype = {
@@ -14,25 +18,67 @@ EntGraphics.prototype = {
 /**
  * Class for particle graphics element
  */
-function ParticlePrimitive(p) {
-    this.xyz = new Array(p.x,p.y,p.z);
-    this.colors = new Array(p.color.r,p.color.g,p.color.b);    
-    this.p = p;
+function ParticlePrimitive(program) {
+    // inizializza con texture non valida
+    this.texture = {isValid: false};
+    // programma di rappresentazione della texture
+    this.textureShaders = program;   
 }
 
 ParticlePrimitive.prototype = {
+    
+    /**
+     * Carica la texture della tipologia di particella
+     * @param gl oggetto rappresentante l'interfaccia webgl
+     * @param reqManager oggetto che gestisce il canvas
+     */
+    load: function(gl,reqManager){
+        var texOpt = {
+                generateMipmap : true,
+                minFilter      : gl.LINEAR_MIPMAP_LINEAR,
+                onload         : reqManager.ui.requestDraw
+        };
+        var tex = new SglTexture2D(gl, "star.gif", texOpt);
+        this.texture = tex;
+    },
+    
+    /**
+     * Disegna una particella 
+     * @param 
+     */
     draw: function(gl,t){
+        /*************************************************************/
+        var quadPositions = new Float32Array ([
+                -1.0, -1.0,
+                 1.0, -1.0,
+                -1.0,  1.0,
+                 1.0,  1.0
+        ]);
+
+        var quadTexcoords = new Float32Array ([
+                0.0, 0.0,
+                1.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0
+        ]);
+
+        var quad = new SglMeshGL(gl);
+        quad.addVertexAttribute("position", 2, quadPositions);
+        quad.addVertexAttribute("texcoord", 2, quadTexcoords);
+        quad.addArrayPrimitives("tristrip", gl.TRIANGLE_STRIP, 0, 4);
+        this.quadMesh = quad;
+        /*************************************************************/
         
-        var pMesh = new SglMeshGL(gl);
-        pMesh.primitives = "vertices" + this.p.id;
-        pMesh.addVertexAttribute("position",3,new Float32Array(this.xyz));
-        pMesh.addVertexAttribute("color",3,new Float32Array(this.color));
-        pMesh.addArrayPrimitives(pMesh.primitives, gl.POINTS, 0, 1);
-        sglRenderMeshGLPrimitives(pMesh, pMesh.primitives, t.simpleProg, null, t.uniform);        
+        if(this.texture.isValid) {
+            var quadUniforms = {u_mvp : t.xform.modelViewProjectionMatrix};
+            var quadSamplers = {s_texture : this.texture};
+            sglRenderMeshGLPrimitives(this.quadMesh, "tristrip", 
+                    this.textureShaders, null, quadUniforms, quadSamplers);            
+        }
     },
     
     animate: function(){
-        this.xyz.forEach(function(v){if(v<10) v+=0.2; else v=-1.3;})
+        
     }
     
 }
