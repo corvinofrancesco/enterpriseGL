@@ -16,7 +16,12 @@ Force.types = {
     ONRELATIONS: "onRelations"    
 };
 
-function attractionForce(particles, k){
+/**
+ * @param particles array di particelle 
+ * @param k costante di elasticità
+ * @param delta lunghezza minima
+ */
+function attractionForce(particles, k, delta){
     var f = new Force();
     f.type = Force.types.ONRELATIONS;
     f.force = function(r) {
@@ -24,9 +29,11 @@ function attractionForce(particles, k){
         var dPart = particles[r.idD];//this.particles[r.idD];
         for(var axis in sPart.accelerations){
             var dir = k * (sPart[axis] - dPart[axis]);
-            sPart.accelerations[axis] -= dir;
-            dPart.accelerations[axis] += dir;
-        }
+            if(dir*dir > delta*delta) {
+                sPart.accelerations[axis] -= dir;
+                dPart.accelerations[axis] += dir;
+            }
+        }        
     };
     return f;
 }
