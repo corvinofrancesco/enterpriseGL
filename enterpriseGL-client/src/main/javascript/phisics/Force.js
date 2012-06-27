@@ -16,3 +16,17 @@ Force.types = {
     ONRELATIONS: "onRelations"    
 };
 
+function attractionForce(particles, k){
+    var f = new Force();
+    f.type = Force.types.ONRELATIONS;
+    f.force = function(r) {
+        var sPart = particles[r.idS];//this.particles[r.idS];
+        var dPart = particles[r.idD];//this.particles[r.idD];
+        for(var axis in sPart.accelerations){
+            var dir = k * (sPart[axis] - dPart[axis]);
+            sPart.accelerations[axis] -= dir;
+            dPart.accelerations[axis] += dir;
+        }
+    };
+    return f;
+}

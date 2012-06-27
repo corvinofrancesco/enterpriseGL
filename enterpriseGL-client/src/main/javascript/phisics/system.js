@@ -31,8 +31,8 @@ function ParticleSystem(){
             y: sPart.y - dPart.y,
             z: sPart.z - dPart.z
         };
-        sPart.acceleration = {x:-dir.x, y:-dir.y, z: -dir.z}; // -dir
-        dPart.acceleration = dir;   // dir
+        sPart.accelerations = {x:-dir.x, y:-dir.y, z: -dir.z}; // -dir
+        dPart.accelerations = dir;   // dir
     };
     this.forces.relAttr.type = Force.types.ONRELATIONS;
     
