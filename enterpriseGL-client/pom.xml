@@ -121,6 +121,7 @@
                     <excludes>
                         <exclude>spidergl.js</exclude>
                         <exclude>jquery*.js</exclude>
+                        <exclude>*min.js</exclude>
                     </excludes>
                     <aggregations>
                         <aggregation>
@@ -138,6 +139,7 @@
                             <excludes>
                                 <exclude>spidergl.js</exclude>
                                 <exclude>jquery*.js</exclude>
+                                <exclude>*min.js</exclude>
                                 <exclude>test/**</exclude>
                                 <exclude>lib/**</exclude>
                                 <exclude>html/**</exclude>

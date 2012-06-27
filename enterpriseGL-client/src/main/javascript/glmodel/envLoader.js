@@ -173,8 +173,29 @@ EnvModel.prototype = {
         for(var i in this.models.psystem.particles){
           var p = this.models.psystem.particles[i];
           this.xform.model.push();
-          this.xform.model.load(this.xform.viewMatrix);//loadIdentity();
-          this.xform.model.translate(p.x,p.y,p.z);
+          this.xform.model.loadIdentity();
+          
+          var n = [0,0,1], p = [p.x,p.y,p.z];
+          mat4.multiplyVec3(this.trackball.matrix,n);
+          mat4.multiplyVec3(this.trackball.matrix,p);
+          var dir = vec3.create();vec3.subtract(n,p,dir);
+          var alpha = Math.atan(vec3.length(dir)/vec3.length(n) );
+          vec3.normalize(dir);
+          
+          
+          log(vec3.str(n) + "," +
+                vec3.str(p) + "->" + alpha ,"ROTATION",true);
+        
+//          vec3.normalize(n); vec3.normalize(p);
+//          var matrix = vec3.rotationTo(n,p);
+//          this.xform.model.multiply(matrix);
+          //this.xform.model.multiply(this.xform.viewMatrix);
+          //this.xform.model.multiply(this.xform.projectionMatrix);
+          //this.xform.model.rotate(anglerad,px,py,pz);
+          
+          
+          //this.xform.model.translate(p.x,p.y,p.z);
+          this.xform.model.rotate(alpha,dir[0],dir[1],dir[2]);
           //this.xform.model.scale(0.1,0.1,0.1);
           this.drawCube(gl,p.x,p.y,p.z);
           this.xform.model.pop();
@@ -197,8 +218,8 @@ EnvModel.prototype = {
     drawCube : function(gl,px,py,pz){
 
         if (this.tex.isValid) {
-                var quadUniforms = { u_mvp : this.xform.modelViewProjectionMatrix };
-                var quadSamplers = { s_texture : this.tex };
+                var quadUniforms = {u_mvp : this.xform.modelViewProjectionMatrix};
+                var quadSamplers = {s_texture : this.tex};
                 sglRenderMeshGLPrimitives(this.quadMesh, "tristrip", this.texProg, null, quadUniforms, quadSamplers);
         }
     },
