@@ -46,15 +46,24 @@ ParticlePrimitive.prototype = {
      * Disegna una particella 
      * @param 
      */
-    draw: function(gl,t){
+    draw: function(gl,t,p){
+        // we don't have texture to display
+        if(!this.texture.isValid) return;
+        
         /*************************************************************/
-        var quadPositions = new Float32Array ([
-                -1.0, -1.0,
-                 1.0, -1.0,
-                -1.0,  1.0,
-                 1.0,  1.0
-        ]);
+        var vp = vec3.create([p.x,p.y,p.z]);
+        mat4.multiplyVec3( t.xform.modelViewProjectionMatrix, vp);
 
+        //log(t.xform.modelViewProjectionMatrix,"DRAW",true);
+        //log(vec3.str(vp) + ": " + "("+p.x+"," +p.y+","+p.z+")","DRAW",true);
+
+        var quadPositions = new Float32Array ([
+                vp[0]-1.0, vp[1]-1.0, vp[2],
+                vp[0]+1.0, vp[1]-1.0, vp[2],
+                vp[0]-1.0, vp[1]+1.0, vp[2],
+                vp[0]+1.0, vp[1]+1.0, vp[2]
+        ]);
+        
         var quadTexcoords = new Float32Array ([
                 0.0, 0.0,
                 1.0, 0.0,
@@ -63,18 +72,16 @@ ParticlePrimitive.prototype = {
         ]);
 
         var quad = new SglMeshGL(gl);
-        quad.addVertexAttribute("position", 2, quadPositions);
+        quad.addVertexAttribute("position", 3, quadPositions);
         quad.addVertexAttribute("texcoord", 2, quadTexcoords);
         quad.addArrayPrimitives("tristrip", gl.TRIANGLE_STRIP, 0, 4);
         this.quadMesh = quad;
         /*************************************************************/
         
-        if(this.texture.isValid) {
             var quadUniforms = {u_mvp : t.xform.modelViewProjectionMatrix};
             var quadSamplers = {s_texture : this.texture};
             sglRenderMeshGLPrimitives(this.quadMesh, "tristrip", 
                     this.textureShaders, null, quadUniforms, quadSamplers);            
-        }
     },
     
     animate: function(){

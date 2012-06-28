@@ -149,9 +149,9 @@ EnvModel.prototype = {
           this.xform.model.push();
           this.xform.model.loadIdentity();
           
-          this.xform.model.translate(p.x,p.y,p.z);
+          //this.xform.model.translate(p.x,p.y,p.z);
           //this.xform.model.scale(0.1,0.1,0.1);
-          this.models.primitives.starParticles.draw(gl,this);
+          this.models.primitives.starParticles.draw(gl,this,p);
           this.xform.model.pop();
         }  
         
