@@ -2,7 +2,7 @@
  * Class used to load the enviroment: shaders, canvas 
  */
 var z = 8;
-function EnvModel(){
+function EntCanvasManager(){
     this.idCanvas = "SGL_CANVAS1";
     // shaders for relations
     this.idRelationVShader = "SIMPLE_VERTEX_SHADER";
@@ -17,7 +17,7 @@ function EnvModel(){
     
 }
  
-EnvModel.prototype = {
+EntCanvasManager.prototype = {
     setup: function (idCanvas, idVSh, idFSh) {
         // control attributes initialisation
         if(idCanvas) this.idCanvas = idCanvas;
