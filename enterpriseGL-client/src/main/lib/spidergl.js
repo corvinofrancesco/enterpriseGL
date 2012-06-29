@@ -3622,7 +3622,7 @@ SglTransformStack.prototype = {
 	},
 
 	get worldSpaceViewDirection() {
-		return ssglNegV3(sglV4toV3(sglGetRowM4(this.viewMatrixRef, 2)));
+		return sglNegV3(sglV4toV3(sglGetRowM4(this.viewMatrixRef, 2)));
 	}
 };
 /***********************************************************************/
