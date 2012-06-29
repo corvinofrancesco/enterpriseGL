@@ -6,8 +6,9 @@ function EntGraphics() {
     this.psystem = new ParticleSystem();  
     this.modelLoader.popolate(this.psystem);
     this.primitives = {
-        starParticles : new ParticleCube()
-        
+        starParticles : new ParticleStar(),
+        cubeParticles : new ParticleCube(),
+        baseRelation : new RelationSimple()
     };
 }
 
@@ -40,14 +41,15 @@ EntGraphics.prototype = {
         
         gl.disable(gl.BLEND);
 
-        for(var i in this.models.psystem.relations) {
-          var r = this.models.psystem.relations[i];
-          var p1 = this.models.psystem.particles[r.idS];
-          var p2 = this.models.psystem.particles[r.idD];
-          this.xform.model.push();
-          this.xform.model.loadIdentity();
-          this.drawRelation(gl,new RelationPrimitive(p1,p2)); 
-          this.xform.model.pop();
+        for(var i in this.psystem.relations) {
+          var r = this.psystem.relations[i];
+          var particles = this.psystem.particles;
+          r.source = particles[r.idS];
+          r.destination = particles[r.idD];
+          context.xform.model.push();
+          context.xform.model.loadIdentity();
+          this.primitives.baseRelation.draw(gl,context,r);
+          context.xform.model.pop();
         }
         
     }

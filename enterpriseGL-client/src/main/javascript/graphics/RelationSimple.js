@@ -1,14 +1,14 @@
 /**
  * Class for relation graphics element
  */
-function RelationPrimitive() {
+function RelationSimple() {
     // shaders for relations
     this.idVShaderSrc = "SIMPLE_VERTEX_SHADER";
     this.idFShaderSrc = "SIMPLE_FRAGMENT_SHADER";
     this.program = null;
 }
 
-RelationPrimitive.prototype = {
+RelationSimple.prototype = {
     load: function(gl,reqManager){
         
     },

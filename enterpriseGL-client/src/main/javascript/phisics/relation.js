@@ -1,17 +1,11 @@
 function Relation(idSource, idDest) {
     this.idS = idSource;
     this.idD = idDest;
-    this.particles = {};
+    this.source = null;
+    this.destination = null;
 }
 
 Relation.prototype = {
-    get source() {
-        return this.particles[this.idS];
-    },
-    
-    get destination() {
-        return this.particles[this.idD];        
-    },
     
     getArray: function(){
         return new Array(this.idS, this.idD);

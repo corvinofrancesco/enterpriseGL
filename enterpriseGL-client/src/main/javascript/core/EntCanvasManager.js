@@ -1,7 +1,6 @@
 /**
  * Class used to load the enviroment: shaders, canvas 
  */
-var z = 8;
 function EntCanvasManager(){
     this.idCanvas = "SGL_CANVAS1";
     // TODO initialize the model
@@ -24,6 +23,7 @@ EntCanvasManager.prototype = {
     load : function(gl){
 
         /*************************************************************/
+        var z = 8;
         this.xform = new SglTransformStack();
         this.xform.projection.loadIdentity();
         this.xform.projection.perspective(sglDegToRad(45.0), 1.4, 0.1, 40000.0);
@@ -32,7 +32,7 @@ EntCanvasManager.prototype = {
         this.xform.model.loadIdentity();
         /*************************************************************/
         
-        this.models.load(gl);
+        this.models.load(gl,this);
         
         /*************************************************************/ 
         // setup point of view and interaction objects
