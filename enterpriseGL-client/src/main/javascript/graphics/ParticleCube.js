@@ -20,7 +20,6 @@ ParticleCube.prototype = {
      * utilizzato per il caricamento delle texture e altre interazioni
      */
     load: function(gl,reqManager) {
-        log("colors: " + this.colors + "\n");
         var d = this.width;
         var boxPositions = new Float32Array ([
                 -d, -d,  d, d, -d,  d,
@@ -51,7 +50,6 @@ ParticleCube.prototype = {
         gl.enable(gl.CULL_FACE);
 
         t.xform.model.translate(p.x,p.y,p.z);
-        log([p.x,p.y,p.z],"DRAW",true);
         var boxUniforms = { u_mvp : t.xform.modelViewProjectionMatrix };
         sglRenderMeshGLPrimitives(this.boxMesh,"triangles",
             this.program,null,boxUniforms);
