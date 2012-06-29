@@ -1,8 +1,12 @@
 /**
  * Draw a Cube Particle 
  */
-function ParticleCube(program){
-    this.program = program;
+function ParticleCube(){
+    /// shader configurations
+    this.idVShaderSrc = "SIMPLE_VERTEX_SHADER";
+    this.idFShaderSrc = "SIMPLE_FRAGMENT_SHADER";
+    this.program = null;
+    /// description configurations
     this.width = 0.2;
     this.colors = [];
     for(var i =0;i<8;i++) 
@@ -10,7 +14,12 @@ function ParticleCube(program){
 }
 
 ParticleCube.prototype = {
-    load: function(gl) {
+    /**
+     * @param gl oggetto rappresentante l'interfaccia webgl
+     * @param reqManager gestore della richiesta, 
+     * utilizzato per il caricamento delle texture e altre interazioni
+     */
+    load: function(gl,reqManager) {
         var d = this.width;
         var boxPositions = new Float32Array ([
                 -d, -d,  d, d, -d,  d,

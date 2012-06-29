@@ -1,11 +1,13 @@
 /**
  * Draw a Star Particle
  */
-function ParticleStar(program){
+function ParticleStar(){
+    /// shader configurations
+    this.idVShaderSrc = "TEX_VERTEX_SHADER";
+    this.idFShaderSrc = "TEX_FRAGMENT_SHADER";
+    this.program = null;
     // inizializza con texture non valida
     this.texture = {isValid: false};
-    // programma di rappresentazione della texture
-    this.textureShaders = program;   
 }
 
 ParticleStar.prototype = {
@@ -59,7 +61,7 @@ ParticleStar.prototype = {
         var quadUniforms = {u_mvp : t.xform.modelViewProjectionMatrix};
         var quadSamplers = {s_texture : this.texture};
         sglRenderMeshGLPrimitives(this.quadMesh, "tristrip", 
-                this.textureShaders, null, quadUniforms, quadSamplers);            
+                this.program, null, quadUniforms, quadSamplers);            
     },
     
     animate: function(){
