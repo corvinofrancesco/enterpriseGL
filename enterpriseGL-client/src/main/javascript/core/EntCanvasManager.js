@@ -57,6 +57,7 @@ EntCanvasManager.prototype = {
         for(var m in this.models.primitives){
             this.models.primitives[m].load(gl,this);
             this.models.primitives[m].textureShaders = texProg;
+            this.models.primitives[m].program = simpleProg;
         }
   
         /*************************************************************/ 
