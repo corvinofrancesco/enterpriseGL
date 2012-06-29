@@ -51,17 +51,25 @@ ParticleStar.prototype = {
     
     /**
      * Disegna una particella 
-     * @param 
+     * @param gl webgl interface
+     * @param t context 
+     * @param p particle to draw
      */
     draw: function(gl,t,p){
         // we don't have texture to display
         if(!this.texture.isValid) return;        
-        var vp = vec3.create([p.x,p.y,p.z]);
-        mat4.multiplyVec3( t.xform.modelViewProjectionMatrix, vp);
+
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+        gl.enable(gl.BLEND);
+
+        t.xform.model.translate(p.x,p.y,p.z);
         var quadUniforms = {u_mvp : t.xform.modelViewProjectionMatrix};
         var quadSamplers = {s_texture : this.texture};
         sglRenderMeshGLPrimitives(this.quadMesh, "tristrip", 
                 this.program, null, quadUniforms, quadSamplers);            
+        
+        gl.disable(gl.BLEND);
+
     },
     
     animate: function(){

@@ -26,8 +26,6 @@ EntGraphics.prototype = {
     },
     
     draw : function(gl,context){
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-        gl.enable(gl.BLEND);
         for(var i in this.psystem.particles){
           var p = this.psystem.particles[i];
           context.xform.model.push();
@@ -35,11 +33,9 @@ EntGraphics.prototype = {
           
           //this.xform.model.translate(p.x,p.y,p.z);
           //this.xform.model.scale(0.1,0.1,0.1);
-          this.primitives.starParticles.draw(gl,context,p);
+          this.primitives.cubeParticles.draw(gl,context,p);
           context.xform.model.pop();
         }  
-        
-        gl.disable(gl.BLEND);
 
         for(var i in this.psystem.relations) {
           var r = this.psystem.relations[i];

@@ -20,6 +20,7 @@ ParticleCube.prototype = {
      * utilizzato per il caricamento delle texture e altre interazioni
      */
     load: function(gl,reqManager) {
+        log("colors: " + this.colors + "\n");
         var d = this.width;
         var boxPositions = new Float32Array ([
                 -d, -d,  d, d, -d,  d,
@@ -46,12 +47,16 @@ ParticleCube.prototype = {
     },
     
     draw: function(gl,t,p) {
-        t.xform.model.push();
-        t.xform.model.loadIdentity();
+        gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.CULL_FACE);
+
         t.xform.model.translate(p.x,p.y,p.z);
+        log([p.x,p.y,p.z],"DRAW",true);
         var boxUniforms = { u_mvp : t.xform.modelViewProjectionMatrix };
         sglRenderMeshGLPrimitives(this.boxMesh,"triangles",
-            this.program,null,null,boxUniforms);
-        t.xform.model.pop();
+            this.program,null,boxUniforms);
+
+        gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.CULL_FACE);
     }
 }
