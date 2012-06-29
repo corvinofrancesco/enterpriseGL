@@ -4,13 +4,6 @@
 var z = 8;
 function EntCanvasManager(){
     this.idCanvas = "SGL_CANVAS1";
-    // shaders for relations
-    this.idRelationVShader = "SIMPLE_VERTEX_SHADER";
-    this.idRelationFShader = "SIMPLE_FRAGMENT_SHADER";
-    // shaders for particle texture 
-    this.idParticleVShader = "TEX_VERTEX_SHADER";
-    this.idParticleFShader = "TEX_FRAGMENT_SHADER";
-    
     // TODO initialize the model
     this.models = new EntGraphics();
     this.running = false;
@@ -38,28 +31,9 @@ EntCanvasManager.prototype = {
         this.xform.view.lookAt(0.0, -z, z, 0.0,0.0,0.0, 0.0,1.0,0.0);
         this.xform.model.loadIdentity();
         /*************************************************************/
- 
-        /*************************************************************/
-        var simpleVsrc = sglNodeText(this.idRelationVShader); 
-        var simpleFsrc = sglNodeText(this.idRelationFShader); 
-        var simpleProg = new SglProgram(gl, [simpleVsrc], [simpleFsrc]); 
-        this.simpleProg = simpleProg;
-        /*************************************************************/
- 
-        /*************************************************************/
-        var texVsrc = sglNodeText(this.idParticleVShader);
-        var texFsrc = sglNodeText(this.idParticleFShader);
-        var texProg = new SglProgram(gl, [texVsrc], [texFsrc]);
-        this.texProg = texProg;
-        /*************************************************************/ 
         
-        /// carica i modelli delle primitive
-        for(var m in this.models.primitives){
-            this.models.primitives[m].load(gl,this);
-            this.models.primitives[m].textureShaders = texProg;
-            this.models.primitives[m].program = simpleProg;
-        }
-  
+        this.models.load(gl);
+        
         /*************************************************************/ 
         // setup point of view and interaction objects
         var eye = sglNormalizedV3([5.0, 4.0, 5.0]);
