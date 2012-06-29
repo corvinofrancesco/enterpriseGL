@@ -115,37 +115,9 @@ EntCanvasManager.prototype = {
         this.xform.view.push();
         this.xform.view.load(this.viewMatrix);
         this.xform.view.multiply(this.trackball.matrix);
-
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-        gl.enable(gl.BLEND);
         
-        for(var i in this.models.psystem.particles){
-          var p = this.models.psystem.particles[i];
-          this.xform.model.push();
-          this.xform.model.loadIdentity();
-          
-          //this.xform.model.translate(p.x,p.y,p.z);
-          //this.xform.model.scale(0.1,0.1,0.1);
-          this.models.primitives.starParticles.draw(gl,this,p);
-          this.xform.model.pop();
-        }  
-        
-        gl.disable(gl.BLEND);
-
-        for(var i in this.models.psystem.relations) {
-          var r = this.models.psystem.relations[i];
-          var p1 = this.models.psystem.particles[r.idS];
-          var p2 = this.models.psystem.particles[r.idD];
-          this.xform.model.push();
-          this.xform.model.loadIdentity();
-          this.drawRelation(gl,new RelationPrimitive(p1,p2)); 
-          this.xform.model.pop();
-        }
-
-    },
-        
-    drawRelation: function(gl,r) {
-        r.draw(gl,this);
+        /// draw models
+        this.models.draw(gl,this);
     }
     
 }; 
