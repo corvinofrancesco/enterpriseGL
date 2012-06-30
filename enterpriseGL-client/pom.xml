@@ -83,7 +83,6 @@
                     <jsTestSrcDir>src/test/javascript</jsTestSrcDir>
                     <preloadSources>
                         <preloadSource>${client.libraries}/jquery-1.4.4.min.js</preloadSource>
-                        <preloadSource>${client.libraries}/spidergl.js</preloadSource>
                     </preloadSources>
                 </configuration>
             </plugin>
@@ -121,6 +120,7 @@
                     <excludes>
                         <exclude>spidergl.js</exclude>
                         <exclude>jquery*.js</exclude>
+                        <exclude>Three.js</exclude>
                         <exclude>*min.js</exclude>
                     </excludes>
                     <aggregations>
@@ -137,8 +137,8 @@
                                 <include>**/*.js</include>
                             </includes>
                             <excludes>
-                                <exclude>spidergl.js</exclude>
                                 <exclude>jquery*.js</exclude>
+                                <exclude>Three.js</exclude>
                                 <exclude>*min.js</exclude>
                                 <exclude>test/**</exclude>
                                 <exclude>lib/**</exclude>
