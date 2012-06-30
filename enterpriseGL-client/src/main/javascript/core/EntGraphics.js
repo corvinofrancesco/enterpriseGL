@@ -1,78 +1,126 @@
 /**
  * Class used to load graphics elements of enterprise rapresentation
  */
-function EntGraphics() {
-    this.modelLoader = new FixedParticles();//SimulSystem();
-    this.psystem = new ParticleSystem();  
-    this.modelLoader.popolate(this.psystem);
-    this.primitives = {
-        starParticles : new ParticleStar(),
-        cubeParticles : new ParticleCube(),
-        baseRelation : new RelationSimple()
-    };
+function EntGraphics(configuration) {
+    this.width = 800;
+    this.height = 600;
+    this.configuration = configuration?configuration:(new EntGraphicsConfig());
+
+    this.scene = new THREE.Scene();
+    // configure camera
+    this.camera = configuration.cameraConfig(this.scene,this.width,this.height);
+    // controls configurations
+    this.controls = configuration.controlsConfig(this.camera);
+    // light configurations
+    this.scene.add( new THREE.AmbientLight( 0x505050 ) );
+    this.scene.add(configuration.lightConfig(this.camera));    
+    // plane configuration
+    this.plane = new THREE.Mesh( 
+        new THREE.PlaneGeometry( 2000, 2000, 8, 8 ), 
+        new THREE.MeshBasicMaterial( 
+            { color: 0x000000, opacity: 0.25, transparent: true, wireframe: true } )
+    );
+    this.plane.geometry.applyMatrix( new THREE.Matrix4().makeRotationX( Math.PI / 2 ) );
+    this.plane.visible = false;
+    this.scene.add( this.plane );    
+    /// init projector
+    this.projector = new THREE.Projector();
+    /// init renderer
+    this.renderer = new THREE.WebGLRenderer( {
+        antialias: true
+    } );
+    this.renderer.sortObjects = false;
+    this.renderer.setSize( this.width, this.height );
+    this.renderer.shadowMapEnabled = true;
+    this.renderer.shadowMapSoft = true;
+    /// init objects
+    this.objects = [];
 }
 
 EntGraphics.prototype = {
-    load : function(gl,reqManager){
-        for(var i in this.primitives){
-            // load programs
-            var shVsrc = sglNodeText(this.primitives[i].idVShaderSrc);
-            var shFsrc = sglNodeText(this.primitives[i].idFShaderSrc);
-            var program = new SglProgram(gl,[shVsrc],[shFsrc]);
-            this.primitives[i].program = program;
-            /// carica i modelli delle primitive
-            this.primitives[i].load(gl,reqManager);            
-        }        
+    
+    configureScene: function(scene) {
+        // particles insertion    
+        var geometry = new THREE.CubeGeometry( 40, 40, 40 );
+        for(var i in this.psystem.particles){
+            var p = this.psystem.particles[i];
+            var object = new THREE.Mesh( geometry, 
+                new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+            object.material.ambient = object.material.color;
+            object.position = {x: p.x, y: p.y, z: p.z};
+            object.rotation = {x: 0.0, y: 0.0, z: 0.0};
+            object.scale = {x: 1.2, y: 1.2, z:1.2};
+            object.castShadow = true;
+            object.receiveShadow = true;
+            
+            scene.add( object );
+            this.objects.push( object );
+            
+        }
     },
     
-    draw : function(gl,context){
-        for(var i in this.psystem.particles){
-          var p = this.psystem.particles[i];
-          context.xform.model.push();
-          context.xform.model.loadIdentity();
-          
-          //this.xform.model.translate(p.x,p.y,p.z);
-          //this.xform.model.scale(0.1,0.1,0.1);
-          this.primitives.cubeParticles.draw(gl,context,p);
-          context.xform.model.pop();
-        }  
+    getObjectOnView: function(posxy){
+        var vector = new THREE.Vector3( posxy.x, posxy.y, 0.5 );
+        this.projector.unprojectVector( vector, this.camera );
 
-        for(var i in this.psystem.relations) {
-          var r = this.psystem.relations[i];
-          var particles = this.psystem.particles;
-          r.source = particles[r.idS];
-          r.destination = particles[r.idD];
-          context.xform.model.push();
-          context.xform.model.loadIdentity();
-          this.primitives.baseRelation.draw(gl,context,r);
-          context.xform.model.pop();
-        }
-        
-            var sys = new ParticleSystem();
-            sys.add((new Particle(0)),null);
-            sys.add((new Particle(1)).move(1,0,0),null);
-            sys.add((new Particle(2)).move(0,1,0),null);
-            sys.add((new Particle(3)).move(0,0,1),null);
-            sys.add((new Particle(4)).move(0,0,2),null);
-            sys.add((new Particle(5)).move(1,1,0),null);
-            sys.relations = [
-                new Relation(0,1),
-                new Relation(0,2),
-                new Relation(0,3),
-                new Relation(3,4),
-                new Relation(2,5)
-            ];   
-        for(var i in sys.relations) {
-          var r = sys.relations[i];
-          var particles = sys.particles;
-          r.source = particles[r.idS];
-          r.destination = particles[r.idD];
-          context.xform.model.push();
-          context.xform.model.loadIdentity();
-          this.primitives.baseRelation.draw(gl,context,r);
-          context.xform.model.pop();
-        }
-          
-    }
+        var ray = new THREE.Ray( this.camera.position, vector.subSelf( this.camera.position ).normalize() );
+
+        var intersects = ray.intersectObjects( this.objects );
+        if(intersects.length > 0) return intersects[0];
+        return null;
+    },
     
+   
+   /**
+    * Update the graphics
+    */
+   update : function(){
+       this.controls.update();
+       this.renderer.render(this.scene,this.camera);
+   }    
+ 
+}
+
+/**
+ * Class for EntGraphics class configuration descriptions
+ */
+function EntGraphicsConfig(){
+    
+}
+
+EntGraphicsConfig.prototype = {
+   lightConfig: function(camera){
+        var light = new THREE.SpotLight( 0xffffff, 1.5 );
+        light.position.set( 0, 500, 2000 );
+        light.castShadow = true;
+
+        light.shadowCameraNear = 200;
+        light.shadowCameraFar = camera.far;
+        light.shadowCameraFov = 50;
+
+        light.shadowBias = -0.00022;
+        light.shadowDarkness = 0.5;
+
+        light.shadowMapWidth = 1024;
+        light.shadowMapHeight = 1024;
+        return light;       
+   },
+   
+   controlsConfig: function(camera){
+        var controls = new THREE.TrackballControls( camera );
+        controls.rotateSpeed = 1.0;
+        controls.zoomSpeed = 1.2;
+        controls.panSpeed = 0.8;
+        controls.noZoom = false;
+        controls.noPan = false;
+        controls.staticMoving = true;
+        controls.dynamicDampingFactor = 0.3;
+        return controls;
+   },
+   
+   cameraConfig: function(scene,w,h){
+        this.camera = new THREE.PerspectiveCamera( 70, w/h, 1, 10000 );
+        this.camera.position.z = 1000;
+        scene.add( this.camera );       
+   }
 }

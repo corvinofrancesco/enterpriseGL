@@ -1,148 +1,69 @@
 /**
- * Class used to load the enviroment: shaders, canvas 
+ * Class used to load the enviroment: 
+ * * graphics: set configurations for EntGraphics class; 
+ * * user interfaces; 
+ * * models and comunications;
  */
 function EntCanvasManager(){
-    this.idCanvas = "SGL_CANVAS1";
-    // TODO initialize the model
-    this.models = new EntGraphics();
-    this.running = false;
+    this.container = document.createElement( 'div' );
+    document.body.appendChild( this.container );
+
+    this.mouse = new THREE.Vector2();
+    this.offset = new THREE.Vector3();
+    this.INTERSECTED = undefined;
+    this.SELECTED = undefined;
     
+    this.model = EntModel();
+
+    this.graphics = new EntGraphics();
+
+    this.container.appendChild( this.renderer.domElement);
+    
+    this.ui = new EntInteraction(this.graphics.renderer);    
 }
  
 EntCanvasManager.prototype = {
-    setup: function (idCanvas, idVSh, idFSh) {
-        // control attributes initialisation
-        if(idCanvas) this.idCanvas = idCanvas;
-        if(idVSh) this.idRelationVShader = idVSh;
-        if(idFSh) this.idRelationFShader = idFSh;
-            
-        // register Canvas
-        sglRegisterCanvas(this.idCanvas, this, 60.0);  
+    setup: function () {
+        this.renderer.render( this.scene, this.graphics.camera ); 
+        update();
+
     },
         
-    load : function(gl){
+    onDocumentMouseMove: function(event){
+        event.preventDefault();
+        enviroment.mouse.x = ( event.clientX / enviroment.graphics.width ) * 2 - 1;
+        enviroment.mouse.y = - ( event.clientY / enviroment.graphics.height ) * 2 + 1;
 
-        /*************************************************************/
-        var z = 8;
-        this.xform = new SglTransformStack();
-        this.xform.projection.loadIdentity();
-        this.xform.projection.perspective(sglDegToRad(45.0), 1.4, 0.1, 40000.0);
-        this.xform.view.loadIdentity();
-        this.xform.view.lookAt(0.0, -z, z, 0.0,0.0,0.0, 0.0,1.0,0.0);
-        this.xform.model.loadIdentity();
-        /*************************************************************/
-        
-        this.models.load(gl,this);
-        
-        /*************************************************************/ 
-        // setup point of view and interaction objects
-        var eye = sglNormalizedV3([5.0, 4.0, 5.0]);
-        eye = sglMulSV3(4.0, eye);		
-        this.viewMatrix = sglLookAtM4C(eye[0], eye[1], eye[2], 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
-        this.trackball = new SglTrackball();
-                
-    /*************************************************************/
-    },
- 
-    keyPress : function(gl, keyCode, keyString) {
-        switch (keyString) {
-            /** rotation */
-            case "a":
-                this.angle -= 15.0 ;
-                break;
-            case "d":
-                this.angle += 15.0;
-                break;
-            case "s":
-                this.rotation = !this.rotation; 
-                break;
-            case "m":
-                this.running = !(this.running);
-                break;
-            default :
-                break;
-        }
-    },
-        
-    mouseMove : function(gl, x, y){
-        var ui = this.ui;
-
-        var ax1 = (x / (ui.width  - 1)) * 2.0 - 1.0;
-        var ay1 = (y / (ui.height - 1)) * 2.0 - 1.0;
-        
-        this.select(ax1,ay1);
-        
-        var action = SGL_TRACKBALL_NO_ACTION;
-        if ((ui.mouseButtonsDown[0] && ui.keysDown[17]) || ui.mouseButtonsDown[1]) {
-            action = SGL_TRACKBALL_PAN;
-        } else if (ui.mouseButtonsDown[0]) {
-            action = SGL_TRACKBALL_ROTATE;
-        }
-
-        this.trackball.action = action;
-        this.trackball.track(this.viewMatrix, ax1, ay1, 0.0);
-        this.trackball.action = SGL_TRACKBALL_NO_ACTION;
-    },
-
-    mouseWheel: function(gl, wheelDelta, x, y) {
-        var action = (this.ui.keysDown[16]) ? (SGL_TRACKBALL_DOLLY) : (SGL_TRACKBALL_SCALE);
-        var factor = (action == SGL_TRACKBALL_DOLLY) ? (wheelDelta * 0.3) : ((wheelDelta < 0.0) ? (1.10) : (0.90));
-
-        this.trackball.action = action;
-        this.trackball.track(this.viewMatrix, 0.0, 0.0, factor);
-        this.trackball.action = SGL_TRACKBALL_NO_ACTION;
-    },
-        
-    update : function(gl, dt) {
-        if(this.rotation) this.angle += 90.0 * dt;
-        if(this.running){
-            this.models.psystem.updateAccelerations();
-            this.models.psystem.updatePosition(0.1);            
-        }
-        log(this.trackball.matrix,"VIEWMATRIX",true);
-    },
- 
-    draw : function(gl){
-        var w = this.ui.width;
-        var h = this.ui.height;
-        gl.clearColor(0, 0, 0, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
-        gl.viewport(0, 0, w, h);
-        
-
-        this.xform.projection.push();
-        this.xform.projection.loadIdentity();
-        this.xform.projection.perspective(sglDegToRad(45.0), w/h, 0.1, 100.0);
-                
-        this.xform.view.push();
-        this.xform.view.load(this.viewMatrix);
-        this.xform.view.multiply(this.trackball.matrix);
-        
-        /// draw models
-        this.models.draw(gl,this);
+        var obj = enviroment.graphics.getObjectOnView(enviroment.mouse);
+        if(obj==null) return;
+        log("muovo (" + enviroment.mouse.x +"," 
+            + enviroment.mouse.y +") -> " +obj.object,"LOG",true);
+          
     },
     
-    select : function(x,y){
- //        log("x:" + x + " y:"+y,"LOG",true);
-         var o = this.xform.modelSpaceViewerPosition;
-         var m = this.xform.modelViewProjectionMatrixInverse;
-         var v = mat4.multiplyVec3(m,[x,y,0.1]);
-         log("x:" + v[0] + " y:"+v[1] + " z:"+v[2],"LOG",true);
-         for(var i in this.models.psystem.particles){
-             var p = this.models.psystem.particles[i];
-             var d = vec3.create();
-             vec3.subtract(v,o,d);
-             var t = (p.z - o[2])/d[2];
-             var v = [t*d[0]+o[0] - p.x, t*d[1]+o[1] - p.y];
-             var delta = v[0]*v[0] + v[1]*v[1];
-             if(delta < 0.2) {
-                 log("select point: " + p.id + 
-                     "x:" + p.x + 
-                     " y:"+ p.y + 
-                     " z:"+ p.z + "\n","DRAW",false);
-             }
-         }
-       
-    }
+    onDocumentMouseDown: function(event){
+        event.preventDefault();
+        var obj = enviroment.graphics.getObjectOnView(enviroment.mouse);
+        if(obj!=null) {
+            enviroment.graphics.controls.enabled = false;
+            enviroment.SELECTED = obj.object;
+            
+            enviroment.container.style.cursor = 'move';
+        }
+      
+    },
+    
+    onDocumentMouseUp: function(event){
+        event.preventDefault();
+        enviroment.graphics.controls.enabled = true;
+        
+        enviroment.container.style.cursor = 'auto';
+        
+    },
     
 }; 
+
+function update(){
+    
+}
+    
