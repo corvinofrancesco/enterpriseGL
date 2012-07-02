@@ -43,10 +43,11 @@ EntInteraction.onMouseMove = function(event){
                     instance.intersectedElem.currentHex );
             instance.intersectedElem = objsInPos[0].object;
             
-            //TODO ripristino del colore del materiale
-            instance.intersectedElem.currentHex = instance
-                .intersectedElem.material.color.getHex();
-            
+            // ripristino del colore del materiale
+            instance.intersectedElem.currentHex = 
+                instance.intersectedElem.material.color.getHex();
+            instance.intersectedElem.material.color.setHex( 0xff0000 );
+      
             // orienta il piano per individuare l'intersezione 
             graphics.plane.position.copy( instance.intersectedElem.position );
             graphics.plane.lookAt( graphics.camera.position );        
