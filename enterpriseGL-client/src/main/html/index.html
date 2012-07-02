@@ -4,7 +4,7 @@
         <title>A simple use of EnterpriseGL-client javascript library</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
-    <body>
+    <body onload="create()">
         <script type="text/javascript" src="lib/jquery-1.4.4.min.js"></script>
         <script type="text/javascript" src="lib/glMatrix-0.9.5.min.js"></script>
         <script type="text/javascript" src="lib/Three.js"></script>
@@ -13,8 +13,10 @@
             /** 
              * Javascript code for enviroment configurations
              **/
-            var enviroment = new EntCanvasManager();
-
+            function create(){
+                var enviroment = new EntCanvasManager();
+            }
+            
             function log(msg,elem,override){
                 var idLog = "LOG";
                 if(elem) idLog = elem;
@@ -30,7 +32,7 @@
         </script>
         
             Session for visualitation of WebGL scene. <br/>
-
+            <div id="container"></div>
             <div>
                 <span>Graphics data:</span><br/>
                 <dir id="VIEWMATRIX">

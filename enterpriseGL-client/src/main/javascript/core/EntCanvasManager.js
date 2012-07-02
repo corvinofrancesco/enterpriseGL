@@ -5,8 +5,8 @@
  * * models and comunications;
  */
 function EntCanvasManager(){
-    this.container = document.createElement( 'div' );
-    document.body.appendChild( this.container );
+    this.container = document.getElementById( 'container' );
+    //document.body.appendChild( this.container );
 
     this.model = new EntModel();
 
