@@ -3,9 +3,11 @@
  */
 function EntGraphics(configuration) {
     this.width = 800;
-    this.height = 600;
-    this.configuration = configuration?configuration:(new EntGraphicsConfig());
+    this.height = 600;    
 
+    if(!configuration) configuration =new EntGraphicsConfig();
+    this.configuration = configuration;
+    
     this.scene = new THREE.Scene();
     // configure camera
     this.camera = configuration.cameraConfig(this.scene,this.width,this.height);
@@ -39,37 +41,30 @@ function EntGraphics(configuration) {
 
 EntGraphics.prototype = {
     
-    configureScene: function(scene) {
+    configureScene: function(sys) {
         // particles insertion    
         var geometry = new THREE.CubeGeometry( 40, 40, 40 );
-        for(var i in this.psystem.particles){
-            var p = this.psystem.particles[i];
+        for(var i in sys.particles){
+            var p = sys.particles[i];
             var object = new THREE.Mesh( geometry, 
                 new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
             object.material.ambient = object.material.color;
-            object.position = {x: p.x, y: p.y, z: p.z};
+            object.position = new THREE.Vector3(40*p.x, 40*p.y, 40*p.z);
             object.rotation = {x: 0.0, y: 0.0, z: 0.0};
             object.scale = {x: 1.2, y: 1.2, z:1.2};
             object.castShadow = true;
             object.receiveShadow = true;
             
-            scene.add( object );
+            this.scene.add( object );
             this.objects.push( object );
             
         }
     },
     
-    getObjectOnView: function(posxy){
-        var vector = new THREE.Vector3( posxy.x, posxy.y, 0.5 );
-        this.projector.unprojectVector( vector, this.camera );
-
-        var ray = new THREE.Ray( this.camera.position, vector.subSelf( this.camera.position ).normalize() );
-
-        var intersects = ray.intersectObjects( this.objects );
-        if(intersects.length > 0) return intersects[0];
-        return null;
-    },
-    
+    createMouseSelector : function(){
+        return new MouseSelector(this.camera,this.plane,this.objects,
+            this.width,this.height);
+    },    
    
    /**
     * Update the graphics
@@ -119,8 +114,9 @@ EntGraphicsConfig.prototype = {
    },
    
    cameraConfig: function(scene,w,h){
-        this.camera = new THREE.PerspectiveCamera( 70, w/h, 1, 10000 );
-        this.camera.position.z = 1000;
-        scene.add( this.camera );       
+        var camera = new THREE.PerspectiveCamera( 70, w/h, 1, 10000 );
+        camera.position.z = 1000;
+        scene.add(camera );       
+        return camera;
    }
 }
