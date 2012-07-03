@@ -5,7 +5,9 @@
  * * models and comunications;
  */
 function EntCanvasManager(){
-    this.container = document.getElementById( 'container' );
+    var containerMng = new ContainerManager({
+        info:"descriptionBox",
+        main:"container"});
     //document.body.appendChild( this.container );
 
     this.model = new EntModel();
@@ -14,9 +16,10 @@ function EntCanvasManager(){
     
     this.model.init(this.graphics);
 
-    this.container.appendChild( this.graphics.renderer.domElement);
+    containerMng.add(this.graphics.renderer.domElement);
     
-    this.ui = new EntInteraction(this.graphics);    
+    this.ui = new EntInteraction(this.graphics); 
+    this.ui.containerManager = containerMng;
     
     EntCanvasManager.instance = this;
     EntCanvasManager.update();
