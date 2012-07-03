@@ -83,6 +83,7 @@
                     <jsTestSrcDir>src/test/javascript</jsTestSrcDir>
                     <preloadSources>
                         <preloadSource>${client.libraries}/jquery-1.4.4.min.js</preloadSource>
+                        <preloadSource>${client.libraries}/Three.js</preloadSource>
                     </preloadSources>
                 </configuration>
             </plugin>
@@ -118,7 +119,6 @@
                     <outputDirectory>${project.build.directory}/classes</outputDirectory>
                     <nosuffix>true</nosuffix>
                     <excludes>
-                        <exclude>spidergl.js</exclude>
                         <exclude>jquery*.js</exclude>
                         <exclude>Three.js</exclude>
                         <exclude>*min.js</exclude>
