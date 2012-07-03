@@ -1,6 +1,5 @@
 /** 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Classe responsabilie dell'interazione con l'utente
  */
 function EntInteraction(graphics){
     var dom = graphics.renderer.domElement;
@@ -14,6 +13,7 @@ function EntInteraction(graphics){
     this.intersectedElem = null;
     this.selectElem = null;
     this.graphicsManager = graphics;
+    this.containerManager = null;
     
     EntInteraction.instance = this;
 }
@@ -27,10 +27,10 @@ EntInteraction.onMouseMove = function(event){
     
     mouse.update(event.clientX,event.clientY);
     
-    if(instance.selectElem){
+    if(instance.selectElem){ // muove elemento selezionato
         var posOnPlane = mouse.getPlane();        
-        instance.selectElem.position.copy( 
-            posOnPlane[0].point.subSelf( instance.offset ) );
+        var pos = posOnPlane[0].point.subSelf(instance.offset);
+        instance.moveObject(pos);
         return;        
     }
     
@@ -38,15 +38,8 @@ EntInteraction.onMouseMove = function(event){
     if(objsInPos.length>0){
         // passaggio su un elemento differente dal precedente
         if(instance.intersectedElem != objsInPos[0].object){
-            if ( instance.intersectedElem ) 
-                instance.intersectedElem.material.color.setHex( 
-                    instance.intersectedElem.currentHex );
-            instance.intersectedElem = objsInPos[0].object;
-            
-            // ripristino del colore del materiale
-            instance.intersectedElem.currentHex = 
-                instance.intersectedElem.material.color.getHex();
-            instance.intersectedElem.material.color.setHex( 0xff0000 );
+            instance.passOverObject();
+            instance.passOnObject(objsInPos[0].object);
       
             // orienta il piano per individuare l'intersezione 
             graphics.plane.position.copy( instance.intersectedElem.position );
@@ -54,12 +47,7 @@ EntInteraction.onMouseMove = function(event){
         }
     } else {
         // nessun elemento sotto il mouse
-        if ( instance.intersectedElem  ) {
-            instance.intersectedElem.material.color
-                .setHex( instance.intersectedElem.currentHex );
-        }
-        instance.intersectedElem = null;
-        //container.style.cursor = 'auto';        
+        instance.passOverObject();
     }
 
 
@@ -75,8 +63,7 @@ EntInteraction.onMouseDown = function(event){
     var objsInPos = mouse.getObjects();
     if ( objsInPos.length > 0 ) {
         graphics.controls.enabled = false;
-
-        instance.selectElem = objsInPos[0].object;
+        instance.selectObject(objsInPos[0].object);
         var posOnPlane = mouse.getPlane();
         if(posOnPlane[0]){
             instance.offset.copy( posOnPlane[0].point )
@@ -84,9 +71,6 @@ EntInteraction.onMouseDown = function(event){
         } else { /// il mouse non intercetta il piano
             
         }
-
-        //container.style.cursor = 'move';
-
     } 
     
 };
@@ -100,13 +84,80 @@ EntInteraction.onMouseUp = function(event){
     
     if ( instance.intersectedElem ) {
         graphics.plane.position.copy( instance.intersectedElem.position );
-        instance.selectElem = null;
     }
-
-    //container.style.cursor = 'auto';    
+    instance.deselectObject();
 };
 
 EntInteraction.prototype = {
+    /**
+     * Mouse over an object of graphics
+     */
+    passOnObject : function(object) {
+        this.intersectedElem = object;
+            
+        // cambio del colore del materiale
+        this.intersectedElem.currentHex = 
+            this.intersectedElem.material.color.getHex();
+        this.intersectedElem.material.color.setHex( 0xff0000 );
+        
+        if(this.containerManager) {
+            var p = object.particle;
+            this.containerManager.writeInfo(
+            "<h1>IdElement " + p.id + "</h1><br/>" +
+                "position: = x " + p.x + ", y " + p.y + " , z " + p.z + "; <br/>" +
+                "An element of system!"
+                
+            );
+            
+        }       
+    },
+    
+    /**
+     * Funzione richiamata quando un oggetto precedentemente con il mouse di sopra
+     * viene lasciato.
+     */
+    passOverObject : function(){
+        // control the esistence of intersected element
+        if ( !this.intersectedElem ) return;        
+        var obj = this.intersectedElem;
+        // ripristina il colore
+        obj.material.color.setHex( obj.currentHex );
+        // perde la traccia dell'elemento
+        this.intersectedElem = null;        
+        if(this.containerManager) {
+            this.containerManager.hiddenInfo();
+        }
+    },
+    
+    selectObject: function(object){
+        this.selectElem = object;
+        if(this.containerManager) {
+            this.containerManager.container.style.cursor = 'move';
+            var p = object.particle;
+            this.containerManager.writeInfo(
+            "<h1>IdElement " + p.id + "</h1><br/>" +
+                "position: = x " + p.x + ", y " + p.y + " , z " + p.z + "; <br/>" +
+                "An element of system!"
+                
+            );
+        }
+    },
+    
+    deselectObject: function(){
+        this.selectElem = null;
+        if(this.containerManager) {
+            this.containerManager.container.style.cursor = 'auto';
+            this.containerManager.hiddenInfo();            
+        }
+    },
+    
+    moveObject: function(position){
+        this.selectElem.position.copy(position);        
+        if(this.containerManager) {
+            this.containerManager.container.style.cursor = 'move';
+        }
+    },
+    
     update : function(){
         
     }
