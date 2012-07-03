@@ -69,7 +69,9 @@ EntCanvasManager.prototype = {
 
         var ax1 = (x / (ui.width  - 1)) * 2.0 - 1.0;
         var ay1 = (y / (ui.height - 1)) * 2.0 - 1.0;
-
+        
+        this.select(ax1,ay1);
+        
         var action = SGL_TRACKBALL_NO_ACTION;
         if ((ui.mouseButtonsDown[0] && ui.keysDown[17]) || ui.mouseButtonsDown[1]) {
             action = SGL_TRACKBALL_PAN;
@@ -95,7 +97,7 @@ EntCanvasManager.prototype = {
         if(this.rotation) this.angle += 90.0 * dt;
         if(this.running){
             this.models.psystem.updateAccelerations();
-            this.models.psystem.updatePosition(0.001);            
+            this.models.psystem.updatePosition(0.1);            
         }
         log(this.trackball.matrix,"VIEWMATRIX",true);
     },
@@ -118,6 +120,29 @@ EntCanvasManager.prototype = {
         
         /// draw models
         this.models.draw(gl,this);
+    },
+    
+    select : function(x,y){
+ //        log("x:" + x + " y:"+y,"LOG",true);
+         var o = this.xform.modelSpaceViewerPosition;
+         var m = this.xform.modelViewProjectionMatrixInverse;
+         var v = mat4.multiplyVec3(m,[x,y,0.1]);
+         log("x:" + v[0] + " y:"+v[1] + " z:"+v[2],"LOG",true);
+         for(var i in this.models.psystem.particles){
+             var p = this.models.psystem.particles[i];
+             var d = vec3.create();
+             vec3.subtract(v,o,d);
+             var t = (p.z - o[2])/d[2];
+             var v = [t*d[0]+o[0] - p.x, t*d[1]+o[1] - p.y];
+             var delta = v[0]*v[0] + v[1]*v[1];
+             if(delta < 0.2) {
+                 log("select point: " + p.id + 
+                     "x:" + p.x + 
+                     " y:"+ p.y + 
+                     " z:"+ p.z + "\n","DRAW",false);
+             }
+         }
+       
     }
     
 }; 

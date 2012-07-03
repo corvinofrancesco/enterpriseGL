@@ -2,7 +2,7 @@
  * Class used to load graphics elements of enterprise rapresentation
  */
 function EntGraphics() {
-    this.modelLoader = new SimulSystem();
+    this.modelLoader = new FixedParticles();//SimulSystem();
     this.psystem = new ParticleSystem();  
     this.modelLoader.popolate(this.psystem);
     this.primitives = {
