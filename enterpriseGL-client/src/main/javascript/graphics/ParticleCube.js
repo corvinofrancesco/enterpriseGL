@@ -12,7 +12,7 @@ function ParticleCube(p,type){
     object.castShadow = true;
     object.receiveShadow = true;
     this.object = object;
-    this.particle = p;
+    this.object.particle = p;
 }
 
 ParticleCube.geometries = {
