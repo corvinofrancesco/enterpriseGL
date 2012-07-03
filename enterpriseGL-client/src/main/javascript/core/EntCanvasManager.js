@@ -95,7 +95,7 @@ EntCanvasManager.prototype = {
         if(this.rotation) this.angle += 90.0 * dt;
         if(this.running){
             this.models.psystem.updateAccelerations();
-            this.models.psystem.updatePosition(0.1);            
+            this.models.psystem.updatePosition(0.001);            
         }
         log(this.trackball.matrix,"VIEWMATRIX",true);
     },

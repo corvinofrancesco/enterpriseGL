@@ -15,13 +15,15 @@ function ParticleSystem(){
     this.particles = {};
     this.relations = [];
     this.forces = {
-        //barneshut:new Force(), 
+        barneshut:new Force(), 
         /// atraction between particles in relation
-        relAttr: attractionForce(this.particles,3,2)};
+        relAttr: attractionForce(this.particles,3,1)//,
+        //attrito: attrito(0.8)
+    };
     this.numparticles = 0;    
     
-    /// basrnes-hut
-    //this.forces.barneshut.type = Force.types.GLOBAL;
+    /// barnes-hut
+    this.forces.barneshut.type = Force.types.GLOBAL;
     this.globalAlg = new BarnesHut();
         
 }
@@ -36,10 +38,15 @@ ParticleSystem.prototype = {
         for(var i in this.particles){
             var p = this.particles[i];
             for(var axis in p.accelerations){
-              p[axis] += 
-                  0.5* dtime*dtime* p.accelerations[axis] +
-                  dtime* p.velocity[axis];
-              p.velocity[axis] += dtime * p.accelerations[axis];
+                p.velocity[axis] += p.accelerations[axis] * dtime;
+                p[axis] += p.velocity[axis] * dtime;
+                log(p.x, "X", true);
+                log(p.y, "Y", true);
+                log(p.z, "Z", true);
+//              p[axis] += 
+//                  0.5* dtime*dtime* p.accelerations[axis] +
+//                  dtime* p.velocity[axis];
+//              p.velocity[axis] += dtime * p.accelerations[axis];
             }  
         }
     },

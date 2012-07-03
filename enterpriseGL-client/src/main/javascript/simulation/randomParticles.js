@@ -57,7 +57,17 @@ SimulSystem.prototype = {
      *  start particles system
      */
     popolate: function(sys) {
-        this.createPart(sys, 5);
-        this.createRel(sys, 5);        
+//        this.createPart(sys, 5);
+//        this.createRel(sys, 5); 
+        var pA = new Particle(0).move(3,1,0); 
+        var pB = new Particle(1).move(-3,2,0);
+        var r = new Relation(0,1);
+        sys.add(pA, r);
+        sys.add(pB, r);
+//        var pC = new Particle(2).move(-4,0,0); 
+//        var pD = new Particle(3).move(4,0,0);
+//        var r1 = new Relation(2,3);
+//        sys.add(pC, r1);
+//        sys.add(pD, r1);
     }
 }
