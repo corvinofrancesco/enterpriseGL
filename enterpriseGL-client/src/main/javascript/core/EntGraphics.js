@@ -41,23 +41,22 @@ function EntGraphics(configuration) {
 
 EntGraphics.prototype = {
     
-    configureScene: function(sys) {
-        // particles insertion    
-        var geometry = new THREE.CubeGeometry( 40, 40, 40 );
-        for(var i in sys.particles){
-            var p = sys.particles[i];
-            var object = new THREE.Mesh( geometry, 
-                new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
-            object.material.ambient = object.material.color;
-            object.position = new THREE.Vector3(40*p.x, 40*p.y, 40*p.z);
-            object.rotation = {x: 0.0, y: 0.0, z: 0.0};
-            object.scale = {x: 1.2, y: 1.2, z:1.2};
-            object.castShadow = true;
-            object.receiveShadow = true;
-            
-            this.scene.add( object );
-            this.objects.push( object );
-            
+    /**
+     * Add an object to the scene
+     */
+    add: function(object){
+        this.scene.add(object);
+        this.objects.push(object);
+    },
+    
+    remove: function(object){
+        this.scene.remove(object);  
+        // rimuove l'oggetto dall'array degli oggetti
+        for(var i =0;i<this.objects.length; i++){
+            if(this.objects[i].id == object.id){
+                this.objects.splice(i,1);
+                return;
+            }
         }
     },
     
@@ -115,7 +114,7 @@ EntGraphicsConfig.prototype = {
    
    cameraConfig: function(scene,w,h){
         var camera = new THREE.PerspectiveCamera( 70, w/h, 1, 10000 );
-        camera.position.z = 1000;
+        camera.position.z = 10;
         scene.add(camera );       
         return camera;
    }

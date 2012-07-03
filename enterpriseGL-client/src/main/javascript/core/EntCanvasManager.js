@@ -12,7 +12,7 @@ function EntCanvasManager(){
 
     this.graphics = new EntGraphics();
     
-    this.graphics.configureScene(this.model.system);
+    this.model.init(this.graphics);
 
     this.container.appendChild( this.graphics.renderer.domElement);
     
