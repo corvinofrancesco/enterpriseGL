@@ -1,6 +1,5 @@
 /**
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Register and unregister enterprise objects retrive from server.
  */
 function EntObjects(){
     this.objects = {};
@@ -23,6 +22,10 @@ EntObjects.prototype = {
     }
 }
 
+/**
+ * Register function of objects
+ * @param object object to be register
+ */
 EntObjects.register = function(object){
     EntObjects.istance.objects[object.id] = object;
 }
@@ -31,10 +34,16 @@ EntObject.unregister = function(object){
     EntObjects.instance.objects[object.id] = undefined;
 }
 
+EntObject.get = function(id) {
+    if(EntObjects.instance.objects[id]) 
+        return EntObjects.instance.objects[id];
+    else return null;
+}
+
 EntObject.getInfo = function(id){
-    return EntObjects.instance.objects[id].getDescription();
+    return EntObjects.get(id).getDescription();
 }
 
 EntObject.getLink = function(id){
-    
+    return EntObject.instance.generateLink(id);
 }

@@ -2,22 +2,53 @@
  * Class for data model loading and comunication to the server
  */
 function  EntModel(){
-    this.loader = new FixedParticles();
+    this.loader = new Loader();
+    this.graphics = null;
+    this.currentEventId = "event0";    
 }
 
 EntModel.prototype = {
+    
     /**
-     * Imposta il contesto di creazione della grafica 
+     * Go to the init event of system
      */
-    setup : function(context){
-        this.contex = context;
-    },
-    
     init : function(graphics){
-        this.loader.popolate(graphics.system);        
+        this.graphics = graphics;
+        //TODO configure loader
+        var firstEv = EntObject.get(this.currentEventId);
+        // try to visualize the first event
+        if(firstEv) this.graphics.add(firstEv);
+        else { // otherwise try to connect to the server
+            this.loader.wait();
+        }
     },
     
-    update : function(graphics){
+    /**
+     * Go to an specific event 
+     */
+    goToEvent: function(eventId) {
         
-    }
+    },
+    
+    /**
+     * Go to the next event in memory if exist
+     */
+    playNextEvent: function(){
+        
+    },
+    
+    /**
+     * Call back function for loader
+     */
+    update : function(){
+        
+    },
+    
+    /**
+     * Reset the enterprise objects
+     */
+    reset : function(){
+        EntObjects.instance.objects = {};
+    },
+    
 }
