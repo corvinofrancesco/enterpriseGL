@@ -88,6 +88,14 @@ EntInteraction.onMouseUp = function(event){
     instance.deselectObject();
 };
 
+EntInteraction.clickOnObject = function(id){
+    var instance = EntInteraction.instance;
+    if(instance.containerManager) {
+        var str = EntObjects.getInfo(id);
+        instance.containerManager.writeInfo(str);            
+    }           
+}
+
 EntInteraction.prototype = {
     /**
      * Mouse over an object of graphics
@@ -100,16 +108,7 @@ EntInteraction.prototype = {
             this.intersectedElem.material.color.getHex();
         this.intersectedElem.material.color.setHex( 0xff0000 );
         
-        if(this.containerManager) {
-            var p = object.particle;
-            this.containerManager.writeInfo(
-            "<h1>IdElement " + p.id + "</h1><br/>" +
-                "position: = x " + p.x + ", y " + p.y + " , z " + p.z + "; <br/>" +
-                "An element of system!"
-                
-            );
-            
-        }       
+        EntInteraction.clickOnObject(object.id);
     },
     
     /**
@@ -131,15 +130,9 @@ EntInteraction.prototype = {
     
     selectObject: function(object){
         this.selectElem = object;
+        EntInteraction.clickOnObject(object.id);
         if(this.containerManager) {
             this.containerManager.container.style.cursor = 'move';
-            var p = object.particle;
-            this.containerManager.writeInfo(
-            "<h1>IdElement " + p.id + "</h1><br/>" +
-                "position: = x " + p.x + ", y " + p.y + " , z " + p.z + "; <br/>" +
-                "An element of system!"
-                
-            );
         }
     },
     
