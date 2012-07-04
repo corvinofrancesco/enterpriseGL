@@ -12,12 +12,19 @@ GraphicalSystem.events = {
  * This class manage whole sistem of particles (interaction and forces)
  */
 function GraphicalSystem(){
+    // system objects
     this.particles = {};
     this.relations = [];
+    // objects for graphical elaboration
+    this.objectsCache = [];
+    // strategy for objects creation
+    this.context = new ModelConfiguration();
+    // phisics configurations 
     this.forces = {
         //barneshut:new Force(), 
         /// atraction between particles in relation
         relAttr: attractionForce(this.particles,3,2)};
+    // other global variables
     this.numparticles = 0;    
     
     /// basrnes-hut
@@ -27,6 +34,13 @@ function GraphicalSystem(){
 }
 
 GraphicalSystem.prototype = {
+    
+    /**
+     * Restituisce tutti gli oggetti grafici del sistema
+     */
+    get objects(){
+        return this.objectsCache;
+    },
     
     size : function() {
         return this.numparticles;

@@ -2,10 +2,7 @@
  * Class for data model loading and comunication to the server
  */
 function  EntModel(){
-    this.system = new ParticleSystem();
     this.loader = new FixedParticles();
-    this.loader.popolate(this.system);
-    this.context = new ModelConfiguration();
 }
 
 EntModel.prototype = {
@@ -17,6 +14,7 @@ EntModel.prototype = {
     },
     
     init : function(graphics){
+        this.loader.popolate(graphics.system);
         for(var i in this.system.particles){
             var p = this.system.particles[i];
             // select the primitive type

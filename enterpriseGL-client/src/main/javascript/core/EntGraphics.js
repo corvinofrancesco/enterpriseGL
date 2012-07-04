@@ -36,17 +36,21 @@ function EntGraphics(configuration) {
     this.renderer.shadowMapEnabled = true;
     this.renderer.shadowMapSoft = true;
     /// init objects
-    this.objects = [];
+    this.system = new GraphicalSystem();
 }
 
 EntGraphics.prototype = {
+    get objects(){
+        return this.system.objects;
+    },
     
     /**
      * Add an object to the scene
      */
     add: function(object){
         this.scene.add(object);
-        this.objects.push(object);
+        this.system.add(object);
+        //this.objects.push(object);
     },
     
     remove: function(object){
