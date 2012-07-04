@@ -37,6 +37,8 @@ function EntGraphics(configuration) {
     this.renderer.shadowMapSoft = true;
     /// init objects
     this.system = new GraphicalSystem();
+    // strategy for objects creation
+    this.context = new ModelConfiguration();
 }
 
 EntGraphics.prototype = {
@@ -47,10 +49,16 @@ EntGraphics.prototype = {
     /**
      * Add an object to the scene
      */
-    add: function(object){
-        this.scene.add(object);
-        this.system.add(object);
-        //this.objects.push(object);
+    add: function(entObject){
+        var objs = this.context.getPrimitivesFor(entObject);
+        for(var i in objs){
+            var obj = objs[i];
+            this.scene.add(obj);            
+            if(obj.type=="particle"){
+                this.system.add(obj);            
+                //this.objects.push(object);                
+            }
+        }
     },
     
     remove: function(object){

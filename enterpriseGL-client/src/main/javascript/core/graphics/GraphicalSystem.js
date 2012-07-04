@@ -17,8 +17,6 @@ function GraphicalSystem(){
     this.relations = [];
     // objects for graphical elaboration
     this.objectsCache = [];
-    // strategy for objects creation
-    this.context = new ModelConfiguration();
     // phisics configurations 
     this.forces = {
         //barneshut:new Force(), 
@@ -34,6 +32,18 @@ function GraphicalSystem(){
 }
 
 GraphicalSystem.prototype = {
+    
+    getFreeSpace: function(){
+       //TODO use global algorith to find a free space
+       return new THREE.Vector3(0,0,0);
+    },
+    
+    getSpaceNextTo: function(idParticle){
+       //TODO use global algorith to find a free space next to particle
+       var p = this.particles[idParticle];
+       if(p) return p.position.copy().addSelf(new THREE.Vector3(0,1,0));
+       return null;
+    },
     
     /**
      * Restituisce tutti gli oggetti grafici del sistema
