@@ -1,6 +1,6 @@
 describe('Testing simulation', function(){
     var  sSystem = new SimulSystem();
-    var sys = new ParticleSystem();
+    var sys = new GraphicalSystem();
     var numPar = 100, numRel = 120;
 
     describe('Control particles creation', function(){

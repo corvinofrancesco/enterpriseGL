@@ -1,6 +1,10 @@
 /**
  * Draw a Cube Particle 
  */
+function ParticleCube(){
+    
+}
+
 ParticleCube.geometries = {
     CUBE01: new THREE.CubeGeometry( 1, 1, 1 ),
     CUBE10: new THREE.CubeGeometry( 10, 10, 10 ),

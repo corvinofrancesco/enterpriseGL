@@ -1,5 +1,5 @@
 describe('Testing forces', function(){
-    var sys = new ParticleSystem();
+    var sys = new GraphicalSystem();
     var p1 = new Particle(1);
     p1.move(1,0,0);
     var p2 = new Particle(2);

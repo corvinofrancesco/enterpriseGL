@@ -1,15 +1,28 @@
 /**
  * Class for relation graphics element
  */
-function RelationSimple(r) {
-    var p1 = r.source, p2 = r.destination;
-    var lineGeometry = new THREE.Geometry();
-    lineGeometry.vertices.push( new THREE.Vector3( p1.x, p1.y, p1.z ) );
-    lineGeometry.vertices.push( new THREE.Vector3( p2.x, p2.y, p2.z ) );
-    THREE.Line.call( this, lineGeometry, new THREE.LineBasicMaterial( { color: 0xFF33FF } ) );    
-    this.relation = r;
+function Relation() {
+    
 }
 
-RelationSimple.prototype = new THREE.Line();
-RelationSimple.prototype.constructor = RelationSimple;
+Relation.prototype =  {
+    generator: function(geom,prop){
+        var color = { color: 0xFF33FF };
+        if(prop.color) color = {color: prop.color};
+        if(!prop.material){
+            prop.material = new THREE.LineBasicMaterial( color );
+        }
+        var object = new THREE.Line(geom, prop.material);
+        object.setExtremis = function (p1,p2){
+            this.value = "a";
+        };
+        return object;
+    },
 
+    geometry: function(){
+        var lineGeometry = new THREE.Geometry();
+        lineGeometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
+        lineGeometry.vertices.push( new THREE.Vector3( 0, 1, 0 ) );
+        return lineGeometry;
+    },
+}

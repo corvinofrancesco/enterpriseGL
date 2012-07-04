@@ -22,7 +22,7 @@ RelationBuilder.prototype = {
     
     build : function(p1,p2){
         var object = this.generator(this.geometry,this.properties);
-        object.position = new THREE.Vector3(p1.x, p1.y, p1.z);
+        object.setExtremis(p1,p2);// = new THREE.Vector3(p1.x, p1.y, p1.z);
         object.modelReference = p1.id;
         return object;
     }
