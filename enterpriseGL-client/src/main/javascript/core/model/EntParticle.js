@@ -7,6 +7,7 @@ function EntParticle(){
     this.title = "empty";
     this.body = "empty";
     this.relations = [];
+    this.changes = {};
 }
 
 EntParticle.prototype = new EntObject();
@@ -31,4 +32,13 @@ EntParticle.prototype.setProperties = function(prop){
     this.setId(prop.id);
     this.title = prop.title || this.title;
     this.body = prop.body || this.body;
+}
+
+EntParticle.prototype.getChange = function(id){
+    if(!this.changes[id]) return this;
+    var p = new EntParticle();
+    p.id = this.id;
+    p.relations = this.changes[id].relations;
+    p.properties = this.changes[id].properties;
+    return p;
 }
