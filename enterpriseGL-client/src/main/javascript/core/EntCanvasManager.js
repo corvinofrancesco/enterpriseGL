@@ -8,7 +8,6 @@ function EntCanvasManager(){
     var containerMng = new ContainerManager({
         info:"descriptionBox",
         main:"container"});
-    //document.body.appendChild( this.container );
 
     this.model = new EntModel();
 
