@@ -1,14 +1,4 @@
 /**
- * GraphicalSystem types of event
- */
-GraphicalSystem.events = {
-    ADD: "add",
-    MODIFY: "modify",
-    REMOVE: "remove",
-    ERROR: "error"
-};
-
-/**
  * This class manage whole sistem of particles (interaction and forces)
  */
 function GraphicalSystem(){
@@ -31,19 +21,46 @@ function GraphicalSystem(){
         
 }
 
-GraphicalSystem.prototype = {
+/**
+ * GraphicalSystem types of event
+ */
+GraphicalSystem.events = {
+    ADD: "add",
+    MODIFY: "modify",
+    REMOVE: "remove",
+    ERROR: "error"
+};
     
+GraphicalSystem.prototype = {
+
+
+    /***************************************************************************
+     * Spatial functions 
+     */
+    
+    /**
+     * This function return the first area free, so we can collocate new particles
+     * @return if the space is empty return (0,0,0)
+     */
     getFreeSpace: function(){
        //TODO use global algorith to find a free space
        return new THREE.Vector3(0,0,0);
     },
     
+    /**
+     * Try to return the nearest free position to a particle
+     * @return null if the particle don't exist
+     */
     getSpaceNextTo: function(idParticle){
        //TODO use global algorith to find a free space next to particle
        var p = this.particles[idParticle],v = new THREE.Vector3(0,1,0);
        if(p) return v.addSelf(p.position);
        return null;
     },
+    
+    /***************************************************************************
+     * Particles management functions
+     */
     
     /**
      * Search a particle primitive by its reference model id
@@ -66,10 +83,79 @@ GraphicalSystem.prototype = {
         return this.objectsCache;
     },
     
+    /**
+     * Numbers of all particles in the system
+     */
     size : function() {
         return this.numparticles;
     },
     
+    /**
+     * Add a particle to the system.
+     * La particella avrà nell'array particles id analogo al suo valore in modo
+     * da essere recuperata.
+     * Per essere modificata basta richiamare lo stesso metodo.
+     * @param p primitive of a particle
+     */
+    add : function(p) {
+        var genEvent = GraphicalSystem.events.ADD,
+            props = {primitive: p};
+        if(this.particles[p.id] != undefined) {
+            genEvent = GraphicalSystem.events.MODIFY;
+        } else {
+            this.numparticles ++;
+            this.objectsCache.push(p);
+        }
+        this.particles[p.modelReference] = p;
+        // register event
+        this.event(genEvent, props);
+    },
+    
+    /**
+     * Si occupa di rimuovere una particella dal sistema,
+     * Se la particella non esiste genera un evento ERROR
+     * @param id reference model id of particle to remove
+     * @return the object removed, null otherwise
+     */
+    remove : function(id) {
+        var ev = GraphicalSystem.events.REMOVE,
+            props = {primitive:p},
+            p = this.particles[id];
+        if(p) {
+            this.particles[id] = undefined;
+            this.numparticles--;
+        } else ev = GraphicalSystem.events.ERROR;
+        this.event(ev,props);
+        return p;
+    },
+    
+    /***************************************************************************
+     * System management functions
+     */
+    
+    /**
+     * Manage system events
+     * @param type is a GraphicalSystem.events value, defines what happen
+     * @param props 
+     */
+    event : function(type, props) {
+        switch(type){
+            case GraphicalSystem.events.ADD:
+                // TODO per le particelle effettuare l'insert nell'algoritmo globale
+                // TODO per le relazioni aggiornare le forze, l'array relations e cacheObjects
+                //this.globalAlg.insert(p);
+                break;
+            case GraphicalSystem.events.MODIFY:
+                // TODO avviare l'aggiornamento delle forze
+                break;
+            case GraphicalSystem.events.REMOVE:
+                // TODO avviare l'aggiornamento delle forze
+                break;
+            default:                
+        }
+        // TODO make something
+    },
+
     update: function(){
         //TODO calculate the differenzial time (dtime) and update particles positions
 //        for(var i in this.particles){
@@ -119,49 +205,5 @@ GraphicalSystem.prototype = {
                 break;                    
             }
         }
-    },
-    
-    /**
-     * Aggiunge una particella al sistema.
-     * La particella avrà nell'array particles id analogo al suo valore in modo
-     * da essere recuperata.
-     * Per essere modificata basta richiamare lo stesso metodo.
-     */
-    add : function(p) {
-        var genEvent = GraphicalSystem.events.ADD;
-        if(this.particles[p.id] != undefined) {
-            genEvent = GraphicalSystem.events.MODIFY;
-            
-        } else {
-            // TODO effettuare l'insert nell'algoritmo globale
-            //this.globalAlg.insert(p);
-            this.numparticles ++;
-        }
-        this.particles[p.id] = p;
-        // TODO make something with globalAlg
-        this.event(genEvent, {particle:p});
-    },
-    
-    /**
-     * Si occupa di rimuovere una particella dal sistema,
-     * Se la particella non esiste genera un evento ERROR
-     */
-    remove : function(id) {
-        if(this.particles[id]) {
-            var p = this.particles[id];
-            this.particles[id] = undefined;
-            // TODO make something with globalAlg
-            this.event(GraphicalSystem.events.REMOVE, {particle:p})
-            this.numparticles--;
-        }
-        this.event(GraphicalSystem.events.ERROR,{particle:p});
-    },
-    
-    /**
-     * Manage 
-     */
-    event : function(type, props) {
-        // TODO make something
-    }
-    
+    }    
 }
