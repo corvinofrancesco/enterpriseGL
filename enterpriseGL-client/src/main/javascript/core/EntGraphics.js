@@ -51,31 +51,9 @@ EntGraphics.prototype = {
     },
     
     /**
-     * Add an object to the scene
+     * Object used by @see EntInteraction class to manage the selections
+     * of objects
      */
-    add: function(entObject){
-        var objs = this.context.getPrimitivesFor(entObject);
-        for(var i in objs){
-            var obj = objs[i];
-            this.scene.add(obj);            
-            if(obj.type=="particle"){
-                this.system.add(obj);            
-                //this.objects.push(object);                
-            }
-        }
-    },
-    
-    remove: function(object){
-        this.scene.remove(object);  
-        // rimuove l'oggetto dall'array degli oggetti
-        for(var i =0;i<this.objects.length; i++){
-            if(this.objects[i].id == object.id){
-                this.objects.splice(i,1);
-                return;
-            }
-        }
-    },
-    
     createMouseSelector : function(){
         return new MouseSelector(this.camera,this.plane,this.objects,
             this.width,this.height);
@@ -83,12 +61,42 @@ EntGraphics.prototype = {
    
    /**
     * Update the graphics
+    * 
+    * Function called by @see EntCanvasManager in the update function
     */
    update : function(){
        this.controls.update();
        this.system.update();
        this.renderer.render(this.scene,this.camera);
-   }    
+   },
+   
+   /**
+    * Update the model from enterprise object
+    * 
+    * This method is called by @see EntModel when it have to change enterprise
+    * objects rapresentations
+    * 
+    * @param entObject enterprise object that rapresent the modifications to be applied
+    */
+   updateModel : function(entObject){
+       // manage system configuration and return primitives
+       var objs = this.context.getPrimitivesFor(entObject);
+       // update the scene
+       for(var i in objs){
+           var obj = objs[i];
+           // TODO if adding / removing / updating objects
+           if(obj.oper=="remove"){
+               this.scene.remove(obj);
+               // TODO remove an object
+           } else if(obj.oper=="add"){
+               this.scene.add(obj);            
+               // TODO if is particle or relation
+               if(obj.type=="particle"){
+                   //this.objects.push(object);                
+               }
+           }
+       }
+   }
  
 }
 

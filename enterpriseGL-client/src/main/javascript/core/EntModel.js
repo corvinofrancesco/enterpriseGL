@@ -17,7 +17,7 @@ EntModel.prototype = {
         //TODO configure loader
         var firstEv = EntObject.get(this.currentEventId);
         // try to visualize the first event
-        if(firstEv) this.graphics.add(firstEv);
+        if(firstEv) this.graphics.updateModel(firstEv);
         else { // otherwise try to connect to the server
             this.loader.wait();
         }
