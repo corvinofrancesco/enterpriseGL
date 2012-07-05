@@ -70,16 +70,17 @@ GraphicalSystem.prototype = {
         return this.numparticles;
     },
     
-    updatePosition: function(dtime){
-        for(var i in this.particles){
-            var p = this.particles[i];
-            for(var axis in p.accelerations){
-              p[axis] += 
-                  0.5* dtime*dtime* p.accelerations[axis] +
-                  dtime* p.velocity[axis];
-              p.velocity[axis] += dtime * p.accelerations[axis];
-            }  
-        }
+    update: function(){
+        //TODO calculate the differenzial time (dtime) and update particles positions
+//        for(var i in this.particles){
+//            var p = this.particles[i];
+//            for(var axis in p.accelerations){
+//              p[axis] += 
+//                  0.5* dtime*dtime* p.accelerations[axis] +
+//                  dtime* p.velocity[axis];
+//              p.velocity[axis] += dtime * p.accelerations[axis];
+//            }  
+//        }
     },
     
     /**
