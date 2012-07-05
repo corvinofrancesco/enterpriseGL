@@ -43,6 +43,9 @@ function EntGraphics(configuration) {
 }
 
 EntGraphics.prototype = {
+    /**
+     * Getter required by mouse selector to intersect the elements in the scene
+     */
     get objects(){
         return this.system.objects;
     },
