@@ -2,14 +2,14 @@
  * 
  */
 function EntEvent(){
-    EntObject.call(this);
+    EntElement.call(this);
     this.graphicalModel = null;
     this.title = "event";
     this.date = new Date();
     this.objects = [];
 }
 
-EntEvent.prototype = new EntObject();
+EntEvent.prototype = new EntElement();
 EntEvent.prototype.constructor = EntEvent;
 
 EntEvent.prototype.getDescription = function(){

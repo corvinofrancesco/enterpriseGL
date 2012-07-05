@@ -27,23 +27,23 @@ EntObjects.prototype = {
  * @param object object to be register
  */
 EntObjects.register = function(object){
-    EntObjects.istance.objects[object.id] = object;
+    EntObjects.instance.objects[object.id] = object;
 }
 
-EntObject.unregister = function(object){
+EntObjects.unregister = function(object){
     EntObjects.instance.objects[object.id] = undefined;
 }
 
-EntObject.get = function(id) {
+EntObjects.get = function(id) {
     if(EntObjects.instance.objects[id]) 
         return EntObjects.instance.objects[id];
     else return null;
 }
 
-EntObject.getInfo = function(id){
+EntObjects.getInfo = function(id){
     return EntObjects.get(id).getDescription();
 }
 
-EntObject.getLink = function(id){
-    return EntObject.instance.generateLink(id);
+EntObjects.getLink = function(id){
+    return EntObjects.instance.generateLink(id);
 }

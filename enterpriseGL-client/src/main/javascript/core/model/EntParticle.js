@@ -2,7 +2,7 @@
  * Define a enterprise particle: an object with enterprise semantic.
  */
 function EntParticle(){
-    EntObject.call(this);
+    EntElement.call(this);
     this.graphicalModel = new ParticleCube();
     this.title = "empty";
     this.body = "empty";
@@ -10,7 +10,7 @@ function EntParticle(){
     this.changes = {};
 }
 
-EntParticle.prototype = new EntObject();
+EntParticle.prototype = new EntElement();
 EntParticle.prototype.constructor = EntParticle;
 
 EntParticle.prototype.getDescription = function(){
@@ -32,6 +32,7 @@ EntParticle.prototype.setProperties = function(prop){
     this.setId(prop.id);
     this.title = prop.title || this.title;
     this.body = prop.body || this.body;
+    this.relations = prop.relations;
 }
 
 EntParticle.prototype.getChange = function(id){
