@@ -40,8 +40,8 @@ GraphicalSystem.prototype = {
     
     getSpaceNextTo: function(idParticle){
        //TODO use global algorith to find a free space next to particle
-       var p = this.particles[idParticle];
-       if(p) return p.position.copy().addSelf(new THREE.Vector3(0,1,0));
+       var p = this.particles[idParticle],v = new THREE.Vector3(0,1,0);
+       if(p) return v.addSelf(p.position);
        return null;
     },
     
@@ -134,7 +134,7 @@ GraphicalSystem.prototype = {
             
         } else {
             // TODO effettuare l'insert nell'algoritmo globale
-            this.globalAlg.insert(p);
+            //this.globalAlg.insert(p);
             this.numparticles ++;
         }
         this.particles[p.id] = p;
