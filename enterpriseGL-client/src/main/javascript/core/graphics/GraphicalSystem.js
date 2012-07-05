@@ -46,6 +46,20 @@ GraphicalSystem.prototype = {
     },
     
     /**
+     * Search a particle primitive by its reference model id
+     * @param idRefParticle identificator of particle in the main reference model
+     * @return null if the particle isn't found
+     */
+    findParticle : function(idRefParticle){
+        for(var i in this.particles){
+            var p = this.particles[i];
+            if(p.modelReference == idRefParticle)
+                return p;
+        }
+        return null;
+    },
+    
+    /**
      * Restituisce tutti gli oggetti grafici del sistema
      */
     get objects(){

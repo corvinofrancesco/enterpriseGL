@@ -38,7 +38,8 @@ function EntGraphics(configuration) {
     /// init objects
     this.system = new GraphicalSystem();
     // strategy for objects creation
-    this.context = new ModelConfiguration();
+    this.context = new ModelConfiguration(this.system);
+    this.context.configure({});
 }
 
 EntGraphics.prototype = {
@@ -82,6 +83,7 @@ EntGraphics.prototype = {
     */
    update : function(){
        this.controls.update();
+       this.system.update();
        this.renderer.render(this.scene,this.camera);
    }    
  

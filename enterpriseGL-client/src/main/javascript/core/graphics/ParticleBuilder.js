@@ -26,12 +26,13 @@ ParticleBuilder.prototype = {
         var object = this.generator(this.geometry,this.properties);
         // select particle position
         var pos = null;
-        if(p.relations.length>0){
+        if(p.relations.length>0){ // next to particle with relations
             for(var i in p.relations){
                 pos = this.system.getSpaceNextTo(p.relations[i]);
                 if(pos != null) break;
             }
         } 
+        // if no valid relations insert in free space
         if(pos==null) pos = this.system.getFreeSpace();
         object.position = pos;
         object.modelReference = p.id;

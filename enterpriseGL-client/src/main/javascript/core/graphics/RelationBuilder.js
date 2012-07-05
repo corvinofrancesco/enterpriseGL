@@ -21,12 +21,19 @@ RelationBuilder.prototype = {
         this.properties = properties;
     },
     
-    build : function(p1,p2){
+    build : function(entPart1,entPart2){
         var object = this.generator(this.geometry,this.properties);
-        // TODO cerca le primitive delle due particelle 
-        object.setExtremis(p1,p2);// = new THREE.Vector3(p1.x, p1.y, p1.z);
-        object.modelReference = p1.id;
+        // TODO cerca le primitive delle due particelle
+        var p1 = this.system.findParticle(entPart1);
+        var p2 = this.system.findParticle(entPart2);
+        object.modelReference = [p1.id, p2.id];
         object.type = "relation";
+        if(p1==null || p2==null){
+            object.updated = false;
+        } else {
+            object.setExtremis(p1,p2);
+            object.updated = true;
+        }
         return object;
     }
 }
