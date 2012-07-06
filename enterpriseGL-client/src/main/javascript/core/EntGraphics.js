@@ -17,14 +17,7 @@ function EntGraphics(configuration) {
     this.scene.add( new THREE.AmbientLight( 0x505050 ) );
     this.scene.add(configuration.lightConfig(this.camera));    
     // plane configuration
-    this.plane = new THREE.Mesh( 
-        new THREE.PlaneGeometry( 2000, 2000, 8, 8 ), 
-        new THREE.MeshBasicMaterial( 
-            { color: 0x000000, opacity: 0.25, transparent: true, wireframe: true } )
-    );
-    this.plane.geometry.applyMatrix( new THREE.Matrix4().makeRotationX( Math.PI / 2 ) );
-    this.plane.visible = false;
-    this.scene.add( this.plane );    
+    this.scene.add(this.plane = configuration.planeConfig());
     /// init projector
     this.projector = new THREE.Projector();
     /// init renderer
@@ -55,48 +48,68 @@ EntGraphics.prototype = {
      * of objects
      */
     createMouseSelector : function(){
-        return new MouseSelector(this.camera,this.plane,this.objects,
-            this.width,this.height);
+        return new MouseSelector(this.camera,this.plane,this.system.objects,
+        this.width,this.height);
     },    
    
-   /**
-    * Update the graphics
-    * 
-    * Function called by @see EntCanvasManager in the update function
-    */
-   update : function(){
-       this.controls.update();
-       this.system.update();
-       this.renderer.render(this.scene,this.camera);
-   },
+    /**
+     * Update the graphics
+     * 
+     * Function called by @see EntCanvasManager in the update function
+     */
+    update : function(){
+        this.controls.update();
+        this.system.update();
+        this.renderer.render(this.scene,this.camera);
+    },
    
-   /**
-    * Update the model from enterprise object
-    * 
-    * This method is called by @see EntModel when it have to change enterprise
-    * objects rapresentations
-    * 
-    * @param entObject enterprise object that rapresent the modifications to be applied
-    */
-   updateModel : function(entObject){
-       // manage system configuration and return primitives
-       var objs = this.context.getPrimitivesFor(entObject);
-       // update the scene
-       for(var i in objs){
-           var obj = objs[i];
-           // TODO if adding / removing / updating objects
-           if(obj.oper=="remove"){
-               this.scene.remove(obj);
-               // TODO remove an object
-           } else if(obj.oper=="add"){
-               this.scene.add(obj);            
-               // TODO if is particle or relation
-               if(obj.type=="particle"){
-                   //this.objects.push(object);                
-               }
-           }
-       }
-   }
+    /**
+     * Update the model from enterprise object
+     * 
+     * This method is called by @see EntModel when it have to change enterprise
+     * objects rapresentations
+     * 
+     * @param entEventId identificator of enterprise event, so it can rapresent the modifications to be applied
+     */
+    updateModel : function(entEventId){
+        var ev = EntObjects.get(entEventId);
+        if(!ev) return; // if invalid event, exit
+        var elements = (new Array()).concat(ev.objects);
+        // control existent particles
+        for(var i in this.system.particles){
+            var p = ev.posInObjects(i);
+            if(p!=-1){
+                elements.split(p,1);
+                //TODO send update event at system
+                //this.system.event()
+            } else {
+                this.system.remove(this.system.particles[i]);
+                this.scene.remove(this.system.particles[i]);
+            }
+        }
+        // read particles only for passed event
+        for(var i in elements){
+            //var elem = EntObjects.get(elements[i]);
+            var elem = elements[i];           
+            if(elem){
+                //elem = elem.getChange(entEventId);
+                // manage system configuration and return primitives
+                var p = this.context.elaborate(elem);  
+                this.system.add(p)
+                this.scene.add(p);
+            }
+        }
+        // manage relations
+//        for(var i in this.system.particles){
+//            var p = this.system.particles[i];
+//            for(var j in p.relations){
+//                var idDest = p.relations[j];
+//                var r = this.context.elaborate(p.modelReference,idDest);
+//                this.relations.push(r);
+//                this.scene.add(r);
+//            }
+//        }
+    }
  
 }
 
@@ -108,7 +121,7 @@ function EntGraphicsConfig(){
 }
 
 EntGraphicsConfig.prototype = {
-   lightConfig: function(camera){
+    lightConfig: function(camera){
         var light = new THREE.SpotLight( 0xffffff, 1.5 );
         light.position.set( 0, 500, 2000 );
         light.castShadow = true;
@@ -123,9 +136,9 @@ EntGraphicsConfig.prototype = {
         light.shadowMapWidth = 1024;
         light.shadowMapHeight = 1024;
         return light;       
-   },
+    },
    
-   controlsConfig: function(camera){
+    controlsConfig: function(camera){
         var controls = new THREE.TrackballControls( camera );
         controls.rotateSpeed = 1.0;
         controls.zoomSpeed = 1.2;
@@ -135,12 +148,24 @@ EntGraphicsConfig.prototype = {
         controls.staticMoving = true;
         controls.dynamicDampingFactor = 0.3;
         return controls;
-   },
+    },
    
-   cameraConfig: function(scene,w,h){
+    cameraConfig: function(scene,w,h){
         var camera = new THREE.PerspectiveCamera( 70, w/h, 1, 10000 );
         camera.position.z = 10;
         scene.add(camera );       
         return camera;
-   }
+    },
+   
+    planeConfig: function(){
+        var plane = new THREE.Mesh( 
+        new THREE.PlaneGeometry( 2000, 2000, 8, 8 ), 
+        new THREE.MeshBasicMaterial( 
+        { color: 0x000000, opacity: 0.25, transparent: true, wireframe: true } )
+    );
+        plane.geometry.applyMatrix( new THREE.Matrix4().makeRotationX( Math.PI / 2 ) );
+        plane.visible = false;
+        return plane;
+    }
+   
 }

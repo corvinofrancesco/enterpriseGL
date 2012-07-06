@@ -6,7 +6,7 @@ function EntObjects(){
     this.undefLink = "Undefined Object";
     this.callbackName = "EntInteraction.clickOnObject";
     EntObjects.instance = this;    
-}
+};
 
 EntObjects.prototype = {
     generateLink : function(id){
@@ -19,8 +19,23 @@ EntObjects.prototype = {
         text += "<a onclick='"+this.callbackName+"("+id+");'>";
         text += title +"</a>:" + shortDesc;
         return text;
+    },
+    
+    /**
+     * This function returns all particles registered
+     * @see EntGraphics class that invokes this method
+     */
+    getParticles: function(){
+        var retArray = [];
+        for(var i in this.objects){
+            var e = this.objects[i];
+            if(e instanceof EntElement) retArray.push(e);
+        }
+        return retArray;
     }
-}
+};
+
+new EntObjects();
 
 /**
  * Register function of objects

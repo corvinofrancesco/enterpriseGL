@@ -3,6 +3,7 @@
  */
 function EntEvent(){
     EntElement.call(this);
+    this.type = "event";
     this.graphicalModel = null;
     this.title = "event";
     this.date = new Date();
@@ -25,6 +26,13 @@ EntEvent.prototype.getDescription = function(){
         text += "</ul>";
     }
     return text;
+}
+
+EntEvent.prototype.posInObjects = function(idObj){
+    if(idObj instanceof EntParticle){
+        idObj = idObj.id;
+    }
+    return $.inArray(idObj, this.objects);
 }
 
 EntEvent.prototype.setProperties = function(prop){

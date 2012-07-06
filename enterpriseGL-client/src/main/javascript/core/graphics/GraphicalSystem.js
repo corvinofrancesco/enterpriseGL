@@ -4,9 +4,8 @@
 function GraphicalSystem(){
     // system objects
     this.particles = {};
-    this.relations = [];
     // objects for graphical elaboration
-    this.objectsCache = [];
+    this.objects = [];
     // phisics configurations 
     this.forces = {
         //barneshut:new Force(), 
@@ -79,9 +78,9 @@ GraphicalSystem.prototype = {
     /**
      * Restituisce tutti gli oggetti grafici del sistema
      */
-    get objects(){
-        return this.objectsCache;
-    },
+//    get objects(){
+//        return this.objects;
+//    },
     
     /**
      * Numbers of all particles in the system
@@ -104,7 +103,7 @@ GraphicalSystem.prototype = {
             genEvent = GraphicalSystem.events.MODIFY;
         } else {
             this.numparticles ++;
-            this.objectsCache.push(p);
+            this.objects.push(p);
         }
         this.particles[p.modelReference] = p;
         // register event
@@ -142,7 +141,6 @@ GraphicalSystem.prototype = {
         switch(type){
             case GraphicalSystem.events.ADD:
                 // TODO per le particelle effettuare l'insert nell'algoritmo globale
-                // TODO per le relazioni aggiornare le forze, l'array relations e cacheObjects
                 //this.globalAlg.insert(p);
                 break;
             case GraphicalSystem.events.MODIFY:

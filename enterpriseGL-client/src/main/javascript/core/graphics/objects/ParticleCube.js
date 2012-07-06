@@ -25,5 +25,6 @@ ParticleCube.prototype = {
         object.scale = new THREE.Vector3(1, 1, 1);
         object.castShadow = true;
         object.receiveShadow = true;
+        return object;
     }
 };

@@ -19,7 +19,7 @@ EntModel.prototype = {
         //TODO configure loader
         var firstEv = EntObjects.get(this.currentEventId);
         // try to visualize the first event
-        if(firstEv) this.graphics.updateModel(firstEv);
+        if(firstEv) this.graphics.updateModel(this.currentEventId);
         else { // otherwise try to connect to the server
             this.loader.wait();
         }
@@ -68,26 +68,26 @@ function Simulation(){
         title: "Particella 01",
         body: "Particella d'esempio numero 01",
         relations: ['part2','part3']    
-    });
+    }); part1.register();
 
     part2.setProperties({
         id: 'part2',
         title: "Particella 02",
         body: "Particella d'esempio numero 02",
         relations: ['part3']    
-    });
+    }); part2.register();
 
     part3.setProperties({
         id: 'part3',
         title: "Particella 03",
         body: "Particella d'esempio numero 03",
         relations: []    
-    });
+    }); part3.register();
 
     event0.setProperties({
         id: 'event0',
         nametime: new Date(),
         descriptio: "A fist event for testing graphical system",
         objects: [part1, part2, part3]
-    });
+    }); event0.register();
 }

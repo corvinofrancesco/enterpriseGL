@@ -108,7 +108,7 @@ EntInteraction.prototype = {
             this.intersectedElem.material.color.getHex();
         this.intersectedElem.material.color.setHex( 0xff0000 );
         
-        EntInteraction.clickOnObject(object.id);
+        EntInteraction.clickOnObject(object.modelReference);
     },
     
     /**
@@ -130,7 +130,7 @@ EntInteraction.prototype = {
     
     selectObject: function(object){
         this.selectElem = object;
-        EntInteraction.clickOnObject(object.id);
+        EntInteraction.clickOnObject(object.modelReference);
         if(this.containerManager) {
             this.containerManager.container.style.cursor = 'move';
         }

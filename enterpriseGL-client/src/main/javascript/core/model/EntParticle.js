@@ -32,7 +32,7 @@ EntParticle.prototype.setProperties = function(prop){
     this.setId(prop.id);
     this.title = prop.title || this.title;
     this.body = prop.body || this.body;
-    this.relations = prop.relations;
+    this.relations = this.relations.concat(prop.relations);
 }
 
 EntParticle.prototype.getChange = function(id){

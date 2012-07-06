@@ -1,49 +1,25 @@
 /**
- * Specifica le stategy di visualizzazione degli oggetti
+ * This class specifics the stategies to visualize objects.
+ * Convert an enterprise object in graphical primitive
+ * Principal distinction is between Particles and Events
  */
 function ModelConfiguration(sys){
     this.pbuilder = new ParticleBuilder(sys);
-    this.rbuilder = new RelationBuilder(sys);            
+    this.rbuilder = new RelationBuilder(sys); 
+    this.system = sys;    
 }
 
 ModelConfiguration.prototype = {
-    /**
-     * Convert an enterprise object in graphical primitive
-     * Distinction principal distinction is between Particles and Events
-     * @param entObject object that it convert
-     * @return array of primitives
-     */
-    getPrimitivesFor : function(entObject){
-        var objects = [];
-        if(entObject instanceof EntParticle) {
-            objects.push( this.getParticleFor(entObject));            
-        } else if(entObject.objects){
-            for(var i in entObject.objects){
-                var subEntObject = EntObjects.get(entObject.objects[i]);
-                if(subEntObject){
-                    objects.push( this.getRelationFor(entObject));                                
-                }
-            }
-        }
-        return this.objects;
+    elaborate: function(entPart){
+        var p = this.pbuilder.build(entPart);
+        return p;
     },
     
-    /**
-     * @param entPart the enterprise particle to be elaborated
-     * @param changeTimeId the time to consider, if null find last change
-     */    
-    getParticleFor : function(entPart, changeTimeId){
-        var objects = [];
-        if(changeTimeId){
-            entPart = entPart.getChange(changeTimeId);
-        }
-        objects.push(this.pbuilder.build(entPart));
-        for(var r in entPart.relations){
-            objects.push(this.rbuilder.build(entPart, entPart.relations[r]));
-        }
-        return objects;
+    elaborateRelation: function(entPart1, entPart2){
+        var r = this.rbuilder.build(entPart1, entPart2);
+        return r;
     },
-    
+        
     configure: function(props){
         //TODO configure builder in function of props
         var pModel = new ParticleCube();

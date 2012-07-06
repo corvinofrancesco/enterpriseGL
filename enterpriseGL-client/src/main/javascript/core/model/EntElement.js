@@ -14,8 +14,14 @@ EntElement.prototype = {
     },
     
     setId: function(id){
-        if(this.id) EntObjects.unregister(this);
-        EntObjects.register(this);
         this.id = id;        
+    },
+    
+    register: function(){
+        EntObjects.register(this);        
+    },
+    
+    unregister: function(){
+        EntObjects.unregister(this);        
     }
 }
