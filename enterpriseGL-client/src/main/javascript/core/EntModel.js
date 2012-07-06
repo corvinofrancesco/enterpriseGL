@@ -61,7 +61,10 @@ EntModel.prototype = {
  */
 function Simulation(){    
     var event0 = new EntEvent();
-    var part1 = new EntParticle(), part2 = new EntParticle(), part3 = new EntParticle();
+    var part1 = new EntParticle(), 
+        part2 = new EntParticle(), 
+        part3 = new EntParticle(),
+        part4 = new EntParticle();
 
     part1.setProperties({
         id: 'part1',
@@ -84,10 +87,17 @@ function Simulation(){
         relations: []    
     }); part3.register();
 
+    part4.setProperties({
+        id: 'part4',
+        title: "Particella 04",
+        body: "Particella d'esempio numero 04",
+        relations: ['part1','part2']    
+    }); part4.register();
+
     event0.setProperties({
         id: 'event0',
         nametime: new Date(),
         descriptio: "A fist event for testing graphical system",
-        objects: [part1, part2, part3]
+        objects: [part1, part2, part3,part4]
     }); event0.register();
 }

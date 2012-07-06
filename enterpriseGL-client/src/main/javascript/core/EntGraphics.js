@@ -33,6 +33,7 @@ function EntGraphics(configuration) {
     // strategy for objects creation
     this.context = new ModelConfiguration(this.system);
     this.context.configure({});
+    this.relations = {};
 }
 
 EntGraphics.prototype = {
@@ -49,7 +50,7 @@ EntGraphics.prototype = {
      */
     createMouseSelector : function(){
         return new MouseSelector(this.camera,this.plane,this.system.objects,
-        this.width,this.height);
+            this.width,this.height);
     },    
    
     /**
@@ -60,6 +61,7 @@ EntGraphics.prototype = {
     update : function(){
         this.controls.update();
         this.system.update();
+        this.updateRelations();
         this.renderer.render(this.scene,this.camera);
     },
    
@@ -80,36 +82,71 @@ EntGraphics.prototype = {
             var p = ev.posInObjects(i);
             if(p!=-1){
                 elements.split(p,1);
-                //TODO send update event at system
-                //this.system.event()
-            } else {
-                this.system.remove(this.system.particles[i]);
-                this.scene.remove(this.system.particles[i]);
-            }
+                this.updateParticle(p);
+            } else this.removeParticle(p)
         }
         // read particles only for passed event
         for(var i in elements){
             //var elem = EntObjects.get(elements[i]);
             var elem = elements[i];           
-            if(elem){
+            if(elem) {
+                //TODO get current element
                 //elem = elem.getChange(entEventId);
-                // manage system configuration and return primitives
-                var p = this.context.elaborate(elem);  
-                this.system.add(p)
-                this.scene.add(p);
+                this.addParticle(elem);
             }
         }
-        // manage relations
-//        for(var i in this.system.particles){
-//            var p = this.system.particles[i];
-//            for(var j in p.relations){
-//                var idDest = p.relations[j];
-//                var r = this.context.elaborate(p.modelReference,idDest);
-//                this.relations.push(r);
-//                this.scene.add(r);
-//            }
-//        }
+        this.updateRelations();
+    },
+    
+    updateParticle: function(p){
+        //TODO send update event at system
+        //this.system.event()        
+        //TODO control if there is new relations
+    },
+    
+    removeParticle: function(p){
+        var gPart = this.system.particles[p.id];
+        this.system.remove(gPart);
+        this.scene.remove(gPart);
+        //TODO remove relations from scene
+    },
+    
+    addParticle: function(pEnt){
+        // manage system configuration and return primitives
+        var p = this.context.elaborate(pEnt);  
+        this.system.add(p)
+        this.scene.add(p);        
+        this.relations[pEnt.id] = [];
+        var b = this.context.relationBuilder();
+        b.reset(p);
+        for(var ri in pEnt.relations){
+            var r = b.build(this.system.findParticle(pEnt.relations[ri]));
+            if(!r.hasExtremis) r.modelReference[1] = pEnt.relations[ri];
+            this.relations[pEnt.id].push(r);    
+        }
+    },
+    
+    updateRelations: function(){
+        for(var entPid in this.relations){
+            for(var j in this.relations[entPid]){
+                var r = this.relations[entPid][j];
+                if(!r.isOnScene){
+                    // control if the relations has extremis   
+                    if(!r.hasExtremis){
+                        var p = this.system.findParticle(r.modelReference[1]);
+                        // control if change function can be executed
+                        if(!p) continue;
+                        r.change(p);
+                    }
+                    this.scene.add(r);
+                    r.isOnScene = true;
+                }
+                // update position
+                r.update();
+            }
+        }
     }
+    
  
 }
 

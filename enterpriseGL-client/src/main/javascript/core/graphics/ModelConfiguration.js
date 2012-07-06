@@ -19,6 +19,8 @@ ModelConfiguration.prototype = {
         var r = this.rbuilder.build(entPart1, entPart2);
         return r;
     },
+    
+    relationBuilder: function(){return this.rbuilder;},
         
     configure: function(props){
         //TODO configure builder in function of props

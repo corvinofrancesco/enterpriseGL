@@ -42,6 +42,11 @@ GraphicalSystem.prototype = {
      * @return if the space is empty return (0,0,0)
      */
     getFreeSpace: function(){
+        if(this.size()>0){
+            var b = new THREE.Vector3(2,2,0); 
+            b.addSelf(this.objects[this.size()-1].position);
+            return b;
+        }
        //TODO use global algorith to find a free space
        return new THREE.Vector3(0,0,0);
     },
@@ -52,7 +57,7 @@ GraphicalSystem.prototype = {
      */
     getSpaceNextTo: function(idParticle){
        //TODO use global algorith to find a free space next to particle
-       var p = this.particles[idParticle],v = new THREE.Vector3(0,1,0);
+       var p = this.particles[idParticle],v = new THREE.Vector3(0,2,0);
        if(p) return v.addSelf(p.position);
        return null;
     },
@@ -73,14 +78,7 @@ GraphicalSystem.prototype = {
                 return p;
         }
         return null;
-    },
-    
-    /**
-     * Restituisce tutti gli oggetti grafici del sistema
-     */
-//    get objects(){
-//        return this.objects;
-//    },
+    },    
     
     /**
      * Numbers of all particles in the system
