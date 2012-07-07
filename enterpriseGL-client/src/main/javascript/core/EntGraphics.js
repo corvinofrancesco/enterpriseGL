@@ -108,7 +108,12 @@ EntGraphics.prototype = {
         var gPart = this.system.particles[p.id];
         this.system.remove(gPart);
         this.scene.remove(gPart);
-        //TODO remove relations from scene
+        // remove relations from scene
+        for(var ri in this.relations[p.modelReference]){
+            var r = this.relations[p.modelReference][ri];
+            if(r.isOnScene) this.scene.remove(r);
+        }
+        this.relations[p.modelReference] = undefined;
     },
     
     addParticle: function(pEnt){
@@ -118,9 +123,11 @@ EntGraphics.prototype = {
         this.scene.add(p);        
         this.relations[pEnt.id] = [];
         var b = this.context.relationBuilder();
+        // create relations
         b.reset(p);
         for(var ri in pEnt.relations){
-            var r = b.build(this.system.findParticle(pEnt.relations[ri]));
+            var pend = this.system.findParticle(pEnt.relations[ri]);
+            var r = b.build(pend);
             if(!r.hasExtremis) r.modelReference[1] = pEnt.relations[ri];
             this.relations[pEnt.id].push(r);    
         }
