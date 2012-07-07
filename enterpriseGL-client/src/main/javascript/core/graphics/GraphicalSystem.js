@@ -57,7 +57,7 @@ GraphicalSystem.prototype = {
      */
     getSpaceNextTo: function(idParticle){
        //TODO use global algorith to find a free space next to particle
-       var p = this.particles[idParticle],v = new THREE.Vector3(0,2,0);
+       var p = this.particles[idParticle],v = new THREE.Vector3(0,0,2);
        if(p) return v.addSelf(p.position);
        return null;
     },
