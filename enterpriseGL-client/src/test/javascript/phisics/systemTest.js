@@ -1,8 +1,8 @@
 describe('Testing particles system', function(){
-    var sys = new ParticleSystem();
-    sys.particles[0] = new Particle("0").move(10,2,5);
-    sys.particles[1] = new Particle("1").move(2,3,5);
-    var numPar = sys.size();
+//    var sys = new ParticleSystem();
+//    sys.particles[0] = new Particle("0").move(10,2,5);
+//    sys.particles[1] = new Particle("1").move(2,3,5);
+//    var numPar = sys.size();
     
     describe('Verify system management of particles', function(){
 //        var vertices = sys.particlesVertex();

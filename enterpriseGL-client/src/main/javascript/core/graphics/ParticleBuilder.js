@@ -37,6 +37,9 @@ ParticleBuilder.prototype = {
         object.position = pos;
         object.modelReference = p.id;
         object.type = "particle";
+        object.relations = p.relations;
+        object.accelerations = new THREE.Vector3(0,0,0);
+        object.velocity = new THREE.Vector3(0,0,0);
         return object;
     }
     

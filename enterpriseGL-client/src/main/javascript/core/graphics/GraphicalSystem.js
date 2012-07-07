@@ -10,7 +10,7 @@ function GraphicalSystem(){
     this.forces = {
         //barneshut:new Force(), 
         /// atraction between particles in relation
-        relAttr: attractionForce(this.particles,3,2)};
+        relAttr: attractionForce(this.particles,0.02,2)};
     // other global variables
     this.numparticles = 0;    
     
@@ -153,16 +153,21 @@ GraphicalSystem.prototype = {
     },
 
     update: function(){
+        this.updateAccelerations();
         //TODO calculate the differenzial time (dtime) and update particles positions
-//        for(var i in this.particles){
-//            var p = this.particles[i];
-//            for(var axis in p.accelerations){
-//              p[axis] += 
-//                  0.5* dtime*dtime* p.accelerations[axis] +
-//                  dtime* p.velocity[axis];
-//              p.velocity[axis] += dtime * p.accelerations[axis];
-//            }  
-//        }
+        var dtime = 0.001;
+        for(var i in this.particles){
+            var p = this.particles[i];            
+            // delta = a*t^2/2 + v*t 
+            var delta = 
+                p.accelerations.clone().multiplyScalar(0.5* dtime*dtime);
+            delta.addSelf(p.velocity.clone().multiplyScalar(dtime));
+            // deltav = t*a
+            var deltav = p.accelerations.clone().multiplyScalar(dtime);
+            p.velocity.addSelf(deltav);
+            // position += delta;
+            p.position.addSelf(delta);
+        }
     },
     
     /**
@@ -170,8 +175,8 @@ GraphicalSystem.prototype = {
      * the system.
      */
     updateAccelerations : function() {
-        for(var p in this.particles){
-            this.particles[p].accelerations = {x:0,y:0,z:0};
+        for(var i in this.particles){
+            this.particles[i].accelerations = new THREE.Vector3(0,0,0);
         }
         for(var findex in this.forces){
             // funzione che calcola la forza da applicare
@@ -188,14 +193,10 @@ GraphicalSystem.prototype = {
                     for(var i in this.particles)
                         this.globalAlg.getForceFor(this.particles[i]);
                     break;
-                case Force.types.ONRELATIONS:
-                    for(var r in this.relations.filter(selector)){
-                        force(this.relations[r]);
-                    }
-                    break;
                 case Force.types.LOCAL:                
                 default:
-                    for(var i in this.particles.filter(selector)){
+                    //for(var i in this.particles.filter(selector)){
+                    for(var i in this.particles){
                         force(this.particles[i]);
                     }
                 break;                    
