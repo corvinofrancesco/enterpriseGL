@@ -16,7 +16,7 @@ EntObjects.prototype = {
         if(ob.title) title = ob.title;    
         if(ob.shortDescription) shortDesc = ob.shortDescription();
         
-        text += "<a onclick='"+this.callbackName+"("+id+");'>";
+        text += "<a onclick='"+this.callbackName+"(\""+id+"\");'>";
         text += title +"</a>:" + shortDesc;
         return text;
     },
