@@ -14,13 +14,9 @@ ParticleCube.prototype = {
     },
 
     generator: function(geom,prop) {
-        var color = { color: Math.random() * 0xffffff };
-        if(prop.color) color = {color: prop.color};
-        if(!prop.material){
-            prop.material = new THREE.MeshLambertMaterial( color );
-        }
-        var object = new THREE.Mesh( geom, prop.material);
-        object.material.ambient = color;
+        var material = new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } );
+        var object = new THREE.Mesh( geom, material);
+        object.material.ambient = object.material.color;
         object.rotation = new THREE.Vector3(0, 0, 0);
         object.scale = new THREE.Vector3(1, 1, 1);
         object.castShadow = true;
