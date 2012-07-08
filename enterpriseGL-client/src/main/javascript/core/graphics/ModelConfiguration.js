@@ -24,10 +24,14 @@ ModelConfiguration.prototype = {
         
     configure: function(props){
         //TODO configure builder in function of props
-        var pModel = new ParticleCube();
-        this.pbuilder.setGeometry(pModel.geometries.CUBE01);
+        var pModel = new ParticleStar();
+        this.pbuilder.setGeometry(pModel.geometry);
         this.pbuilder.setGenerator(pModel.generator);
         this.pbuilder.setProperties(props);
+//        var pModel = new ParticleCube();
+//        this.pbuilder.setGeometry(pModel.geometries.CUBE01);
+//        this.pbuilder.setGenerator(pModel.generator);
+//        this.pbuilder.setProperties(props);
         var rModel = new Relation();
         this.rbuilder.setGeometry(rModel.geometry);
         this.rbuilder.setGenerator(rModel.generator);
