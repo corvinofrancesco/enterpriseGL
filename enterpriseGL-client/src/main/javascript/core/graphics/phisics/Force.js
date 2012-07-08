@@ -25,8 +25,6 @@ function attractionForce(particles, k, delta){
     var f = new Force();
     f.type = Force.types.LOCAL;
     f.force = function(p) {
-        if(!(p.accelerations instanceof THREE.Vector3)) 
-            p.accelerations = new THREE.Vector3(0,0,0);
         for(var ri in p.relations){
             var r = p.relations[ri],
                 d = particles[r],
@@ -35,17 +33,17 @@ function attractionForce(particles, k, delta){
             var dp = d.position.clone().subSelf(p.position);
             l = dp.length();
             if(l==0) continue;
-            if(l<delta - 0.2) dp.negate()
-            else if(l<delta + 0.2) continue;
+            if(l<delta - 0.5) dp.negate();
+            else if(l<delta + 0.5) continue;
             dp.multiplyScalar(k);
             p.accelerations.addSelf(dp)
-            log(l + " -> " + 
-                p.accelerations.x + ", " +
-                p.accelerations.y + ", " +
-                p.accelerations.z 
-                
-            , 'LOG', true);
         }
+        log(p.modelReference + " -> " + p.accelerations.length() 
+//                + ", " +
+//                p.accelerations.y + ", " +
+//                p.accelerations.z 
+                
+            , 'LOG'+p.modelReference, true);
     };
     return f;
 }
@@ -54,14 +52,8 @@ function attrito(c){
     var f = new Force();
     f.type = Force.types.LOCAL;
     f.force = function(p) {
-        for(var axis in p.accelerations){
-            p.accelerations[axis] -= c * p.accelerations[axis];
-//            if(p.accelerations[axis]>0){
-//                p.accelerations[axis] -= c;
-//            } else if (p.accelerations[axis]<0){
-//                p.accelerations[axis] += c;
-//            }
-        }    
+        var s = p.accelerations.clone().multiplyScalar(c);
+        p.accelerations.subSelf(s);
     };
     return f;
 }
