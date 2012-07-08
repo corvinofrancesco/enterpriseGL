@@ -155,7 +155,7 @@ GraphicalSystem.prototype = {
     update: function(){
         this.updateAccelerations();
         //TODO calculate the differenzial time (dtime) and update particles positions
-        var dtime = 0.001;
+        var dtime = 0.5;
         for(var i in this.particles){
             var p = this.particles[i];            
             // delta = a*t^2/2 + v*t 
@@ -177,6 +177,7 @@ GraphicalSystem.prototype = {
     updateAccelerations : function() {
         for(var i in this.particles){
             this.particles[i].accelerations = new THREE.Vector3(0,0,0);
+            this.particles[i].velocity = new THREE.Vector3(0,0,0);
         }
         for(var findex in this.forces){
             // funzione che calcola la forza da applicare
