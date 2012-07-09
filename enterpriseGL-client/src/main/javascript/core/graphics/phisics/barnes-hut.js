@@ -15,7 +15,48 @@ BarnesHut.prototype = {
      * Inserisce un elemento nella regione principale.
      */
     insert : function (element){
+        if(!element.position) return false;
+        // TODO aggiunge ad element gli attributi di controllo
+        element.barneshut = {
+            region: this.root,
+            insertPos: element.position.clone()
+        }
+        if(!element.getMass){
+            // set default mass function
+            element.getMass = function(){
+                return 1;
+            }
+        }
         this.root.insert(element);
+        return true;
+    },
+    
+    /**
+     * Rimuove l'elemento passato dai rami delle regioni
+     * Se la regione non contiene altri elementi, viene eliminata.
+     * Non effettua aggiornamenti sulla posizione.
+     * @param element particella da eliminare (non una regione)
+     */
+    remove : function (element){
+        if(!element.barneshut) return false;
+        var childs = element.barneshut.region.childs;
+        for(var i in childs){
+            if(childs[i]==element) {
+                childs.splice(i,1);
+                if(childs.length==0){
+                    // TODO rimuovere la regione dal parent
+                }
+                return true;
+            }
+        }
+        return false;
+    },
+    
+    /**
+     * Effettua l'aggiornamento delle regioni e dei loro punti
+     */
+    update : function(particles){
+        
     },
     
     /**
