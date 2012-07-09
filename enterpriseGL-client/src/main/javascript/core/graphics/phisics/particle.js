@@ -117,11 +117,12 @@ Particle.prototype = {
     },
     
     recurseForce: function(node, dsq) {
-        var drx, dry, drz, drsq, nphi, scale, idr;
-        drx = node.x - this.x;
-        dry = node.y - this.y;
-        drz = node.z - this.z;
-        drsq = drx * drx + dry * dry + drz * drz;
+        var point;
+        var drsq, nphi, scale, idr,
+            dr = node.point.clone().subSelf(point),
+            a = new THREE.Vector3(0,0,0);
+        
+        drsq = dr.lengthSq();
         var thisParticle = this;
         
         // la distanza non è sufficiente per considerare le particelle come un unico corpo
@@ -134,25 +135,21 @@ Particle.prototype = {
                         thisParticle.recurseForce(ch, dsq);
                     }
                 });
-            } else { // se il nodo è una particella si calcolano le forze
-                if(node != this) {
+            } else if(node != this) { // se il nodo è una particella si calcolano le forze
                     drsq += BarnesHutConfig.epssq();
                     idr = 1 / Math.sqrt(drsq);
-                    nphi = node.mass * idr;
-                    scale = nphi * idr * idr;
-                    this.accelerations.x += drx * scale;
-                    this.accelerations.y += dry * scale;
-                    this.accelerations.z += drz * scale;
-                }
+                    ///TODO calcola l'accelerazione
+                    scale = node.mass*idr*idr*idr;
+                    dr.multiplyScalar(scale);
+                    a.addSelf(dr)
             }
         } else { // la distanza è sufficiente per considerare le particelle come un unico corpo
-            drsq += BarnesHutConfig.epssq();
-            idr = 1 / Math.sqrt(drsq);
-            nphi = node.mass * idr;
-            scale = nphi * idr * idr;
-            this.accelerations.x += drx * scale;
-            this.accelerations.y += dry * scale;
-            this.accelerations.z += drz * scale;
+                drsq += BarnesHutConfig.epssq();
+                idr = 1 / Math.sqrt(drsq);
+                ///TODO calcola l'accelerazione
+                scale = node.mass*idr*idr*idr;
+                dr.multiplyScalar(scale);
+                a.addSelf(dr)
         }
     }
            

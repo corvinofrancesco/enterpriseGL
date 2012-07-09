@@ -5,9 +5,7 @@
 
 function Region(x, y, z){
     this.type = "defcube";
-    this.x = x;
-    this.y = y;
-    this.z = z;
+    this.position = new THREE.Vector3(x,y,z);
     this.mass = 1;
     this.range = 10;
     this.parent = null;
@@ -28,9 +26,9 @@ Region.prototype = {
      */
     contains : function (element) {
         var limit = this.range * this.range;
-        var dist = element.quadDistance({x:this.x, y:this.y, z:this.z});
+        var dist = element.clone().subSelf(this.position);
         if (this.type == "spherical") {
-            return (limit == dist);
+            return (limit == dist.length());
         } if(this.type == "defcube"){ // definite cube region
             return (limit >= dist.x ) && (limit >= dist.y) && (limit >= dist.z);             
         } else { // cube region
@@ -39,9 +37,7 @@ Region.prototype = {
     },
     
     move : function (x,y,z){
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.position.set(x,y,z);
     },
     
     resize : function (range) {
@@ -81,15 +77,15 @@ Region.prototype = {
      */ 
     insert: function(part){
         var i=0, rx=0, ry=0, rz=0;
-        if(this.x < part.x) {
+        if(this.position.x < part.position.x) {
             i = 1;
             rx = 2 * this.range;
         }
-        if(this.y < part.y) {
+        if(this.position.y < part.position.y) {
             i += 2;
             ry = 2 * this.range;
         }
-        if(this.z < part.z) {
+        if(this.position.z < part.position.z) {
             i += 4;
             rz = 2 * this.range;
         }
@@ -101,8 +97,10 @@ Region.prototype = {
             this.childs[i].insert(part, this.range);
         } else {
             var newRange = this.range;
-            var newRegion = new Region(this.x - newRange + rx, this.y - newRange + ry, 
-                this.z - newRange + rz);
+            var newRegion = new Region(
+                this.position.x - newRange + rx, 
+                this.position.y - newRange + ry, 
+                this.position.z - newRange + rz);
             newRegion.range = 0.5 * newRange;
             newRegion.insert(part, newRange);
             newRegion.insert(this.childs[i], newRange);
@@ -111,7 +109,8 @@ Region.prototype = {
     }, 
     
     computeCenterOfMass: function(){
-        var mass=0, m=0, px=0, py=0, pz=0;
+        var mass=0, m=0,
+            p = new THREE.Vector3(0,0,0);
         this.childs.forEach(function(ch){
             if (ch!=null) {
                 if(ch instanceof Region){
@@ -119,21 +118,21 @@ Region.prototype = {
                 } else {
                     m = ch.mass;
                     mass += m;
-                    px += ch.x * m;
-                    py += ch.y * m;
-                    pz += ch.z * m;
+                    p.addSelf(ch.position.clone().multiplyScalar(m));
                 }
             }
         });
         
         m = 1.0 / mass;
         // distinguere il centro della regione dal centro di massa??
-        this.x = px * m;
-	this.y = py * m;
-	this.z = pz * m;
+        this.position = p.multiplyScalar(m);
         this.mass = mass;
         
-        return {mass:mass, x:this.x, y:this.y, z:this.z};
+        return {mass:mass, x:this.position.x, y:this.position.y, z:this.position.z};
+    },
+    
+    getMass : function(){
+        
     }
     
 }
