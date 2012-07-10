@@ -13,6 +13,7 @@ function Region(x, y, z){
     this.range = 10;
     this.parent = null;
     this.childs = [];
+    this.index = 0;
 }
 
 Region.centerVectors = [
@@ -74,6 +75,7 @@ Region.prototype = {
         r.centre = this.centre.clone().addSelf(offset);
         r.range = newRange;
         r.parent = this;
+        r.index = regionIndex;
         
         r.insert(p);
         // control adding particles at same position
@@ -84,18 +86,38 @@ Region.prototype = {
     /**
      * Inserisce nella regione this la particella 
      * passata con il parametro part 
+     * @param part particles to insert in the region
      */ 
     insert: function(part){
         var i=0;
         if(this.centre.x < part.position.x) i = 1;
         if(this.centre.y < part.position.y) i += 2;
         if(this.centre.z < part.position.z) i += 4;
-        
+        // update the region of particle
+        part.barneshut.region = this;
         if(this.childs[i] == undefined) this.childs[i] = part;
         else if(this.childs[i] instanceof Region) {
             this.childs[i].insert(part, this.range);
         } else this.createSubRegion(i,part);
     }, 
+    
+    /**
+     * @param part node to reinsert
+     * @param from region where part is collocate actually
+     */
+    reinsert: function(part,from){
+        // remove particle from origin if exist
+        if(from) for(var i in from.childs)
+            if(from.childs[i]== part) 
+                from.childs[i]=undefined;
+        // control if the part is effectly in the region
+        if(!this.contains(part)){
+            if(this.parent)
+                this.parent.reinsert(part);
+            return;
+        }          
+        this.insert(part);
+    },
     
     computeCenterOfMass: function(){
         var mass=0,
