@@ -1,13 +1,13 @@
 describe('Region Testing', function(){
     var p = [
-        {position: new THREE.Vector3(15,15,15), barneshut: {}},
+        {position: new THREE.Vector3(15,15,15), barneshut: {}, getMass:function(){return 1;}},
         {position: new THREE.Vector3(12, 8, 8), barneshut: {}, getMass:function(){return 4;}},
         {position: new THREE.Vector3( 8,12, 8), barneshut: {}, getMass:function(){return 4;}},
-        {position: new THREE.Vector3(12,12, 8), barneshut: {}},
-        {position: new THREE.Vector3( 8, 8,12), barneshut: {}},
-        {position: new THREE.Vector3(12, 8,12), barneshut: {}},
-        {position: new THREE.Vector3( 8,12,12), barneshut: {}},
-        {position: new THREE.Vector3(12,12,12), barneshut: {}}
+        {position: new THREE.Vector3(12,12, 8), barneshut: {}, getMass:function(){return 1;}},
+        {position: new THREE.Vector3( 8, 8,12), barneshut: {}, getMass:function(){return 1;}},
+        {position: new THREE.Vector3(12, 8,12), barneshut: {}, getMass:function(){return 1;}},
+        {position: new THREE.Vector3( 8,12,12), barneshut: {}, getMass:function(){return 1;}},
+        {position: new THREE.Vector3(12,12,12), barneshut: {}, getMass:function(){return 1;}}
     ];
     
     describe('Testing constutor', function(){
@@ -61,6 +61,18 @@ describe('Region Testing', function(){
           result = r.contains({position: new THREE.Vector3(39,39,1)}); 
           expect(result).toBe(true);
        });
+    });
+    
+    describe("computeCentreOfMass() Testing", function(){
+       var r = new Region(20,20,20);
+       r.range = 20;
+       //r.insert(p[0]);
+       for(var i in p) r.insert(p[i]);
+       r.computeCenterOfMass();
+       it("Control if centreOfMass assign correct mass value", function(){
+           expect(r.getMass()).toBe(14);
+       })
+        
     });
        
 });

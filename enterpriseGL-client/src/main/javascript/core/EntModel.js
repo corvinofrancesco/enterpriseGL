@@ -65,7 +65,8 @@ function Simulation(){
         part2 = new EntParticle(), 
         part3 = new EntParticle(),
         part4 = new EntParticle(),
-        part5 = new EntParticle();
+        part5 = new EntParticle(),
+        part6 = new EntParticle();
 
     part1.setProperties({
         id: 'part1',
@@ -102,11 +103,18 @@ function Simulation(){
         relations: ['part3','part2']    
     }); part5.register();
 
+    part6.setProperties({
+        id: 'part6',
+        title: "Particella 06",
+        body: "Particella d'esempio numero 06",
+        relations: ['part1']    
+    }); part6.register();
+
     event0.setProperties({
         id: 'event0',
         nametime: new Date(),
         descriptio: "A fist event for testing graphical system",
-        objects: [part1, part2, part3,part4,part5]
+        objects: [part1, part2, part3,part4,part5,part6]
     }); event0.register();
 }
 
