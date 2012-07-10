@@ -6,7 +6,6 @@
 function BarnesHut(){
     this.root = new Region(0,0,0);
     this.root.range = 100;
-    // TODO: controllare l'algoritmo di inserimento delle particelle
 }
 
 BarnesHut.prototype = {
@@ -16,7 +15,12 @@ BarnesHut.prototype = {
      */
     insert : function (element){
         if(!element.position) return false;
-        // TODO aggiunge ad element gli attributi di controllo
+        // element out of bound
+        if(!this.root.contains(element)) {
+            this.root.resize(element.position.length() + 50);
+            // TODO update all the regions
+        }
+        // aggiunge ad element gli attributi di controllo        
         element.barneshut = {
             region: this.root,
             insertPos: element.position.clone()
@@ -44,7 +48,11 @@ BarnesHut.prototype = {
             if(childs[i]==element) {
                 childs.splice(i,1);
                 if(childs.length==0){
-                    // TODO rimuovere la regione dal parent
+                    // rimuovere la regione dal parent
+                    var r = element.barneshut.region;
+                    if(r.parent){
+                        r.parent.childs[r.index] = undefined;
+                    }
                 }
                 return true;
             }
@@ -55,8 +63,23 @@ BarnesHut.prototype = {
     /**
      * Effettua l'aggiornamento delle regioni e dei loro punti
      */
-    update : function(particles){
-        
+    update : function(){
+        var q = [this.root], exitQueque = [];
+        while(q.length>0){
+            var node = q.shift();
+            if(node instanceof Region){
+                node.computeCenterOfMass();
+                q = q.concat(node.childs);
+            } else {
+                var r = node.barneshut.region;
+                if(!r.contains(node)) {
+                    exitQueque.push(node);
+                    if(r.parent){
+                        r.parent.reinsert(node,r)
+                    }
+                }
+            }
+        }
     },
     
     /**
@@ -72,7 +95,7 @@ BarnesHut.prototype = {
             var node = curr.elem,
                 dsq = curr.dsq,
                 dr = particle.position.clone()
-                    .subSelf(curr.position);
+                    .subSelf(node.position);
             var drsq = dr.lengthSq();
             if(drsq < dsq){
                 if(node instanceof Region){
@@ -112,7 +135,8 @@ BarnesHut.prototype = {
             m = node.getMass();
         /// calcola l'accelerazione come
         // circa = m / (distance) ^ 3
-        a.multiplyScalar(m*idr*idr*idr);
+//        a.multiplyScalar(m*idr*idr*idr);
+        a.multiplyScalar(m*idr*idr);
         return a;
     },
     
@@ -128,7 +152,7 @@ var BarnesHutConfig = {
         dtime : 0.025,
         dthf : function(){return 0.5 * BarnesHutConfig.dtime;},
         tol: 0.5,
-        itolsq : function(){ return 1 / (BarnesHutConfig.tol * BarnesHutConfig.tol);},
+        itolsq : function(){return 1 / (BarnesHutConfig.tol * BarnesHutConfig.tol);},
         eps: 0.05,
-        epssq: function(){ return BarnesHutConfig.eps * BarnesHutConfig.eps; } 
+        epssq: function(){return BarnesHutConfig.eps * BarnesHutConfig.eps;} 
 }
