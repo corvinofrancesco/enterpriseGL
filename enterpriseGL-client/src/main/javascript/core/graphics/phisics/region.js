@@ -76,7 +76,13 @@ Region.prototype = {
         r.range = newRange;
         r.parent = this;
         r.index = regionIndex;
-        
+        var distance = new THREE.Vector3().copy(p.position).subSelf(addedP.position);
+        if(distance.lengthSq()<1) {
+            r.insert(p);
+            var freeIndices = Math.max(7,this.childs.length);
+            this.childs[freeIndices++] = addedP;
+            return;
+        }
         r.insert(p);
         // control adding particles at same position
         r.insert(addedP);

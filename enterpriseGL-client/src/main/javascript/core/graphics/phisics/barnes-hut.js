@@ -69,8 +69,8 @@ BarnesHut.prototype = {
             var node = q.shift();
             if(node instanceof Region){
                 node.computeCenterOfMass();
-                q = q.concat(node.childs);
-            } else {
+                q.push(node.childs);
+            } else if(node != undefined) if(node.barneshut != undefined){
                 var r = node.barneshut.region;
                 if(!r.contains(node)) {
                     exitQueque.push(node);
@@ -94,8 +94,7 @@ BarnesHut.prototype = {
             var curr = queque.shift();
             var node = curr.elem,
                 dsq = curr.dsq,
-                dr = particle.position.clone()
-                    .subSelf(node.position);
+                dr = particle.position.clone().subSelf(node.position);
             var drsq = dr.lengthSq();
             if(drsq < dsq){
                 if(node instanceof Region){
@@ -136,7 +135,7 @@ BarnesHut.prototype = {
         /// calcola l'accelerazione come
         // circa = m / (distance) ^ 3
 //        a.multiplyScalar(m*idr*idr*idr);
-        a.multiplyScalar(m*idr*idr);
+        a.multiplyScalar(m*idr*idr*idr/100);
         return a;
     },
     
