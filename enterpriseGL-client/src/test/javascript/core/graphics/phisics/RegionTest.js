@@ -1,13 +1,13 @@
 describe('Region Testing', function(){
     var p = [
-        {position: new THREE.Vector3(15,15,15)},
-        {position: new THREE.Vector3(12, 8, 8), getMass:function(){return 4;}},
-        {position: new THREE.Vector3( 8,12, 8), getMass:function(){return 4;}},
-        {position: new THREE.Vector3(12,12, 8)},
-        {position: new THREE.Vector3( 8, 8,12)},
-        {position: new THREE.Vector3(12, 8,12)},
-        {position: new THREE.Vector3( 8,12,12)},
-        {position: new THREE.Vector3(12,12,12)}
+        {position: new THREE.Vector3(15,15,15), barneshut: {}},
+        {position: new THREE.Vector3(12, 8, 8), barneshut: {}, getMass:function(){return 4;}},
+        {position: new THREE.Vector3( 8,12, 8), barneshut: {}, getMass:function(){return 4;}},
+        {position: new THREE.Vector3(12,12, 8), barneshut: {}},
+        {position: new THREE.Vector3( 8, 8,12), barneshut: {}},
+        {position: new THREE.Vector3(12, 8,12), barneshut: {}},
+        {position: new THREE.Vector3( 8,12,12), barneshut: {}},
+        {position: new THREE.Vector3(12,12,12), barneshut: {}}
     ];
     
     describe('Testing constutor', function(){
