@@ -8,14 +8,14 @@ function GraphicalSystem(){
     this.objects = [];
     // phisics configurations 
     this.forces = {
-        //barneshut:new Force(), 
+        barneshut:new Force(), 
         /// atraction between particles in relation
         relAttr: attractionForce(this.particles,0.02,2)};
     // other global variables
     this.numparticles = 0;    
     
     /// basrnes-hut
-    //this.forces.barneshut.type = Force.types.GLOBAL;
+    this.forces.barneshut.type = Force.types.GLOBAL;
     this.globalAlg = new BarnesHut();
         
 }
@@ -139,7 +139,7 @@ GraphicalSystem.prototype = {
         switch(type){
             case GraphicalSystem.events.ADD:
                 // TODO per le particelle effettuare l'insert nell'algoritmo globale
-                //this.globalAlg.insert(p);
+                //this.globalAlg.insert(props.primitive);
                 break;
             case GraphicalSystem.events.MODIFY:
                 // TODO avviare l'aggiornamento delle forze
@@ -179,6 +179,7 @@ GraphicalSystem.prototype = {
             this.particles[i].accelerations = new THREE.Vector3(0,0,0);
             this.particles[i].velocity = new THREE.Vector3(0,0,0);
         }
+        this.globalAlg.update();
         for(var findex in this.forces){
             // funzione che calcola la forza da applicare
             var force = this.forces[findex].force;
@@ -191,8 +192,11 @@ GraphicalSystem.prototype = {
                     this.globalAlg.configureFor(
                         this.forces[findex]);
                     // aggiunge il calcolo delle forze
-                    for(var i in this.particles)
-                        this.globalAlg.getForceFor(this.particles[i]);
+                    for(var i in this.particles){
+                        var a = this.globalAlg.getForceFor(this.particles[i]);
+                        log(a.length(), "LOG",true);
+                        this.particles[i].accelerations.addSelf(a);
+                    }
                     break;
                 case Force.types.LOCAL:                
                 default:
