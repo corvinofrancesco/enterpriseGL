@@ -10,7 +10,8 @@ function GraphicalSystem(){
     this.forces = {
         barneshut:new Force(), 
         /// atraction between particles in relation
-        relAttr: attractionForce(this.particles,0.02,2)};
+        relAttr: attractionForce(this.particles,0.02,2),
+        centreforce: gravitation(0.009)};
     // other global variables
     this.numparticles = 0;    
     
@@ -139,7 +140,7 @@ GraphicalSystem.prototype = {
         switch(type){
             case GraphicalSystem.events.ADD:
                 // TODO per le particelle effettuare l'insert nell'algoritmo globale
-                //this.globalAlg.insert(props.primitive);
+                this.globalAlg.insert(props.primitive);
                 break;
             case GraphicalSystem.events.MODIFY:
                 // TODO avviare l'aggiornamento delle forze

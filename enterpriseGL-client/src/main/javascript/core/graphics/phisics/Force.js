@@ -48,6 +48,17 @@ function attractionForce(particles, k, delta){
     return f;
 }
 
+function gravitation(g){
+    var f = new Force();
+    f.type = Force.types.LOCAL;
+    f.force = function(p) {
+        var dp = p.position.clone().normalize();
+        dp.multiplyScalar(-g);
+        p.accelerations.addSelf(dp)
+    }
+    return f;
+}
+
 function attrito(c){
     var f = new Force();
     f.type = Force.types.LOCAL;
