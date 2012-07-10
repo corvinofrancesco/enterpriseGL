@@ -20,12 +20,12 @@
             function log(msg,elem,override){
                 var idLog = "LOG";
                 if(elem) idLog = elem;
+                var object = document.getElementById(idLog);
+                if(!object) return;
                 if(override) {
-                    document.getElementById(idLog).
-                        innerHTML = (msg + "\n");                    
+                    object.innerHTML = (msg + "\n");                    
                 } else {
-                    document.getElementById(idLog).
-                        innerHTML += (msg + "\n");                    
+                    object.innerHTML += (msg + "\n");                    
                 }
             }
 
