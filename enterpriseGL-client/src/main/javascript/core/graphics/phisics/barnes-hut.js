@@ -112,7 +112,7 @@ BarnesHut.prototype = {
                 // le particelle come un unico corpo
                 a.addSelf(this.getForce(node,dr,drsq));
         }        
-        return a;
+        return a.multiplyScalar(particle.getMass());
     },
 
     /**
@@ -132,11 +132,49 @@ BarnesHut.prototype = {
         var idr = 1 / Math.sqrt(drsq + BarnesHutConfig.epssq()),
             a = dist.clone(),
             m = node.getMass();
+        if(a.lengthSq()<0.01){
+            a.set(Math.random(),Math.random(),Math.random()).normalize();
+        }
         /// calcola l'accelerazione come
         // circa = m / (distance) ^ 3
 //        a.multiplyScalar(m*idr*idr*idr);
         a.multiplyScalar(m*idr*idr*idr/100);
         return a;
+    },
+    
+    getFreeRegion: function(region){
+        var q = [region || this.root],
+            pointRegions = [],
+            peso = 0, head;
+        while(q.length>0){
+            var rcurr = q.shift();
+            if(!rcurr.childs) return rcurr.centre;
+            if(rcurr.childs.length==0) return rcurr.centre;
+            for(var rInd=0; rInd<8; rInd++){
+                var elem = rcurr.childs[rInd];
+                if(!elem) return rcurr.getCentreForSubRegion(rInd);
+                else if(elem instanceof Region){                    
+                    peso+= 0.125;
+                    q.push(elem);
+                    if(pointRegions.length>0){ // ci sono punti in coda
+                        head = pointRegions[0];
+                        if(head.peso - peso >= 1){ 
+                            // conviene creare un punto affianco al punto in coda 
+                            return head.region.getPosNextTo(head.index, head.particle);
+                        }
+                    }
+                } else {
+                    // aggiunge regione del punto
+                    pointRegions.push({
+                        region: rcurr, 
+                        index: rInd, 
+                        level: Math.round(peso), 
+                        particle: elem});
+                }
+            }            
+        }
+        head = pointRegions[0];
+        return head.region.getPosNextTo(head.index, head.particle);
     },
     
     /**
@@ -152,6 +190,6 @@ var BarnesHutConfig = {
         dthf : function(){return 0.5 * BarnesHutConfig.dtime;},
         tol: 0.5,
         itolsq : function(){return 1 / (BarnesHutConfig.tol * BarnesHutConfig.tol);},
-        eps: 0.05,
+        eps: 0.5,
         epssq: function(){return BarnesHutConfig.eps * BarnesHutConfig.eps;} 
 }

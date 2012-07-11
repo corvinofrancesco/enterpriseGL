@@ -66,6 +66,31 @@ Region.prototype = {
         });
     },
     
+    getPosNextTo: function(subRegionIndex,existP){
+        // ricava il centro della sotto regione 
+        // dove saranno collocati i due punti
+        var centre = this.getCentreForSubRegion(subRegionIndex);
+        // ricava l'indice del punto esistente nella sua regione
+        var r = new Region(centre.x,centre.y,centre.z);
+        var occIndex = r.getIndexRegionForParticle(existP);
+        // ritorna la posizione nella regione affianco al punto
+        return r.getCentreForSubRegion((occIndex+1)%8);        
+    },
+    
+    getCentreForSubRegion: function(regionIndex){
+        var offset = Region.centerVectors[regionIndex].clone()
+            .multiplyScalar(this.range * 0.5);
+        return this.centre.clone().addSelf(offset);        
+    },
+    
+    getIndexRegionForParticle: function(part){
+        var i =0;
+        if(this.centre.x < part.position.x) i = 1;
+        if(this.centre.y < part.position.y) i += 2;
+        if(this.centre.z < part.position.z) i += 4;
+        return i;
+    },
+    
     createSubRegion: function(regionIndex,addedP){
         var r = new Region(),
             p = this.childs[regionIndex],
@@ -95,10 +120,7 @@ Region.prototype = {
      * @param part particles to insert in the region
      */ 
     insert: function(part){
-        var i=0;
-        if(this.centre.x < part.position.x) i = 1;
-        if(this.centre.y < part.position.y) i += 2;
-        if(this.centre.z < part.position.z) i += 4;
+        var i=this.getIndexRegionForParticle(part);
         // update the region of particle
         part.barneshut.region = this;
         if(this.childs[i] == undefined) this.childs[i] = part;

@@ -77,5 +77,32 @@ describe('BarnesHut Testing',function(){
                expect(a.length()<0.1).toBe(true);
            });
            
-        });                
+        });        
+
+        describe("getFreeRegion() test", function(){
+           
+           it("Control if the position free is 0,0,0", function(){
+               var b = new BarnesHut();
+               expect(b.getFreeRegion().x).toBe(0);
+               expect(b.getFreeRegion().y).toBe(0);
+               expect(b.getFreeRegion().y).toBe(0);
+           });
+           
+           it("Insert (0,0,0) control new free space", function(){
+               var b = new BarnesHut(),
+                   p = {position: new THREE.Vector3(0,0,0)},
+                   t,v;
+               b.insert(p);
+               t = {position: b.getFreeRegion()};
+               expect(t.position.x).not.toBe(0);
+               expect(t.position.y).not.toBe(0);
+               expect(t.position.z).not.toBe(0);                              
+               v = {position: b.insert(t)};
+               expect(v.position.x).not.toBe(t.position.x);
+               expect(v.position.y).not.toBe(t.position.y);
+               expect(v.position.z).not.toBe(t.position.z);                              
+           })
+           
+
+        });
 });

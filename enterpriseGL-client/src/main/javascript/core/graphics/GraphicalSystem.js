@@ -43,12 +43,15 @@ GraphicalSystem.prototype = {
      * @return if the space is empty return (0,0,0)
      */
     getFreeSpace: function(){
+       // use global algorithm to find a free space
         if(this.size()>0){
-            var b = new THREE.Vector3(2,2,0); 
-            b.addSelf(this.objects[this.size()-1].position);
-            return b;
+            var res =  this.globalAlg.getFreeRegion();
+            if(!(res instanceof THREE.Vector3)) {
+                res = new THREE.Vector3(2,2,0); 
+                res.addSelf(this.objects[this.size()-1].position);
+            } 
+            return res;
         }
-       //TODO use global algorith to find a free space
        return new THREE.Vector3(0,0,0);
     },
     
@@ -56,10 +59,14 @@ GraphicalSystem.prototype = {
      * Try to return the nearest free position to a particle
      * @return null if the particle don't exist
      */
-    getSpaceNextTo: function(idParticle){
+    getSpaceNextTo: function(idParticle){        
        //TODO use global algorith to find a free space next to particle
-       var p = this.particles[idParticle],v = new THREE.Vector3(0,0,2);
-       if(p) return v.addSelf(p.position);
+       var p = this.particles[idParticle],v = new THREE.Vector3(0,0,2);       
+       try {
+           var pos = this.globalAlg.getFreeRegion(p.barneshut.region);
+           if(pos instanceof THREE.Vector3) return pos;
+           return v.addSelf(p.position);
+       } catch(e){ }
        return null;
     },
     
