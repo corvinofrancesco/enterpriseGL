@@ -3,10 +3,11 @@
  */
 function  EntModel(){
     this.loader = new Loader();
+    this.loader.callback = this.update;
     this.graphics = null;
     this.currentEventId = "event0"; 
     new EntObjects();
-    Simulation();
+    Simulation2();
 }
 
 EntModel.prototype = {
@@ -43,7 +44,8 @@ EntModel.prototype = {
      * Call back function for loader
      */
     update : function(){
-        
+//        this.loader.wait();
+//        this.graphics.updateModel(this.currentEventId);
     },
     
     /**
@@ -166,5 +168,38 @@ function Simulation1(){
         nametime: new Date(),
         descriptio: "A fist event for testing graphical system",
         objects: [part2, part3]
+    }); event0.register();
+}
+
+function Simulation2(){    
+    var event0 = new EntEvent(),
+        parts = [],
+        numPart = 5000;
+
+    for(var i =0;i<numPart;i++){
+        var part = new EntParticle();        
+        var relCasual = [],
+            rndInd = Math.round(Math.random()* 5);
+        for(var j =0;j<rndInd;j++) {
+            var rndId = Math.round(Math.random()*numPart);
+            var id = "part" + rndId;
+            if(EntObjects.get(id)) relCasual.push(id);
+        }
+        part.setProperties({
+            id: 'part' + i,
+            title: "Particella "+ i,
+            body: "Particella d'esempio numero "+i,
+            relations: relCasual    
+        }); part.register();
+        
+        parts.push(part);
+    }
+
+
+    event0.setProperties({
+        id: 'event0',
+        nametime: new Date(),
+        descriptio: "A fist event for testing graphical system",
+        objects: parts
     }); event0.register();
 }
