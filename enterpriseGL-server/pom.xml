@@ -17,6 +17,13 @@
 
     <dependencies>
 
+        <!-- Poi jar for excel imports -->
+        <dependency>
+            <groupId>poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.1-FINAL</version>
+        </dependency>
+        
         <!-- Spring MVC -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -24,7 +31,14 @@
             <version>${spring.version}</version>
             <optional>false</optional>
         </dependency>
-        
+
+        <!-- Jakarta Commons -->
+        <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>1.1.1</version>
+        </dependency>
+                
         <!-- Dwr -->
         <dependency>
             <groupId>uk.ltd.getahead</groupId>
