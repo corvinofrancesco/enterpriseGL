@@ -32,7 +32,9 @@ function attractionForce(particles, k, delta){
             // vector D - P
             var dp = d.position.clone().subSelf(p.position);
             l = dp.length();
-            if(l==0) continue;
+            if(l==0) {
+                dp.set(Math.random(),Math.random(),Math.random());
+            }
             if(l<delta - 0.5) dp.negate();
             else if(l<delta + 0.5) continue;
             dp.multiplyScalar(k);

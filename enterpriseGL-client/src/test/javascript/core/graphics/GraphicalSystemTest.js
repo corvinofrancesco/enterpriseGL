@@ -22,10 +22,11 @@ describe('GraphicalSystem Test', function(){
             });
             
             it('Control if with a particle the result is a valid position', function(){
-                sys.particles['part1'] = {
+                var part1 = {
                     position : new THREE.Vector3(0,0,0),
                     modelReference: 'part1'
                 };
+                sys.add(part1);
                 var v = sys.getSpaceNextTo('part1'); 
                 expect(v).not.toBe(null);
             });
