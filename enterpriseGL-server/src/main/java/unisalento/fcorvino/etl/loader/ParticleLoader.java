@@ -13,7 +13,7 @@ import unisalento.fcorvino.etl.EtlLoadBean.EtlLoadTypes;
  */
 public class ParticleLoader implements EtlLoadBean<Particle> {
     
-    Map<Integer,Field> fields = new HashMap<Integer, Field>();
+    private Map<Integer,Field> fields = new HashMap<Integer, Field>();
 
     public void addField(Integer id, EtlLoadTypes type, Object value) {
         Field f = new Field(id,type,value);
@@ -30,7 +30,7 @@ public class ParticleLoader implements EtlLoadBean<Particle> {
         try {
             Integer id = (Integer) fields.get(0).value;
             String shortText = (String) fields.get(1).value;
-            String longText = (String) fields.get(1).value;
+            String longText = (String) fields.get(2).value;
             // 4 data data
             p = new Particle(id);
             p.setDefinition(shortText);

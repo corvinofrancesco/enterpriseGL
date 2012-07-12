@@ -4,6 +4,7 @@ import unisalento.fcorvino.beans.Model;
 import unisalento.fcorvino.etl.excel.HSSFExcel;
 import unisalento.fcorvino.etl.excel.XSSFExcel;
 import unisalento.fcorvino.etl.loader.ParticleLoader;
+import unisalento.fcorvino.etl.loader.RelationLoader;
 
 /**
  *
@@ -78,7 +79,7 @@ public class EtlBaseContext implements EtlContext {
     public EtlLoadBean getImporter() {
         switch(this.entriesType){
             case Particle: return new ParticleLoader();
-            case Relation:
+            case Relation: return new RelationLoader();
         }
         return null;
     }
