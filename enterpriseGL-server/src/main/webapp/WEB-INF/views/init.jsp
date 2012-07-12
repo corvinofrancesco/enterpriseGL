@@ -12,7 +12,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>Crea modello</h1>
         <form method="post" action="/form" enctype="multipart/form-data">
             <input type="text" name="name"/>
             <input type="file" name="file"/>
