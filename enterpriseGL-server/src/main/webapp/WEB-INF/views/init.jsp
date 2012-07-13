@@ -4,19 +4,63 @@
     Author     : Francesco Corvino
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page contentType="text/html" pageEncoding="windows-1252"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-        <title>JSP Page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Home</title>
     </head>
     <body>
-        <h1>Crea modello</h1>
-        <form method="post" action="/form" enctype="multipart/form-data">
-            <input type="text" name="name"/>
-            <input type="file" name="file"/>
-            <input type="submit"/>
-        </form>
+        <form:form action="/create">
+            <fieldset>
+                <div class="form-row">
+                    <label for="name">Nome da assegnare al modello:</label>
+                    <span class="input"><input type="text" name="name" /></span>
+                </div>
+                <div class="form-row">
+                    <label for="name">Tipo di modello</label>
+                    <span class="input"><select name="typeOfModel" ></select></span>
+                </div>
+                <div class="form-buttons">
+                    <div class="button">
+                        <input type="submit" id="save" name="_eventId_save" value="Crea"/>
+                        <input type="submit" name="_eventId_cancel" value="Cancel"/>          
+                    </div>    
+                </div>
+            </fieldset>
+        </form:form>
+    
+        <c:if test="${empty models}">
+            <p>Nessun modello caricato</p>
+        </c:if>
+
+        <c:if test="${not empty models}">
+        <table class="search">
+            <tr>
+                <th>Nome del modello</th>
+                <th>Stato</th>
+                <th>Ultima modifica</th>
+                <th>Tabelle caricate</th>
+                <th>Operazioni</th>
+            </tr>
+        <c:forEach var="model" items="${models}">
+        <tr>
+                <td>${model.name}</td>
+                <td>${model.status}</td>
+                <td>${model.lastChange}</td>
+                <td></td>
+                <td>Visualizza - Modifica ${model.name}</td> 
+                <td>
+                    <a href="${flowExecutionUrl}&_eventId=editAddress&addressId=${address.id}" >Edit</a>
+                    <a href="${flowExecutionUrl}&_eventId=deleteAddress&addressId=${address.id}" >Elimina</a>
+                </td>
+        </tr>
+        </c:forEach>
+        </table>        
+        </c:if>
+            
+        <a href='<c:url value="/create" />' >Create a new model</a>    
     </body>
 </html>
