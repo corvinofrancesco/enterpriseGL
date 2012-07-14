@@ -13,24 +13,6 @@
         <title>Home</title>
     </head>
     <body>
-        <form:form action="/create">
-            <fieldset>
-                <div class="form-row">
-                    <label for="name">Nome da assegnare al modello:</label>
-                    <span class="input"><input type="text" name="name" /></span>
-                </div>
-                <div class="form-row">
-                    <label for="name">Tipo di modello</label>
-                    <span class="input"><select name="typeOfModel" ></select></span>
-                </div>
-                <div class="form-buttons">
-                    <div class="button">
-                        <input type="submit" id="save" name="_eventId_save" value="Crea"/>
-                        <input type="submit" name="_eventId_cancel" value="Cancel"/>          
-                    </div>    
-                </div>
-            </fieldset>
-        </form:form>
     
         <c:if test="${empty models}">
             <p>Nessun modello caricato</p>
@@ -52,12 +34,12 @@
                 <td>${model.lastChange}</td>
                 <td>
                     <c:if test="${not empty model.typeModel.tables}">
-                        ${model.typeModel.tables.size}
+                        ${model.typeModel.tables.size()}
                     </c:if>                
                 </td>
                 <td>Visualizza - Modifica ${model.name}</td> 
                 <td>
-                    <a href="${flowExecutionUrl}&_eventId=editAddress&addressId=${address.id}" >Edit</a>
+                    <a href='<s:url value="" />' >Edit</a>
                     <a href="${flowExecutionUrl}&_eventId=deleteAddress&addressId=${address.id}" >Elimina</a>
                 </td>
         </tr>
