@@ -6,11 +6,12 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,22 +61,22 @@ public class ModelLoader {
             }
             HSSFWorkbook workBook = new HSSFWorkbook (fileSystem);
             HSSFSheet sheet = workBook.getSheetAt (0);
-            Iterator<HSSFRow> rows = sheet.rowIterator();
+            Iterator<Row> rows = sheet.rowIterator();
  
             //for each row in the spreadsheet
             while (rows.hasNext()){
-                HSSFRow row = rows.next();
+                Row row = rows.next();
  
                 // display row number in the console.
                 System.out.println ("Row No.: " + row.getRowNum());
  
                 // once get a row its time to iterate through cells.
-                Iterator<HSSFCell> cells = row.cellIterator();
+                Iterator<Cell> cells = row.cellIterator();
  
                 while (cells.hasNext ()){
-                    HSSFCell cell = cells.next();
+                    Cell cell = cells.next();
  
-                    System.out.println ("Cell No.: " + cell.getCellNum());
+                    System.out.println ("Cell No.: " + cell.getColumnIndex());
  
                     /*
                      * Now we will get the cell type and display the values
@@ -92,7 +93,7 @@ public class ModelLoader {
                         case HSSFCell.CELL_TYPE_STRING :
                         {                      
                             // cell type string.
-                            HSSFRichTextString richTextString = cell.getRichStringCellValue ();
+                            RichTextString richTextString = cell.getRichStringCellValue ();
  
                             System.out.println ("String value: " + richTextString.getString ());
  
