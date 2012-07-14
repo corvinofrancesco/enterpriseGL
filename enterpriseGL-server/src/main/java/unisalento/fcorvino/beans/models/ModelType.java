@@ -11,6 +11,10 @@ public class ModelType {
     private String typeId;
     private Set<ModelTable> tables = new HashSet<ModelTable>();
 
+    public ModelType(String typeId) {
+        this.typeId = typeId;
+    }    
+
     public Set<ModelTable> getTables() {
         return tables;
     }

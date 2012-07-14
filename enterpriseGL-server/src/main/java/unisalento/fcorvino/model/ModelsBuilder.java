@@ -26,33 +26,33 @@ public class ModelsBuilder {
     
     static {
         // modello con particelle e relazioni
-        ModelType simpleParticle = new ModelType();
+        ModelType simpleParticle = new ModelType("simple nodes");
         simpleParticle.getTables().add(
                 new ModelTable("particles","Describe all particles of a system.",new ParticleLoader()));
         simpleParticle.getTables().add(
                 new ModelTable("relations","Describe all relations between particles of the system.",new RelationLoader()));
         modelTypes.put("simple nodes", simpleParticle);
         // modello dei dipendenti: un'unica tabella con dipendenti e gerarchia
-        ModelType personal = new ModelType();
+        ModelType personal = new ModelType("personal");
         personal.getTables().add(
                 new ModelTable("employees","Describe all employees of the enterprise and their hierarchy.",new ParticleLoader()));
         modelTypes.put("personal", personal);
         // modello dei servizi: una tabella per i servizi e una per le relazioni
-        ModelType servicesRes = new ModelType();
+        ModelType servicesRes = new ModelType("services resources");
         servicesRes.getTables().add(
                 new ModelTable("services","Describe all services of the enterprise.",new ParticleLoader()));
         servicesRes.getTables().add(
                 new ModelTable("relationsServ","Describe all relations between services.",new RelationLoader()));
         modelTypes.put("services resources", servicesRes);
         // modello delle applicazioni: una tabella per le applicazioni e una per le relazioni
-        ModelType applicationsRes = new ModelType();
+        ModelType applicationsRes = new ModelType("applications resources");
         applicationsRes.getTables().add(
                 new ModelTable("applications","Describe all applications of the enterprise.",new ParticleLoader()));
         applicationsRes.getTables().add(
                 new ModelTable("relationsApp","Describe all relations between aplications.",new RelationLoader()));
         modelTypes.put("applications resources", applicationsRes);
         // modello dell'hardware: una tabella degli items e una per le relazioni
-        ModelType hardwareRes = new ModelType();
+        ModelType hardwareRes = new ModelType("hardware resources");
         hardwareRes.getTables().add(
                 new ModelTable("hardware","Describe all hardware devices of the enterprise.",new ParticleLoader()));
         hardwareRes.getTables().add(
