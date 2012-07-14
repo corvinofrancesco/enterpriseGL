@@ -4,6 +4,7 @@
     Author     : Francesco Corvino
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -33,14 +34,13 @@
                 <td>${model.status}</td>
                 <td>${model.lastChange}</td>
                 <td>
+                    ${model.typeModel.id}
                     <c:if test="${not empty model.typeModel.tables}">
                         ${model.typeModel.tables.size()}
                     </c:if>                
                 </td>
-                <td>Visualizza - Modifica ${model.name}</td> 
-                <td>
-                    <a href='<s:url value="" />' >Edit</a>
-                    <a href="${flowExecutionUrl}&_eventId=deleteAddress&addressId=${address.id}" >Elimina</a>
+                <td><a href='<s:url value="/edit/${model.name}" />' >Edit</a></td> 
+                <td><a href='<s:url value="/view/${model.name}" />' >View</a>
                 </td>
         </tr>
         </c:forEach>

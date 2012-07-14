@@ -60,8 +60,8 @@ public class Welcome {
         return null;
     }
 
-    @RequestMapping(value = "edit")
-    public String editModel() {
+    @RequestMapping(value = "edit/{name}")
+    public String editModel(@PathVariable String name) {
 
         return "edit";
     }
