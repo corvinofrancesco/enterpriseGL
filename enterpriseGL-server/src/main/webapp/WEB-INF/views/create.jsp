@@ -3,6 +3,8 @@
     Created on : 12-lug-2012, 16.06.32
     Author     : Francesco Corvino
 --%>
+<%@page import="java.util.Set"%>
+<%@page import="unisalento.fcorvino.model.ModelsBuilder"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
@@ -29,14 +31,14 @@
     </fieldset>
     <fieldset>
         <legend>Type of model to create</legend>
-        <form:label path="inquiry">
+        <form:label path="type">
             Type (select one)
         </form:label>
-        <form:select path="inquiry">
-            <form:option value="employees">Employees</form:option>
-            <form:option value="resources">Resources</form:option>
-            <form:option value="process">Process</form:option>
-        </form:select>
+        <%
+        Set list = ModelsBuilder.getTypes();
+        request.setAttribute("list",list);
+        %>
+        <form:select path="type" items="${requestScope['list']}" />
     </fieldset>
     <fieldset>
         <legend>Source data of model</legend>
