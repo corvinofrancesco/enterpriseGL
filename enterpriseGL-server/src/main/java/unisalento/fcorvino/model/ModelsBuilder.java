@@ -25,16 +25,39 @@ public class ModelsBuilder {
     private static Map<String,ModelType> modelTypes = new HashMap<String, ModelType>();
     
     static {
+        // modello con particelle e relazioni
         ModelType simpleParticle = new ModelType();
         simpleParticle.getTables().add(
                 new ModelTable("particles","Describe all particles of a system.",new ParticleLoader()));
         simpleParticle.getTables().add(
                 new ModelTable("relations","Describe all relations between particles of the system.",new RelationLoader()));
         modelTypes.put("simple nodes", simpleParticle);
-        ModelType personal = new ModelType();        
-        //TODO configure personal model type
+        // modello dei dipendenti: un'unica tabella con dipendenti e gerarchia
+        ModelType personal = new ModelType();
+        personal.getTables().add(
+                new ModelTable("employees","Describe all employees of the enterprise and their hierarchy.",new ParticleLoader()));
         modelTypes.put("personal", personal);
-        //TODO add other model types
+        // modello dei servizi: una tabella per i servizi e una per le relazioni
+        ModelType servicesRes = new ModelType();
+        servicesRes.getTables().add(
+                new ModelTable("services","Describe all services of the enterprise.",new ParticleLoader()));
+        servicesRes.getTables().add(
+                new ModelTable("relationsServ","Describe all relations between services.",new RelationLoader()));
+        modelTypes.put("services resources", servicesRes);
+        // modello delle applicazioni: una tabella per le applicazioni e una per le relazioni
+        ModelType applicationsRes = new ModelType();
+        applicationsRes.getTables().add(
+                new ModelTable("applications","Describe all applications of the enterprise.",new ParticleLoader()));
+        applicationsRes.getTables().add(
+                new ModelTable("relationsApp","Describe all relations between aplications.",new RelationLoader()));
+        modelTypes.put("applications resources", applicationsRes);
+        // modello dell'hardware: una tabella degli items e una per le relazioni
+        ModelType hardwareRes = new ModelType();
+        hardwareRes.getTables().add(
+                new ModelTable("hardware","Describe all hardware devices of the enterprise.",new ParticleLoader()));
+        hardwareRes.getTables().add(
+                new ModelTable("relationsHw","Describe all relations between hardware devices.",new RelationLoader()));
+        modelTypes.put("hardware resources", hardwareRes);
     } 
 
     public Model getModel() {
