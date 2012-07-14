@@ -8,17 +8,9 @@ public class ModelBean {
 
     private String name;
     
-    private String inquiry;
+    private String type;
     
     private String source;
-
-    public String getInquiry() {
-        return inquiry;
-    }
-
-    public void setInquiry(String inquiry) {
-        this.inquiry = inquiry;
-    }
 
     public String getName() {
         return name;
@@ -34,6 +26,14 @@ public class ModelBean {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
     
 }

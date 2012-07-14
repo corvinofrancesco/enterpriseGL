@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import unisalento.fcorvino.beans.models.ModelTable;
+import unisalento.fcorvino.beans.models.ModelType;
 
 /**
  *
@@ -20,11 +20,12 @@ public class Model {
     private TreeSet<Particle> particles;
     private List relations;
     private String name;
-    private ModelTable typeModel;
+    private ModelType typeModel;
     private Date lastChange;
     private ModelStatus status;
     
     public Model(){
+        this.status = ModelStatus.Incomplete;
         this.particles = new TreeSet();
         this.relations = new ArrayList();
     }
@@ -74,11 +75,11 @@ public class Model {
         this.status = status;
     }
 
-    public ModelTable getTypeModel() {
+    public ModelType getTypeModel() {
         return typeModel;
     }
 
-    public void setTypeModel(ModelTable typeModel) {
+    public void setTypeModel(ModelType typeModel) {
         this.typeModel = typeModel;
     }
 

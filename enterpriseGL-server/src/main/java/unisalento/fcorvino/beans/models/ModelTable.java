@@ -11,6 +11,12 @@ public class ModelTable {
     private String description;
     private EtlLoadBean loader;
 
+    public ModelTable(String name, String description, EtlLoadBean loader) {
+        this.name = name;
+        this.description = description;
+        this.loader = loader;
+    }
+
     public String getDescription() {
         return description;
     }
