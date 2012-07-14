@@ -99,7 +99,7 @@ public class ModelsBuilder {
     public void setType(String type){
        if(modelTypes.containsKey(type)){
            current.setTypeModel(modelTypes.get(type));
-       } 
+       } else System.out.println("Not found: " + type);
     }
     
     public static Set<String> getTypes(){
@@ -111,7 +111,8 @@ public class ModelsBuilder {
      * @return true if the configured model is valid
      */
     public Boolean isValid(){
-        if(factory.getModel(current.getName())==null) return false;        
+        if(current.getName()==null) return false;
+        if(factory.getModel(current.getName())!=null) return false;        
         if(current.getTypeModel()==null) return false;
         if(current.getStatus()!=ModelStatus.Incomplete){
             if(current.getParticles().isEmpty()) return false;

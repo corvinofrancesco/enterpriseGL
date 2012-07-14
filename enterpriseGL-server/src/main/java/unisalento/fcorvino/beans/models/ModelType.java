@@ -1,5 +1,6 @@
 package unisalento.fcorvino.beans.models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Set;
  */
 public class ModelType {
     private String typeId;
-    private Set<ModelTable> tables;
+    private Set<ModelTable> tables = new HashSet<ModelTable>();
 
     public Set<ModelTable> getTables() {
         return tables;

@@ -39,18 +39,22 @@
         <c:if test="${not empty models}">
         <table class="search">
             <tr>
-                <th>Nome del modello</th>
-                <th>Stato</th>
-                <th>Ultima modifica</th>
-                <th>Tabelle caricate</th>
-                <th>Operazioni</th>
+                <th>Model name</th>
+                <th>Status</th>
+                <th>Last change</th>
+                <th>Numbers of requred tables</th>
+                <th>Actions</th>
             </tr>
         <c:forEach var="model" items="${models}">
         <tr>
                 <td>${model.name}</td>
                 <td>${model.status}</td>
                 <td>${model.lastChange}</td>
-                <td></td>
+                <td>
+                    <c:if test="${not empty model.typeModel.tables}">
+                        ${model.typeModel.tables.size}
+                    </c:if>                
+                </td>
                 <td>Visualizza - Modifica ${model.name}</td> 
                 <td>
                     <a href="${flowExecutionUrl}&_eventId=editAddress&addressId=${address.id}" >Edit</a>

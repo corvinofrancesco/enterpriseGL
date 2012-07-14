@@ -20,8 +20,8 @@ public class Model {
     private TreeSet<Particle> particles;
     private List relations;
     private String name;
-    private ModelType typeModel;
-    private Date lastChange;
+    private ModelType typeModel = null;
+    private Date lastChange = null;
     private ModelStatus status;
     
     public Model(){
