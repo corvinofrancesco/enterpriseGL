@@ -27,4 +27,10 @@ public class ModelsFactory {
     public void addModel(Model model){
         models.add(model);
     }
+
+    public boolean remove(String name) {
+        Model m = new Model();
+        m.setName(name);
+        return models.remove(m);
+    }
 }

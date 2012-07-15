@@ -32,8 +32,9 @@ public class ModelLoader {
     }
     
     @RequestMapping(value = "/form", method= RequestMethod.POST)
-    public String handleUpload(@RequestParam("name") String name,
-        @RequestParam("file") MultipartFile file) {
+    public String handleUpload(
+            @RequestParam("name") String name,
+            @RequestParam("file") MultipartFile file) {
         
         if(!file.isEmpty()) {
             try {
