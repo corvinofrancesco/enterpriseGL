@@ -6,47 +6,52 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
+<c:if test="${!ajaxRequest}">
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Home</title>
-    </head>
-    <body>
-    
-        <c:if test="${empty models}">
-            <p>Nessun modello caricato</p>
-        </c:if>
+<head>
+	<title>Home</title>
+	<link href="<c:url value="/resources/form.css" />" rel="stylesheet"  type="text/css" />		
+	<script type="text/javascript" src="<c:url value="/resources/jquery/1.6/jquery.js" />"></script>
+	<script type="text/javascript" src="<c:url value="/resources/jqueryform/2.8/jquery.form.js" />"></script>	
+</head>
+<body>
+</c:if>
+    <c:if test="${empty models}">
+        <p>Nessun modello caricato</p>
+    </c:if>
 
-        <c:if test="${not empty models}">
-        <table class="search">
-            <tr>
-                <th>Model name</th>
-                <th>Status</th>
-                <th>Last change</th>
-                <th>Numbers of requred tables</th>
-                <th>Actions</th>
-            </tr>
-        <c:forEach var="model" items="${models}">
+    <c:if test="${not empty models}">
+    <table class="search" border="3">
         <tr>
-                <td>${model.name}</td>
-                <td>${model.status}</td>
-                <td>${model.lastChange}</td>
-                <td>
-                    ${model.typeModel.id}
-                    <c:if test="${not empty model.typeModel.tables}">
-                        ${model.typeModel.tables.size()}
-                    </c:if>                
-                </td>
-                <td><a href='<s:url value="/edit/${model.name}" />' >Edit</a></td> 
-                <td><a href='<s:url value="/view/${model.name}" />' >View</a>
-                </td>
+            <th>Model name</th>
+            <th>Status</th>
+            <th>Last change</th>
+            <th>Numbers of requred tables</th>
+            <th>Actions</th>
         </tr>
-        </c:forEach>
-        </table>        
-        </c:if>
+    <c:forEach var="model" items="${models}">
+    <tr>
+            <td>${model.name}</td>
+            <td>${model.status}</td>
+            <td>${model.lastChange}</td>
+            <td>
+                ${model.typeModel.typeId}:
+                <c:if test="${not empty model.typeModel.tables}">
+                    ${model.typeModel.tables.size()}
+                </c:if>                
+            </td>
+            <td>
+                <a href='<s:url value="/view/${model.name}" />' >View</a>
+                <a href='<s:url value="/edit/${model.name}" />' >Edit</a>
+                <a href='<s:url value="/delete/${model.name}" />' >Delete</a>
+            </td>
+    </tr>
+    </c:forEach>
+    </table>        
+    </c:if>
             
-        <a href='<c:url value="/create" />' >Create a new model</a>    
-    </body>
+    <a href='<c:url value="/create" />' >Create a new model</a>    
+<c:if test="${!ajaxRequest}">
+</body>
 </html>
+</c:if>
