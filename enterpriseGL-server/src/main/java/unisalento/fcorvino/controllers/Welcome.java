@@ -19,7 +19,7 @@ import unisalento.fcorvino.model.ModelsFactory;
  * @author Francesco Corvino
  */
 @Controller
-@RequestMapping(value = "/")
+@RequestMapping(value = "/",  headers="ajaxRequest")
 @SessionAttributes("modelBean")
 public class Welcome {
 
