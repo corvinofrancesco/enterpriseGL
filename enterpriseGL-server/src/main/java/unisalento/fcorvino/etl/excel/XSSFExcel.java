@@ -1,7 +1,15 @@
 package unisalento.fcorvino.etl.excel;
 
+import java.io.InputStream;
 import java.util.Iterator;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import unisalento.fcorvino.etl.EtlLoadBean.EtlLoadTypes;
 
 /**
@@ -11,38 +19,56 @@ import unisalento.fcorvino.etl.EtlLoadBean.EtlLoadTypes;
 public class XSSFExcel extends Excel {
 
     @Override
-    public Iterator getRowsIterator(POIFSFileSystem fileSystem) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Iterator getRowsIterator(InputStream fileSystem) throws Exception {
+        Workbook workBook = new XSSFWorkbook(fileSystem);
+        Sheet sheet = workBook.getSheetAt (0);
+        Iterator<Row> rows = sheet.rowIterator();        
+        return rows;
     }
 
     @Override
     public Iterator getCellIterator(Object row) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Row xssfrow = (Row) row;
+        return xssfrow.cellIterator();
     }
 
     @Override
     public Integer getNumCell(Object cell) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Cell xssfcell = (Cell) cell;
+        return new Integer(xssfcell.getColumnIndex());   
     }
 
     @Override
     public EtlLoadTypes getTypeCell(Object cell) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Cell xssfcell = (Cell) cell;
+        EtlLoadTypes type = null;
+        switch(xssfcell.getCellType()){
+            case Cell.CELL_TYPE_NUMERIC: return EtlLoadTypes.EtlNumeric;
+            case Cell.CELL_TYPE_STRING: return EtlLoadTypes.EtlText;
+        }
+        return type;
     }
 
     @Override
     public String getStringCell(Object cell) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Cell xssfcell = (Cell) cell;
+        RichTextString richTextString =
+                xssfcell.getRichStringCellValue();
+        return richTextString.getString();
     }
 
     @Override
     public Integer getIntegerCell(Object cell) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Cell xssfcell = (Cell) cell;
+        int ret = (int) xssfcell.getNumericCellValue();
+        Integer i = new Integer(ret);
+        return i;
     }
 
     @Override
     public Double getDoubleCell(Object cell) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Cell xssfcell = (Cell) cell;
+        return xssfcell.getNumericCellValue();
     }
     
 }

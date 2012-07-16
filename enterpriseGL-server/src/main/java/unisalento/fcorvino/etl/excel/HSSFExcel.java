@@ -1,5 +1,6 @@
 package unisalento.fcorvino.etl.excel;
 
+import java.io.InputStream;
 import java.util.Iterator;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -7,6 +8,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Row;
 import unisalento.fcorvino.etl.EtlLoadBean.EtlLoadTypes;
 
 /**
@@ -16,11 +18,11 @@ import unisalento.fcorvino.etl.EtlLoadBean.EtlLoadTypes;
 public class HSSFExcel extends Excel{
 
     @Override
-    public Iterator getRowsIterator(POIFSFileSystem fileSystem) 
+    public Iterator getRowsIterator(InputStream fileSystem) 
             throws Exception {
         HSSFWorkbook workBook = new HSSFWorkbook (fileSystem);
         HSSFSheet sheet = workBook.getSheetAt (0);
-        Iterator<HSSFRow> rows = sheet.rowIterator();        
+        Iterator<Row> rows = sheet.rowIterator();        
         return rows;
     }
 

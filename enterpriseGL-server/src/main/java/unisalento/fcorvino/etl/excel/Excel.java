@@ -1,6 +1,7 @@
 package unisalento.fcorvino.etl.excel;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Iterator;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import unisalento.fcorvino.beans.Model;
@@ -19,8 +20,7 @@ public abstract class Excel implements EtlStrategy {
         Iterator rows = null;         
         try{ 
             //get the excel document
-            POIFSFileSystem fileSystem = new POIFSFileSystem(
-                    new ByteArrayInputStream(context.getBytes()));            
+            InputStream fileSystem = new ByteArrayInputStream(context.getBytes());            
             rows = getRowsIterator(fileSystem);
         } catch (Exception e) { 
             return m;
@@ -50,7 +50,7 @@ public abstract class Excel implements EtlStrategy {
         return m;
     }
     
-    abstract public Iterator getRowsIterator(POIFSFileSystem fileSystem) throws Exception;
+    abstract public Iterator getRowsIterator(InputStream fileSystem) throws Exception;
     
     abstract public Iterator getCellIterator(Object row);
     
