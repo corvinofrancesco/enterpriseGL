@@ -8,6 +8,8 @@ import unisalento.fcorvino.beans.Model;
 import unisalento.fcorvino.beans.Model.ModelStatus;
 import unisalento.fcorvino.beans.models.ModelTable;
 import unisalento.fcorvino.beans.models.ModelType;
+import unisalento.fcorvino.etl.EtlBaseContext;
+import unisalento.fcorvino.etl.EtlContext;
 import unisalento.fcorvino.etl.loader.ParticleLoader;
 import unisalento.fcorvino.etl.loader.RelationLoader;
 
@@ -23,7 +25,7 @@ public class ModelsBuilder {
     private ModelsFactory factory = new ModelsFactory();
     
     private static Map<String,ModelType> modelTypes = new HashMap<String, ModelType>();
-    
+            
     static {
         // modello con particelle e relazioni
         ModelType simpleParticle = new ModelType("simple nodes");
@@ -57,7 +59,7 @@ public class ModelsBuilder {
                 new ModelTable("hardware","Describe all hardware devices of the enterprise.",new ParticleLoader()));
         hardwareRes.getTables().add(
                 new ModelTable("relationsHw","Describe all relations between hardware devices.",new RelationLoader()));
-        modelTypes.put("hardware resources", hardwareRes);
+        modelTypes.put("hardware resources", hardwareRes);        
     } 
 
     public Model getModel() {
@@ -130,6 +132,29 @@ public class ModelsBuilder {
         current.setLastChange(new Date());        
         factory.addModel(current);
         return true;
+    }
+    
+    /**
+     * Load a model in the factory
+     * 
+     * @param name identificator of model
+     * @return 
+     */
+    public Boolean loadModel(String name){
+        this.current = factory.getModel(name);
+        if(this.current == null) return false;
+        return true;
+    }
+    
+    public EtlContext getContext(){
+        EtlBaseContext context = new EtlBaseContext();
+        context.setModel(current);
+        return context;
+    }
+    
+    public Boolean save(){
+        /** TODO make serialization of model */
+        return false;
     }
 
 }

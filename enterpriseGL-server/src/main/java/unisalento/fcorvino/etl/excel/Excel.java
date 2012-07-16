@@ -36,13 +36,16 @@ public abstract class Excel implements EtlStrategy {
                 EtlLoadBean.EtlLoadTypes type = getTypeCell(cell);
                 // TODO ricava il valore dell'attributo
                 Object value = null;
-                switch(type){
-                    case EtlText: value = getStringCell(cell); break;
-                    case EtlNumeric: value = getIntegerCell(cell); break;
-                    case EtlData:
-                    default:
+                if(type!=null){
+                    switch(type){
+                        case EtlText: value = getStringCell(cell); break;
+                        case EtlNumeric: value = getIntegerCell(cell); break;
+                        case EtlData:
+                        default:
+                            continue;
+                    }
+                    importer.addField( id, type, value);
                 }
-                importer.addField( id, type, value);
             }
             importer.addBeanTo(context.getModel());
             importer.clearData();

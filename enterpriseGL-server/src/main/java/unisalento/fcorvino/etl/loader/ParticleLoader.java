@@ -22,6 +22,7 @@ public class ParticleLoader implements EtlLoadBean<Particle> {
 
     public void addBeanTo(Model m) {
         Particle p = getBean();
+        p.setId((Integer) fields.get(0).value);
         if(p!=null) m.getParticles().add(p);
     }
 

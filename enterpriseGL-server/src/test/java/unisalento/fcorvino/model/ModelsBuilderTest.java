@@ -4,13 +4,10 @@
  */
 package unisalento.fcorvino.model;
 
-import com.sun.xml.internal.bind.v2.model.impl.ModelBuilder;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import junit.framework.TestCase;
 import unisalento.fcorvino.beans.Model;
-import unisalento.fcorvino.beans.Model.ModelStatus;
 
 /**
  *
@@ -49,16 +46,16 @@ public class ModelsBuilderTest extends TestCase {
     /**
      * Test of isValid method, of class ModelsBuilder.
      */
-//    public void testIsValid() {
-//        System.out.println("isValid");
-//        ModelsBuilder instance = new ModelsBuilder();
-//        assertFalse(instance.isValid());
-//        Model m = new Model();
-//        m.setName("provaUnivoco");
-//        instance.setModel(m);
-//        instance.setType("personal");
-//        assertTrue(instance.isValid());
-//    }
+    public void testIsValid() {
+        System.out.println("isValid");
+        ModelsBuilder instance = new ModelsBuilder();
+        assertFalse(instance.isValid());
+        Model m = new Model();
+        m.setName("provaUnivoco");
+        instance.setModel(m);
+        instance.setType("personal");
+        assertTrue(instance.isValid());
+    }
 
     /**
      * Test of build method, of class ModelsBuilder.

@@ -1,10 +1,14 @@
 package unisalento.fcorvino.etl;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import unisalento.fcorvino.beans.Model;
+import unisalento.fcorvino.beans.models.ModelTable;
 import unisalento.fcorvino.etl.excel.HSSFExcel;
 import unisalento.fcorvino.etl.excel.XSSFExcel;
-import unisalento.fcorvino.etl.loader.ParticleLoader;
-import unisalento.fcorvino.etl.loader.RelationLoader;
 
 /**
  *
@@ -15,73 +19,70 @@ public class EtlBaseContext implements EtlContext {
     /**
      * Dati temporanei del contesto
      */
-    
-    private FileType dataFileType;
-    
-    private EntriesType entriesType;
+    private Map<String,EtlStrategy> strategies = 
+            new HashMap<String, EtlStrategy>();
     
     private byte[] cacheFile;
     
-    private EtlStrategy strategy;
+    private EtlStrategy currentSource;
     
-    private Model model;
+    private Model currentModel;
+    
+    private ModelTable currentTable;
     
     /**
      * Costruttore
      */
     public EtlBaseContext(){
-        this.dataFileType = null;
-        this.entriesType = null;
-        this.strategy = null;
+        this.currentSource = null;
         this.cacheFile = null;
-        this.model = new Model();
+        this.currentModel = new Model();
+        strategies.put("hssf", new HSSFExcel());
+        strategies.put("xssf", new XSSFExcel());
     }
-
-    public void setDataFileType(FileType fileType) {
-        this.dataFileType = fileType;
-        switch(fileType){
-            case HSSFEXCEL: this.strategy = new HSSFExcel(); break;
-            case XSSFEXCEL: this.strategy = new XSSFExcel(); break;
-            default: break;
-        }
-    }
-    
-    public FileType getDataFileType(){
-        return this.dataFileType;
-    }
-    
-    public void setEntriesType(EntriesType entriesType) {
-        this.entriesType = entriesType;
-    }
-    
-    public EntriesType getEntriesType() {
-        return this.entriesType;
-    }    
 
     public void setModel(Model model) {
-        this.model = model;
+        this.currentModel = model;
     }
 
     public Model getModel() {
-        return model;
+        return currentModel;
     }
 
     public byte[] getBytes() {
         return this.cacheFile;
     }
 
-    public void parseFile(byte[] bytesFile, EntriesType type ) {
+    public void parseFile(byte[] bytesFile) throws Exception {
         this.cacheFile = bytesFile;
-        if(this.dataFileType == null) return;
-        this.strategy.execute(this);
+        this.currentSource.execute(this);
     }
 
     public EtlLoadBean getImporter() {
-        switch(this.entriesType){
-            case Particle: return new ParticleLoader();
-            case Relation: return new RelationLoader();
+        return currentTable.getLoader();
+    }
+
+    public void setCurrentSource(String strategyId) throws Exception{
+        if(this.strategies.containsKey(strategyId)){
+            // set strategy configurations
+            this.currentSource = this.strategies.get(strategyId);
+        } else{
+            throw new Exception("sorce extractor " + strategyId + " not yet implemented");
         }
-        return null;
+    }
+
+    public void setCurrentTable(String tableId) throws Exception{
+        Set<ModelTable> tables = this.currentModel.getTypeModel().getTables();
+        Iterator<ModelTable> tablesIt = tables.iterator();
+        for(;tablesIt.hasNext();){
+            ModelTable mt  = tablesIt.next();
+            System.out.println(mt.getName());
+            if(tableId.equals(mt.getName())) {
+                this.currentTable = mt;
+                return;
+            }
+        }
+        throw new Exception("not exist table: " + tableId);
     }
 
 }

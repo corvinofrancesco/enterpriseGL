@@ -1,6 +1,5 @@
 package unisalento.fcorvino.etl;
 
-import java.util.Map;
 import unisalento.fcorvino.beans.Model;
 
 /**
@@ -13,21 +12,13 @@ import unisalento.fcorvino.beans.Model;
  */
 public interface EtlContext {
     public enum FileType {
-        HSSFEXCEL, XSSFEXCEL, TEXTUAL
+        HSSFEXCEL, XSSFEXCEL, TEXTUAL, MYSQL
     };
     
     public enum EntriesType {
         Particle, Relation
     };
-    
-    public void setDataFileType(FileType fileType);
-    
-    public FileType getDataFileType();
-    
-    public void setEntriesType(EntriesType entriesType);
-    
-    public EntriesType getEntriesType();
-    
+
     public void setModel(Model model);
     
     public Model getModel();
@@ -50,6 +41,18 @@ public interface EtlContext {
      * @param bytesFile
      * @param type the type of entries to add in the model
      */
-    public void parseFile(byte[] bytesFile, EtlContext.EntriesType type);
+    public void parseFile(byte[] bytesFile) throws Exception;
     
+    /**
+     * Method called by Context clients to configure strategy to be executed
+     * 
+     * @param  strategyId identificator of strategy to execute
+     */
+    public void setCurrentSource(String strategyId) throws Exception;
+    
+    /**
+     * 
+     * @param tableId 
+     */
+    public void setCurrentTable(String tableId) throws Exception;
 }
