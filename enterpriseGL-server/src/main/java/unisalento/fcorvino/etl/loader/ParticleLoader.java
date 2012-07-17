@@ -1,5 +1,6 @@
 package unisalento.fcorvino.etl.loader;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import unisalento.fcorvino.beans.Model;
@@ -22,8 +23,12 @@ public class ParticleLoader implements EtlLoadBean<Particle> {
 
     public void addBeanTo(Model m) {
         Particle p = getBean();
-        p.setId((Integer) fields.get(0).value);
-        if(p!=null) m.getParticles().add(p);
+        if(p!=null) 
+            p.setId((Integer) fields.get(0).value);
+        p.setDefinition((String)fields.get(1).value);
+        p.setDescription((String)fields.get(2).value);
+        p.setAssumption((Date)fields.get(3).value);
+        m.getParticles().add(p);
     }
 
     public Particle getBean() {        

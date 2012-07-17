@@ -46,16 +46,16 @@ public class ModelsBuilderTest extends TestCase {
     /**
      * Test of isValid method, of class ModelsBuilder.
      */
-    public void testIsValid() {
-        System.out.println("isValid");
-        ModelsBuilder instance = new ModelsBuilder();
-        assertFalse(instance.isValid());
-        Model m = new Model();
-        m.setName("provaUnivoco");
-        instance.setModel(m);
-        instance.setType("personal");
-        assertTrue(instance.isValid());
-    }
+//    public void testIsValid() {
+//        System.out.println("isValid");
+//        ModelsBuilder instance = new ModelsBuilder();
+//        assertFalse(instance.isValid());
+//        Model m = new Model();
+//        m.setName("provaUnivoco");
+//        instance.setModel(m);
+//        instance.setType("personal");
+//        assertTrue(instance.isValid());
+//    }
 
     /**
      * Test of build method, of class ModelsBuilder.
