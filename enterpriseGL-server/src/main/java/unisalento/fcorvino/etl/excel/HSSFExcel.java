@@ -28,7 +28,7 @@ public class HSSFExcel extends Excel{
 
     @Override
     public Iterator getCellIterator(Object row) {
-        HSSFRow hssfrow = (HSSFRow) row;
+        Row hssfrow = (Row) row;
         return hssfrow.cellIterator();
     }
 
@@ -45,6 +45,7 @@ public class HSSFExcel extends Excel{
         switch(hssfcell.getCellType()){
             case HSSFCell.CELL_TYPE_NUMERIC: return EtlLoadTypes.EtlNumeric;
             case HSSFCell.CELL_TYPE_STRING: return EtlLoadTypes.EtlText;
+            case HSSFCell.CELL_TYPE_FORMULA: return EtlLoadTypes.EtlNumeric;
         }
         return type;
     }

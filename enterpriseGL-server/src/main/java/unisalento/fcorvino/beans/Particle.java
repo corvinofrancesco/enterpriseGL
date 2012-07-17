@@ -6,7 +6,7 @@ import java.util.Date;
  * 
  * @author Francesco Corvino
  */
-public class Particle {
+public class Particle implements Comparable<Particle> {
     private Integer id;
     private String definition;
     private String description;
@@ -46,6 +46,10 @@ public class Particle {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public int compareTo(Particle o) {
+        return this.id - o.id;
     }
 
     
