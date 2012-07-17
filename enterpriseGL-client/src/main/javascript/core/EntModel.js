@@ -44,8 +44,8 @@ EntModel.prototype = {
      * Call back function for loader
      */
     update : function(){
-//        this.loader.wait();
-//        this.graphics.updateModel(this.currentEventId);
+    //        this.loader.wait();
+    //        this.graphics.updateModel(this.currentEventId);
     },
     
     /**
@@ -64,122 +64,135 @@ EntModel.prototype = {
 function Simulation(){    
     var event0 = new EntEvent();
     var part1 = new EntParticle(), 
-        part2 = new EntParticle(), 
-        part3 = new EntParticle(),
-        part4 = new EntParticle(),
-        part5 = new EntParticle(),
-        part6 = new EntParticle();
+    part2 = new EntParticle(), 
+    part3 = new EntParticle(),
+    part4 = new EntParticle(),
+    part5 = new EntParticle(),
+    part6 = new EntParticle();
 
     part1.setProperties({
         id: 'part1',
         title: "Particella 01",
         body: "Particella d'esempio numero 01",
         relations: ['part2','part3']    
-    }); part1.register();
+    });
+    part1.register();
 
     part2.setProperties({
         id: 'part2',
         title: "Particella 02",
         body: "Particella d'esempio numero 02",
         relations: ['part3']    
-    }); part2.register();
+    });
+    part2.register();
 
     part3.setProperties({
         id: 'part3',
         title: "Particella 03",
         body: "Particella d'esempio numero 03",
         relations: []    
-    }); part3.register();
+    });
+    part3.register();
 
     part4.setProperties({
         id: 'part4',
         title: "Particella 04",
         body: "Particella d'esempio numero 04",
         relations: ['part1','part2']    
-    }); part4.register();
+    });
+    part4.register();
 
     part5.setProperties({
         id: 'part5',
         title: "Particella 05",
         body: "Particella d'esempio numero 05",
         relations: ['part3','part2']    
-    }); part5.register();
+    });
+    part5.register();
 
     part6.setProperties({
         id: 'part6',
         title: "Particella 06",
         body: "Particella d'esempio numero 06",
         relations: ['part1']    
-    }); part6.register();
+    });
+    part6.register();
 
     event0.setProperties({
         id: 'event0',
         nametime: new Date(),
         descriptio: "A fist event for testing graphical system",
         objects: [part1, part2, part3,part4,part5,part6]
-    }); event0.register();
+    });
+    event0.register();
 }
 
 function Simulation1(){    
     var event0 = new EntEvent();
     var part1 = new EntParticle(), 
-        part2 = new EntParticle(), 
-        part3 = new EntParticle(),
-        part4 = new EntParticle(),
-        part5 = new EntParticle();
+    part2 = new EntParticle(), 
+    part3 = new EntParticle(),
+    part4 = new EntParticle(),
+    part5 = new EntParticle();
 
     part1.setProperties({
         id: 'part1',
         title: "Particella 01",
         body: "Particella d'esempio numero 01",
         relations: ['part2','part3']    
-    }); part1.register();
+    });
+    part1.register();
 
     part2.setProperties({
         id: 'part2',
         title: "Particella 02",
         body: "Particella d'esempio numero 02",
         relations: ['part3']    
-    }); part2.register();
+    });
+    part2.register();
 
     part3.setProperties({
         id: 'part3',
         title: "Particella 03",
         body: "Particella d'esempio numero 03",
         relations: []    
-    }); part3.register();
+    });
+    part3.register();
 
     part4.setProperties({
         id: 'part4',
         title: "Particella 04",
         body: "Particella d'esempio numero 04",
         relations: ['part1','part2']    
-    }); part4.register();
+    });
+    part4.register();
 
     part5.setProperties({
         id: 'part5',
         title: "Particella 05",
         body: "Particella d'esempio numero 05",
         relations: ['part3','part2']    
-    }); part5.register();
+    });
+    part5.register();
 
     event0.setProperties({
         id: 'event0',
         nametime: new Date(),
         descriptio: "A fist event for testing graphical system",
         objects: [part2, part3]
-    }); event0.register();
+    });
+    event0.register();
 }
 
 function Simulation2(){    
     var event0 = new EntEvent(),
-        parts = [],
-        numPart = 5000;
+    parts = [],
+    numPart = 5000;
 
     for(var i =0;i<numPart;i++){
         var part = new EntParticle();        
         var relCasual = [],
-            rndInd = Math.round(Math.random()* 5);
+        rndInd = Math.round(Math.random()* 5);
         for(var j =0;j<rndInd;j++) {
             var rndId = Math.round(Math.random()*numPart);
             var id = "part" + rndId;
@@ -190,7 +203,8 @@ function Simulation2(){
             title: "Particella "+ i,
             body: "Particella d'esempio numero "+i,
             relations: relCasual    
-        }); part.register();
+        });
+        part.register();
         
         parts.push(part);
     }
@@ -201,7 +215,8 @@ function Simulation2(){
         nametime: new Date(),
         descriptio: "A fist event for testing graphical system",
         objects: parts
-    }); event0.register();
+    });
+    event0.register();
 }
 
 function Simulation3(){
@@ -210,38 +225,44 @@ function Simulation3(){
     numPart = 100,
     numLiv = 10,
     childMax = 5,
-    levelDef = [],
-    level = [];
-    
-    levelDef.push({estr:1,row:1})
-    level[0] =1;
+    levelDef = [{
+        estr:1,
+        row:1
+    }],
+    level = [1,0];
     
     for(var j=1; j<=numLiv; j++) {
-        var numEstr = Math.floor(Math.random()*levelDef[j-1].numEstr*childMax+1);
-        var initRow = levelDef[j-1].numEstr + levelDef[j-1].initRow;
-        levelDef.push({estr:numEstr,row:initRow});
+        var numEstr = Math.floor(Math.random()*levelDef[j-1].estr * childMax + 1);
+        var initRow = levelDef[j-1].estr + levelDef[j-1].row;
+        levelDef[j] = {
+            estr: numEstr,
+            row: initRow
+        };
     }
-
     for(var i =0;i<numPart;i++){
         var part = new EntParticle(),
-            rel = [];
+        rel = [];
         if(i!=0){
-            var succLev = level[i-1]+1,
-                precLev = level[i]-1,
-                succ = levelDef[succLev];
-            level[i] = (succ.initRow == i)?succLev:level[i-1];
-            var idF = levelDef[level[i]-1].initRow +
-                    Math.floor(Math.random()*levelDef[level[i]-1].numEstr),
-            idFather = 'part' + idF;
-        if(EntObjects.get(idFather)) rel.push(idFather);
-        else alert(idFather + " non esiste!");
+            var succLev = level[i-1]+1, succ = levelDef[succLev];
+            level[i] = (succ.row == i+1)?succLev:level[i-1];
+            var idF = 0;
+            if(level[i]!=1){
+                var precLev = level[i]-1;
+                idF = levelDef[precLev].row +
+                    Math.floor(Math.random() * levelDef[precLev].estr);
+            }
+            var idFather = 'part' + idF;
+            if(EntObjects.get(idFather)) rel.push(idFather);
+            else alert(idFather + " non esiste!: " + levelDef[precLev].row + " - " 
+                + (Math.floor(Math.random() * levelDef[precLev].estr)) );
         }
         part.setProperties({
             id: 'part' + i,
             title: "Particella "+ i,
             body: "Particella d'esempio numero " + i,
             relations: rel
-        }); part.register();
+        });
+        part.register();
         parts.push(part);
     }
 
@@ -250,6 +271,7 @@ function Simulation3(){
         nametime: new Date(),
         description: "Event for testing cone tree relations",
         objects: parts
-    }); event0.register();
+    });
+    event0.register();
 
 }

@@ -172,13 +172,13 @@ this.loader.callback=this.update;
 this.graphics=null;
 this.currentEventId="event0";
 new EntObjects();
-Simulation2()
+Simulation3()
 }EntModel.prototype={init:function(b){this.graphics=b;
 var a=EntObjects.get(this.currentEventId);
 if(a){this.graphics.updateModel(this.currentEventId)
 }else{this.loader.wait()
 }},goToEvent:function(a){},playNextEvent:function(){},update:function(){},reset:function(){EntObjects.instance.objects={}
-},};
+}};
 function Simulation(){var d=new EntEvent();
 var g=new EntParticle(),f=new EntParticle(),e=new EntParticle(),c=new EntParticle(),b=new EntParticle(),a=new EntParticle();
 g.setProperties({id:"part1",title:"Particella 01",body:"Particella d'esempio numero 01",relations:["part2","part3"]});
@@ -209,7 +209,7 @@ a.setProperties({id:"part5",title:"Particella 05",body:"Particella d'esempio num
 a.register();
 c.setProperties({id:"event0",nametime:new Date(),descriptio:"A fist event for testing graphical system",objects:[e,d]});
 c.register()
-}function Simulation2(){var l=new EntEvent(),d=[],h=100;
+}function Simulation2(){var l=new EntEvent(),d=[],h=5000;
 for(var f=0;
 f<h;
 f++){var b=new EntParticle();
@@ -223,6 +223,28 @@ if(EntObjects.get(a)){k.push(a)
 b.register();
 d.push(b)
 }l.setProperties({id:"event0",nametime:new Date(),descriptio:"A fist event for testing graphical system",objects:d});
+l.register()
+}function Simulation3(){var l=new EntEvent(),n=[],f=100,d=10,e=5,b=[{estr:1,row:1}],a=[1,0];
+for(var q=1;
+q<=d;
+q++){var h=Math.floor(Math.random()*b[q-1].estr*e+1);
+var t=b[q-1].estr+b[q-1].row;
+b[q]={estr:h,row:t}
+}for(var r=0;
+r<f;
+r++){var p=new EntParticle(),c=[];
+if(r!=0){var o=a[r-1]+1,g=b[o];
+a[r]=(g.row==r+1)?o:a[r-1];
+var m=0;
+if(a[r]!=1){var s=a[r]-1;
+m=b[s].row+Math.floor(Math.random()*b[s].estr)
+}var k="part"+m;
+if(EntObjects.get(k)){c.push(k)
+}else{alert(k+" non esiste!: "+b[s].row+" - "+(Math.floor(Math.random()*b[s].estr)))
+}}p.setProperties({id:"part"+r,title:"Particella "+r,body:"Particella d'esempio numero "+r,relations:c});
+p.register();
+n.push(p)
+}l.setProperties({id:"event0",nametime:new Date(),description:"Event for testing cone tree relations",objects:n});
 l.register()
 };
 function GraphicalSystem(){this.particles={};
