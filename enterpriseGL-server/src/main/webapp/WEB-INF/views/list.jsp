@@ -18,20 +18,20 @@
         </c:if>
 
         <c:if test="${not empty models}">
-            Modelli inseriti:
-            <table class="search" border="3">
+            Models:
+            <table class="search">
                 <tr>
                     <th>Name</th>
-                    <th>Status</th>
-                    <th>Last change</th>
                     <th>Tables</th>
                     <th>Actions</th>
                 </tr>
                 <c:forEach var="model" items="${models}">
                     <tr>
-                        <td>${model.name}</td>
-                        <td>${model.status}</td>
-                        <td><fmt:formatDate value="${model.lastChange}" pattern="yyyy-MM-dd" /></td>
+                        <td>
+                            <b>${model.name}</b> 
+                            ${model.status}
+                            <fmt:formatDate value="${model.lastChange}" pattern="yyyy-MM-dd" />
+                        </td>                        
                         <td>
                             <c:if test="${not empty model.typeModel.tables}">
                                 ${model.typeModel.tables.size()}

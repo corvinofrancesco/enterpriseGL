@@ -39,3 +39,13 @@
         <input type="submit" id="login" value="Create"/>
     </fieldset>
 </form:form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('<input type="hidden" name="ajaxUpload" value="true" />').insertAfter($("#commandForm"));
+        $("#commandForm").ajaxForm({ success: function(html) {
+                configuration.menu.changeWith(html);
+            }
+        });
+    });
+</script>	

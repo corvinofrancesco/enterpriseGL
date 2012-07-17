@@ -1,3 +1,15 @@
+function hiddenPanel(){
+    $("#content").hide();
+    $("#showButton").show();    
+    $("#hideButton").hide();    
+}
+
+function showPanel(){
+    $("#content").show();
+    $("#showButton").hide();    
+    $("#hideButton").show();    
+}
+
 function LinkController(){
     $("a.textLink").click(function(){
         var link = $(this);
@@ -9,39 +21,14 @@ function LinkController(){
         });
         return false;
     });    
-    $("form.commandForm")
 }
 
-function MenuController(buttonId, boxId, formId){
-    this.buttonId = buttonId;
-    this.boxId = boxId;
-    this.formId = formId;
-    this.loader = function(){
-        $(function() {
-            var button = $(buttonId);
-            var box = $(boxId);
-            var form = $(formId);
-            button.removeAttr('href');
-            button.mouseup(function(login) {
-                box.toggle();
-                button.toggleClass('active');
-            });
-            form.mouseup(function() { 
-                return false;
-            });
-            $(this).mouseup(function(login) {
-                if(!($(login.target).parent(buttonId).length > 0)) {
-                    button.removeClass('active');
-                    box.hide();
-                }
-            });
-        });        
-    };
+function MenuController(contentId){
+    this.contentId = contentId;
     
     this.changeWith = function(text){
-        $(boxId).empty();
-        $(boxId).prepend(text);
-        this.loader();
+        $(contentId).empty();
+        $(contentId).prepend(text);
         new LinkController();
     }
 }

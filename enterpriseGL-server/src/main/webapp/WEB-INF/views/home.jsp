@@ -22,7 +22,7 @@
 
             var configuration = {
                 startReq: { link: "<c:url value='/list'/>"},
-                menu: new MenuController("#commandButton","#commandBox","#commandForm"),
+                menu: new MenuController("#content"),
                 link: new LinkController(),
                 cntError: function(xhr){alert("Error! Fail connection at the server.")},
                 prepareAjax: function(req){
@@ -50,15 +50,17 @@
             }
 
         </script>
-        <div id="bar">
-            <div id="container">
-                <div class="descriptionBox" id="descriptionBox" style="background-color: transparent; position: absolute;">
-                </div>  
-                <div class="commandContainer">
-                    <a href="#" id="commandButton" class="commandButton"><span>Model</span><em></em></a>
-                    <div style="clear:both"></div>
-                    <div id="commandBox" class="commandBox"></div>
+        <div id="container">
+            <div class="descriptionBox" id="descriptionBox">
+            </div>  
+            <div id="controlPanel" >
+                <div id="showButton" class="panelControls">
+                    <a onclick="showPanel();">Show</a>
                 </div>
+                <div id="hideButton" class="panelControls">
+                    <a onclick="hiddenPanel();">Hidden</a>                   
+                </div>
+                <div id="content"></div>
             </div>
         </div>
     </body>

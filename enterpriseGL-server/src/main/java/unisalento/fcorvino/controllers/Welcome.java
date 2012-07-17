@@ -39,18 +39,18 @@ public class Welcome {
         return "home";
     }
 
-    @RequestMapping(value = "list",  headers="ajaxRequest")
+    @RequestMapping(value = "list")
     public @ModelAttribute("models")
     List init(Model model) {
         return entModelsFactory.getModels();
     }
 
-    @RequestMapping(value = "create",  headers="ajaxRequest")
+    @RequestMapping(value = "create")
     public String createModel() {
         return "create";
     }
 
-    @RequestMapping(value = "create", method = RequestMethod.POST,  headers="ajaxRequest")
+    @RequestMapping(value = "create", method = RequestMethod.POST)
     public String saveModel(@ModelAttribute ModelBean newModel) {
         ModelsBuilder builder = new ModelsBuilder();
         builder.setName(newModel.getName());
@@ -63,7 +63,7 @@ public class Welcome {
         return "redirect:/create";
     }
 
-    @RequestMapping(value = "edit/{name}",  headers="ajaxRequest")
+    @RequestMapping(value = "edit/{name}")
     public String editModel(@PathVariable String name, Model model) {
         Object obj = entModelsFactory.getModel(name);
         if(obj==null) {
@@ -74,7 +74,7 @@ public class Welcome {
         return "edit";
     }
     
-    @RequestMapping(value="edit",method= RequestMethod.POST,  headers="ajaxRequest")
+    @RequestMapping(value="edit",method= RequestMethod.POST)
     public void processUpload(
             @RequestParam(value="file") MultipartFile file,
             @RequestParam(value="name") String name,
@@ -84,15 +84,15 @@ public class Welcome {
                 "' uploaded successfully");
     }
 
-    @RequestMapping(value = "delete/{name}",  headers="ajaxRequest")
+    @RequestMapping(value = "delete/{name}")
     public String deleteModel(@PathVariable String name) {
         if(!entModelsFactory.remove(name)){
             //TODO deletion faillure add error message 
         }
-        return "redirect:/init";
+        return "redirect:/list";
     }
 
-    @RequestMapping(value = "view/{name}",  headers="ajaxRequest")
+    @RequestMapping(value = "view/{name}")
     public String viewModel(@PathVariable String name, Model model) {
         Object entModel = entModelsFactory.getModel(name);
         if (entModel != null) {
