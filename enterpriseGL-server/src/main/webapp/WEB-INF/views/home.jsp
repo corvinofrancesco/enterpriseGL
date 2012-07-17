@@ -15,57 +15,26 @@
         <script type="text/javascript" src="<c:url value="/resources/enterpriseGL/Three.js" />"></script>
         <script type="text/javascript" src="<c:url value="/resources/enterpriseGL/enterpriseGL-client-1.0-SNAPSHOT.js" />"></script>
         <script type="text/javascript" src="<c:url value="/resources/jqueryform/2.8/jquery.form.js" />"></script>
-        <script src="<c:url value="/resources/menucss/menuController.js"/>"></script>
+        <script type="text/javascript" src="<c:url value="/resources/menucss/menuController.js"/>"></script>
     </head>
     <body onload="create()">
         <script type="text/javascript">
+
+            var configuration = {
+                startReq: { link: "<c:url value='/list'/>"},
+                menu: new MenuController("#commandButton","#commandBox","#commandForm"),
+                link: new LinkController(),
+                cntError: function(xhr){alert("Error! Fail connection at the server.")},
+                prepareAjax: function(req){
+                    req.setRequestHeader("Accept", "text/plain;charset=UTF-8");
+                    req.setRequestHeader("ajaxRequest", "true");
+                }
+            };
             /** 
              * Javascript code for enviroment configurations
              **/
             function create(){
                 var enviroment = new EntCanvasManager();
-                $(document).ready(function(){
-                    $.ajax({
-                        url:"<c:url value='/list'/>",
-                        dataType:"text",
-                        beforeSend: function(req){
-                            req.setRequestHeader("Accept", "text/plain;charset=UTF-8");
-                            req.setRequestHeader("ajaxRequest", "true");
-                        },
-                        success: function(text){
-                            $(text).insertAfter("#bodyContent"); 
-                                
-                        },
-                        error: function(xhr){
-                            alert("Errore di connessione al server")
-                        }    
-                    });
-                    $("a.textLink").click(function(){
-                        var link = $(this);
-                        $.ajax({
-                            url:link.attr("href"),
-                            dataType: "text",
-                            beforeSend: function(req){
-                                req.setRequestHeader("Accept", "text/plain;charset=UTF-8");
-                                req.setRequestHeader("ajaxRequest", "true");
-                            },
-                            success: function(text){
-                                $("#commandBox").replaceWith(text);
-                                var mc = new MenuController("#commandButton", "#commandBox", "#commandForm");
-                                mc.loader();
-                                //$("#commandBox").replaceWith(text);
-                                //$(text).insertAfter("#body");
-                                //$("#body").replaceWith(text); 
-
-                            },
-                            error: function(xhr){
-                                alert("Errore di connessione al server")
-                            }    
-                        });
-                        return false;
-                    });
-                    
-                });                
             }
 
             function log(msg,elem,override){
@@ -88,14 +57,7 @@
                 <div class="commandContainer">
                     <a href="#" id="commandButton" class="commandButton"><span>Model</span><em></em></a>
                     <div style="clear:both"></div>
-                    <div id="commandBox" class="commandBox">
-                        <form id="commandForm" class="commandForm">
-                            <fieldset id="body">
-                                <div id="bodyContent" ></div>
-                            </fieldset>
-                            <span><b><a href='<c:url value="/create" />' class="textLink">CREATE A NEW MODEL</a></b></span>
-                        </form>
-                    </div>
+                    <div id="commandBox" class="commandBox"></div>
                 </div>
             </div>
         </div>
