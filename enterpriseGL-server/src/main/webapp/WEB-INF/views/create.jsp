@@ -10,34 +10,32 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ page session="false" %>
 
-<div id="commandBox" class="commandBox">
-    <form:form id="commandForm" method="post" action="/create" modelAttribute="modelBean" class="commandForm">
-        <fieldset id="body">
-            <c:if test="${not empty message}">
-                <div id="message" class="success">${message}</div>	
+<form:form id="commandForm" method="post" action="/create" modelAttribute="modelBean" class="commandForm">
+    <fieldset id="body">
+        <c:if test="${not empty message}">
+            <div id="message" class="success">${message}</div>	
+        </c:if>
+        <s:bind path="*">
+            <c:if test="${status.error}">
+                <div id="message" class="error">Form has errors</div>
             </c:if>
-            <s:bind path="*">
-                <c:if test="${status.error}">
-                    <div id="message" class="error">Form has errors</div>
-                </c:if>
-            </s:bind>
-            <fieldset>
-                <form:label path="name">
-                    Name <form:errors path="name" cssClass="error" />
-                </form:label>
-                <form:input path="name" />
-            </fieldset>
-            <fieldset>
-                <form:label path="type">
-                    Type (select one)
-                </form:label>
-                <%
-                    Set list = ModelsBuilder.getTypes();
-                    request.setAttribute("list", list);
-                %>
-                <form:select path="type" items="${requestScope['list']}" />
-            </fieldset>
-            <input type="submit" id="login" value="Create"/>
+        </s:bind>
+        <fieldset>
+            <form:label path="name">
+                Name <form:errors path="name" cssClass="error" />
+            </form:label>
+            <form:input path="name" />
         </fieldset>
-    </form:form>
-</div>
+        <fieldset>
+            <form:label path="type">
+                Type (select one)
+            </form:label>
+            <%
+                Set list = ModelsBuilder.getTypes();
+                request.setAttribute("list", list);
+            %>
+            <form:select path="type" items="${requestScope['list']}" />
+        </fieldset>
+        <input type="submit" id="login" value="Create"/>
+    </fieldset>
+</form:form>

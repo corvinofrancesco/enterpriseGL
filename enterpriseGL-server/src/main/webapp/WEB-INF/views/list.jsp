@@ -10,36 +10,44 @@
 
 <c:if test="${!ajaxRequest}">
 </c:if>
-<c:if test="${empty models}">
-    <p>Nessun modello caricato</p>
-</c:if>
+<form id="commandForm" class="commandForm">
+    <fieldset id="body">
 
-<c:if test="${not empty models}">
-    Modelli inseriti:
-    <table class="search" border="3">
-        <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Last change</th>
-            <th>Tables</th>
-            <th>Actions</th>
-        </tr>
-        <c:forEach var="model" items="${models}">
-            <tr>
-                <td>${model.name}</td>
-                <td>${model.status}</td>
-                <td><fmt:formatDate value="${model.lastChange}" pattern="yyyy-MM-dd" /></td>
-                <td>
-                    <c:if test="${not empty model.typeModel.tables}">
-                        ${model.typeModel.tables.size()}
-                    </c:if>                
-                </td>
-                <td>
-                    <a href='<s:url value="/view/${model.name}" />' >View</a>
-                    <a href='<s:url value="/edit/${model.name}" />' >Edit</a>
-                    <a href='<s:url value="/delete/${model.name}" />' >Delete</a>
-                </td>
-            </tr>
-        </c:forEach>
-    </table>        
-</c:if>
+        <c:if test="${empty models}">
+            <p>Nessun modello caricato</p>
+        </c:if>
+
+        <c:if test="${not empty models}">
+            Modelli inseriti:
+            <table class="search" border="3">
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Last change</th>
+                    <th>Tables</th>
+                    <th>Actions</th>
+                </tr>
+                <c:forEach var="model" items="${models}">
+                    <tr>
+                        <td>${model.name}</td>
+                        <td>${model.status}</td>
+                        <td><fmt:formatDate value="${model.lastChange}" pattern="yyyy-MM-dd" /></td>
+                        <td>
+                            <c:if test="${not empty model.typeModel.tables}">
+                                ${model.typeModel.tables.size()}
+                            </c:if>                
+                        </td>
+                        <td>
+                            <a href='<s:url value="/view/${model.name}" />' class="textLink">View</a>
+                            <a href='<s:url value="/edit/${model.name}" />' class="textLink">Edit</a>
+                            <a href='<s:url value="/delete/${model.name}" />' class="textLink">Delete</a>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>        
+        </c:if>
+    
+    </fieldset>
+    <span><b><a href='<c:url value="/create" />' class="textLink">CREATE A NEW MODEL</a></b></span>
+</form>
+    
