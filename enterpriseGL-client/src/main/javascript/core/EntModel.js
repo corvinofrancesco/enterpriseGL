@@ -7,7 +7,7 @@ function  EntModel(){
     this.graphics = null;
     this.currentEventId = "event0"; 
     new EntObjects();
-    Simulation2();
+    Simulation3();
 }
 
 EntModel.prototype = {
@@ -53,7 +53,7 @@ EntModel.prototype = {
      */
     reset : function(){
         EntObjects.instance.objects = {};
-    },
+    }
     
 }
 
@@ -202,4 +202,54 @@ function Simulation2(){
         descriptio: "A fist event for testing graphical system",
         objects: parts
     }); event0.register();
+}
+
+function Simulation3(){
+    var event0 = new EntEvent(),
+    parts = [],
+    numPart = 100,
+    numLiv = 10,
+    childMax = 5,
+    levelDef = [],
+    level = [];
+    
+    levelDef.push({estr:1,row:1})
+    level[0] =1;
+    
+    for(var j=1; j<=numLiv; j++) {
+        var numEstr = Math.floor(Math.random()*levelDef[j-1].numEstr*childMax+1);
+        var initRow = levelDef[j-1].numEstr + levelDef[j-1].initRow;
+        levelDef.push({estr:numEstr,row:initRow});
+    }
+
+    for(var i =0;i<numPart;i++){
+        var part = new EntParticle(),
+            rel = [];
+        if(i!=0){
+            var succLev = level[i-1]+1,
+                precLev = level[i]-1,
+                succ = levelDef[succLev];
+            level[i] = (succ.initRow == i)?succLev:level[i-1];
+            var idF = levelDef[level[i]-1].initRow +
+                    Math.floor(Math.random()*levelDef[level[i]-1].numEstr),
+            idFather = 'part' + idF;
+        if(EntObjects.get(idFather)) rel.push(idFather);
+        else alert(idFather + " non esiste!");
+        }
+        part.setProperties({
+            id: 'part' + i,
+            title: "Particella "+ i,
+            body: "Particella d'esempio numero " + i,
+            relations: rel
+        }); part.register();
+        parts.push(part);
+    }
+
+    event0.setProperties({
+        id: 'event0',
+        nametime: new Date(),
+        description: "Event for testing cone tree relations",
+        objects: parts
+    }); event0.register();
+
 }
