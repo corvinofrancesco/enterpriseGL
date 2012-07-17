@@ -43,7 +43,8 @@ public class XSSFExcel extends Excel {
         Cell xssfcell = (Cell) cell;
         EtlLoadTypes type = null;
         switch(xssfcell.getCellType()){
-            case Cell.CELL_TYPE_NUMERIC: return EtlLoadTypes.EtlNumeric;
+            case Cell.CELL_TYPE_NUMERIC:
+            case Cell.CELL_TYPE_FORMULA: return EtlLoadTypes.EtlNumeric;
             case Cell.CELL_TYPE_STRING: return EtlLoadTypes.EtlText;
         }
         return type;

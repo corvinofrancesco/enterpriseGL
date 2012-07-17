@@ -19,7 +19,7 @@ import unisalento.fcorvino.model.ModelsFactory;
  * @author Francesco Corvino
  */
 @Controller
-@RequestMapping(value = "/",  headers="ajaxRequest")
+@RequestMapping(value = "/")
 @SessionAttributes("modelBean")
 public class Welcome {
 
@@ -33,8 +33,13 @@ public class Welcome {
     @RequestMapping(method = RequestMethod.GET)
     public void form() {
     }
+    
+    @RequestMapping(value = "init",  headers="!ajaxRequest")
+    public String initPage() {
+        return "home";
+    }
 
-    @RequestMapping(value = "init")
+    @RequestMapping(value = "list")
     public @ModelAttribute("models")
     List init(Model model) {
         return entModelsFactory.getModels();
@@ -52,7 +57,7 @@ public class Welcome {
         builder.setStatus(ModelStatus.Incomplete);
         builder.setType(newModel.getType());
         if (builder.build()) {
-            return "redirect:/init";
+            return "redirect:/list";
         }
         //TODO error in the creation of model
         return "redirect:/create";
@@ -84,7 +89,7 @@ public class Welcome {
         if(!entModelsFactory.remove(name)){
             //TODO deletion faillure add error message 
         }
-        return "redirect:/init";
+        return "redirect:/list";
     }
 
     @RequestMapping(value = "view/{name}")
