@@ -19,7 +19,7 @@ import unisalento.fcorvino.model.ModelsFactory;
  * @author Francesco Corvino
  */
 @Controller
-@RequestMapping(value = "/",  headers="ajaxRequest")
+@RequestMapping(value = "/")
 @SessionAttributes("modelBean")
 public class Welcome {
 
@@ -33,32 +33,37 @@ public class Welcome {
     @RequestMapping(method = RequestMethod.GET)
     public void form() {
     }
+    
+    @RequestMapping(value = "init",  headers="!ajaxRequest")
+    public String initPage() {
+        return "home";
+    }
 
-    @RequestMapping(value = "init")
+    @RequestMapping(value = "list",  headers="ajaxRequest")
     public @ModelAttribute("models")
     List init(Model model) {
         return entModelsFactory.getModels();
     }
 
-    @RequestMapping(value = "create")
+    @RequestMapping(value = "create",  headers="ajaxRequest")
     public String createModel() {
         return "create";
     }
 
-    @RequestMapping(value = "create", method = RequestMethod.POST)
+    @RequestMapping(value = "create", method = RequestMethod.POST,  headers="ajaxRequest")
     public String saveModel(@ModelAttribute ModelBean newModel) {
         ModelsBuilder builder = new ModelsBuilder();
         builder.setName(newModel.getName());
         builder.setStatus(ModelStatus.Incomplete);
         builder.setType(newModel.getType());
         if (builder.build()) {
-            return "redirect:/init";
+            return "redirect:/list";
         }
         //TODO error in the creation of model
         return "redirect:/create";
     }
 
-    @RequestMapping(value = "edit/{name}")
+    @RequestMapping(value = "edit/{name}",  headers="ajaxRequest")
     public String editModel(@PathVariable String name, Model model) {
         Object obj = entModelsFactory.getModel(name);
         if(obj==null) {
@@ -69,7 +74,7 @@ public class Welcome {
         return "edit";
     }
     
-    @RequestMapping(value="edit",method= RequestMethod.POST)
+    @RequestMapping(value="edit",method= RequestMethod.POST,  headers="ajaxRequest")
     public void processUpload(
             @RequestParam(value="file") MultipartFile file,
             @RequestParam(value="name") String name,
@@ -79,7 +84,7 @@ public class Welcome {
                 "' uploaded successfully");
     }
 
-    @RequestMapping(value = "delete/{name}")
+    @RequestMapping(value = "delete/{name}",  headers="ajaxRequest")
     public String deleteModel(@PathVariable String name) {
         if(!entModelsFactory.remove(name)){
             //TODO deletion faillure add error message 
@@ -87,7 +92,7 @@ public class Welcome {
         return "redirect:/init";
     }
 
-    @RequestMapping(value = "view/{name}")
+    @RequestMapping(value = "view/{name}",  headers="ajaxRequest")
     public String viewModel(@PathVariable String name, Model model) {
         Object entModel = entModelsFactory.getModel(name);
         if (entModel != null) {
