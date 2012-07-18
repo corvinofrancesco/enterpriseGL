@@ -16,9 +16,16 @@
         EditForm_CurrentTable = $("#form"+name);
         EditForm_CurrentTable.show();
     }
+    
+    $(document).ready(function() {
+        $("#formEditManager").ajaxForm({ success: function(html) {
+                configuration.menu.changeWith(html);
+            }
+        });
+    });
 </script>
 
-<form id="formEditManager" action="/edit" class="commandForm">
+<form id="formEditManager" action="/view" class="commandForm">
     <fieldset id="body">
         <h2>Model name: ${model.name}</h1>
         <p>Load or edit model</p>
@@ -36,7 +43,7 @@
         <c:if test="${not empty message}">
             <div id="message" class="success">${message}</div>	
         </c:if>
-        <input type="submit" id="login" value="Cancel"/>
+        <input type="submit" id="login" value="Cancel" onclick="return configuration.menu.cancelOp();"/>
         <input type="submit" id="login" value="View"/>
     </fieldset>               
 </form>

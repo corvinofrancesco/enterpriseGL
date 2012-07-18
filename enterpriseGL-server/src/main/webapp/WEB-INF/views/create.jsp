@@ -10,6 +10,12 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ page session="false" %>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#commandForm").ajaxForm({ success: function(html) {configuration.menu.changeWith(html);}});
+    });
+</script>	
+
 <form:form id="commandForm" method="post" action="/create" modelAttribute="modelBean" class="commandForm">
     <fieldset id="body">
         <c:if test="${not empty message}">
@@ -37,16 +43,6 @@
             <form:select path="type" items="${requestScope['list']}" />
         </fieldset>
         <input type="submit" id="login" value="Create"/>
-        <input type="submit" id="login" value="Cancel"/>
+        <input type="submit" id="login" value="Cancel" onclick="return configuration.menu.cancelOp();"/>
     </fieldset>
 </form:form>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('<input type="hidden" name="ajaxUpload" value="true" />').insertAfter($("#commandForm"));
-        $("#commandForm").ajaxForm({ success: function(html) {
-                configuration.menu.changeWith(html);
-            }
-        });
-    });
-</script>	

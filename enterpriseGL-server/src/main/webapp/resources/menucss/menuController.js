@@ -24,12 +24,25 @@ function LinkController(){
 }
 
 function MenuController(contentId){
-    this.contentId = contentId;
-    
-    this.changeWith = function(text){
-        $(contentId).empty();
-        $(contentId).prepend(text);
+    this.contentId = contentId;    
+}
+
+MenuController.prototype = {
+    changeWith: function(text){
+        $(this.contentId).empty();
+        $(this.contentId).prepend(text);
         new LinkController();
+    },
+    
+    cancelOp: function(){
+        $.ajax({
+            url: configuration.startReq.link,
+            dataType: "text",
+            beforeSend: function(req){configuration.prepareAjax(req)},
+            success: function(text){configuration.menu.changeWith(text);},
+            error: function(xhr){configuration.cntError(xhr);}    
+        });
+        return false;
     }
 }
 
