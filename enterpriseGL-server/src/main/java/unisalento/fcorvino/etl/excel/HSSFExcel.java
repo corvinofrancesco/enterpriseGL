@@ -2,11 +2,7 @@ package unisalento.fcorvino.etl.excel;
 
 import java.io.InputStream;
 import java.util.Iterator;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Row;
 import unisalento.fcorvino.etl.EtlLoadBean.EtlLoadTypes;
@@ -43,9 +39,21 @@ public class HSSFExcel extends Excel{
         HSSFCell hssfcell = (HSSFCell) cell;
         EtlLoadTypes type = null;
         switch(hssfcell.getCellType()){
-            case HSSFCell.CELL_TYPE_NUMERIC: return EtlLoadTypes.EtlNumeric;
+            case HSSFCell.CELL_TYPE_NUMERIC:                 
+                if(HSSFDateUtil.isCellDateFormatted(hssfcell))
+                    return EtlLoadTypes.EtlData;
+                else return EtlLoadTypes.EtlNumeric;
             case HSSFCell.CELL_TYPE_STRING: return EtlLoadTypes.EtlText;
-            case HSSFCell.CELL_TYPE_FORMULA: return EtlLoadTypes.EtlNumeric;
+            case HSSFCell.CELL_TYPE_FORMULA: 
+                switch (hssfcell.getCachedFormulaResultType()){
+                    case HSSFCell.CELL_TYPE_STRING:
+                        return EtlLoadTypes.EtlText;
+                    case HSSFCell.CELL_TYPE_NUMERIC:
+                        if(HSSFDateUtil.isCellDateFormatted(hssfcell))
+                            return EtlLoadTypes.EtlData;
+                        else return EtlLoadTypes.EtlNumeric;
+                        default:
+                }
         }
         return type;
     }
