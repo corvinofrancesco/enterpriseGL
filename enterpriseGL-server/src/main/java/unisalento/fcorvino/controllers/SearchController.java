@@ -11,4 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value="/search")
 public class SearchController {
     
+    @RequestMapping(value="")
+    public void form(){
+        
+    }
 }
