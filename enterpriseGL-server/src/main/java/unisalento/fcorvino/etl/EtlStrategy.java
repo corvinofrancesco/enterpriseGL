@@ -1,6 +1,6 @@
 package unisalento.fcorvino.etl;
 
-import unisalento.fcorvino.beans.Model;
+import unisalento.fcorvino.beans.EntModel;
 
 /**
  *
@@ -8,6 +8,6 @@ import unisalento.fcorvino.beans.Model;
  */
 public interface EtlStrategy {
     
-    public Model execute(EtlContext context);
+    public EntModel execute(EtlContext context);
     
 }

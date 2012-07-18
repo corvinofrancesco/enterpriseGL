@@ -13,7 +13,7 @@ import unisalento.fcorvino.beans.models.ModelType;
  *
  * @author Francesco Corvino
  */
-public class Model {
+public class EntModel {
     
     public enum ModelStatus {
         Complete, Incomplete
@@ -28,7 +28,7 @@ public class Model {
     private Map<String,ModelTableInstance> importTables 
             = new HashMap<String, ModelTableInstance>();
     
-    public Model(){
+    public EntModel(){
         this.status = ModelStatus.Incomplete;
         this.particles = new TreeSet();
         this.relations = new ArrayList();
@@ -113,7 +113,7 @@ public class Model {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Model other = (Model) obj;
+        final EntModel other = (EntModel) obj;
         if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }

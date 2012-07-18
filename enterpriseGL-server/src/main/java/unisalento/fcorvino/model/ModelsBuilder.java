@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.web.multipart.MultipartFile;
-import unisalento.fcorvino.beans.Model;
-import unisalento.fcorvino.beans.Model.ModelStatus;
+import unisalento.fcorvino.beans.EntModel;
+import unisalento.fcorvino.beans.EntModel.ModelStatus;
 import unisalento.fcorvino.beans.ModelTableInstance;
 import unisalento.fcorvino.beans.models.ModelTable;
 import unisalento.fcorvino.beans.models.ModelType;
@@ -18,12 +18,12 @@ import unisalento.fcorvino.etl.loader.RelationLoader;
 /**
  * Class realised to build a enterprise model bean 
  * 
- * @see unisalento.fcorvino.beans.Model class
+ * @see unisalento.fcorvino.beans.EntModel class
  * 
  * @author Francesco Corvino
  */
 public class ModelsBuilder {
-    private Model current = new Model();
+    private EntModel current = new EntModel();
     private ModelsFactory factory = new ModelsFactory();
     
     private static Map<String,ModelType> modelTypes = new HashMap<String, ModelType>();
@@ -64,17 +64,17 @@ public class ModelsBuilder {
         modelTypes.put("hardware resources", hardwareRes);        
     } 
 
-    public Model getModel() {
+    public EntModel getModel() {
         return current;
     }
 
-    public void setModel(Model current) {
+    public void setModel(EntModel current) {
         this.current = current;
     }
     
     /**
-     * Delegate method of setter Name in Model
-     * @see unisalento.fcorvino.beans.Model#name
+     * Delegate method of setter Name in EntModel
+     * @see unisalento.fcorvino.beans.EntModel#name
      * 
      * @param name 
      */
@@ -83,8 +83,8 @@ public class ModelsBuilder {
     }
     
     /**
-     * Delegate method of setter Status in Model
-     * @see unisalento.fcorvino.beans.Model#status
+     * Delegate method of setter Status in EntModel
+     * @see unisalento.fcorvino.beans.EntModel#status
      * 
      * @param modelStatus 
      */
@@ -93,8 +93,8 @@ public class ModelsBuilder {
     }    
     
     /**
-     * Delegate method of setter TypeModel in Model
-     * @see unisalento.fcorvino.beans.Model#typeModel
+     * Delegate method of setter TypeModel in EntModel
+     * @see unisalento.fcorvino.beans.EntModel#typeModel
      * 
      * This method controls if the typeModel is defined
      * 

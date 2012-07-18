@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import unisalento.fcorvino.beans.Model;
+import unisalento.fcorvino.beans.EntModel;
 import unisalento.fcorvino.etl.EtlContext;
 import unisalento.fcorvino.etl.EtlLoadBean;
 import unisalento.fcorvino.etl.EtlStrategy;
@@ -15,8 +15,8 @@ import unisalento.fcorvino.etl.EtlStrategy;
  */
 public abstract class Excel implements EtlStrategy {
 
-    public Model execute(EtlContext context) {
-        Model m = new Model();
+    public EntModel execute(EtlContext context) {
+        EntModel m = new EntModel();
         Iterator rows = null;         
         try{ 
             //get the excel document

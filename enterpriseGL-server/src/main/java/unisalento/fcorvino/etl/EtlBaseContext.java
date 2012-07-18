@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import unisalento.fcorvino.beans.Model;
+import unisalento.fcorvino.beans.EntModel;
 import unisalento.fcorvino.beans.models.ModelTable;
 import unisalento.fcorvino.etl.excel.HSSFExcel;
 import unisalento.fcorvino.etl.excel.XSSFExcel;
@@ -26,7 +26,7 @@ public class EtlBaseContext implements EtlContext {
     
     private EtlStrategy currentSource;
     
-    private Model currentModel;
+    private EntModel currentModel;
     
     private ModelTable currentTable;
     
@@ -36,16 +36,16 @@ public class EtlBaseContext implements EtlContext {
     public EtlBaseContext(){
         this.currentSource = null;
         this.cacheFile = null;
-        this.currentModel = new Model();
+        this.currentModel = new EntModel();
         strategies.put("hssf", new HSSFExcel());
         strategies.put("xssf", new XSSFExcel());
     }
 
-    public void setModel(Model model) {
+    public void setModel(EntModel model) {
         this.currentModel = model;
     }
 
-    public Model getModel() {
+    public EntModel getModel() {
         return currentModel;
     }
 

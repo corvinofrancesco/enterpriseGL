@@ -24,7 +24,7 @@
                 startReq: { link: "<c:url value='/list'/>"},
                 menu: new MenuController("#content",{
                     Models:'<c:url value="/list"/>',
-                    Graphics:'<c:url value="/graphics"/>',
+                    Graphics:'<c:url value="/graphic"/>',
                     Search:'<c:url value="/search" />'
                 }),
                 link: new LinkController(),

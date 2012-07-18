@@ -1,6 +1,6 @@
 package unisalento.fcorvino.etl;
 
-import unisalento.fcorvino.beans.Model;
+import unisalento.fcorvino.beans.EntModel;
 
 /**
  * This interface define the context of a etl.
@@ -19,9 +19,9 @@ public interface EtlContext {
         Particle, Relation
     };
 
-    public void setModel(Model model);
+    public void setModel(EntModel model);
     
-    public Model getModel();
+    public EntModel getModel();
     
     /**
      * Called by @see EtlStrategy to retrive bytes to elaborate

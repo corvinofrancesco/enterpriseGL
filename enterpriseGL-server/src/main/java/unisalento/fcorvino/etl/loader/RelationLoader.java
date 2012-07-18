@@ -7,7 +7,7 @@ package unisalento.fcorvino.etl.loader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import unisalento.fcorvino.beans.Model;
+import unisalento.fcorvino.beans.EntModel;
 import unisalento.fcorvino.beans.Particle;
 import unisalento.fcorvino.beans.Relation;
 import unisalento.fcorvino.etl.EtlLoadBean;
@@ -26,7 +26,7 @@ public class RelationLoader implements EtlLoadBean<Relation> {
         this.fields.put(f.id, f);
     }
 
-    public void addBeanTo(Model m) {
+    public void addBeanTo(EntModel m) {
         Relation r = getBean();        
         if(r!=null) {
             Set<Particle> particles = m.getParticles();

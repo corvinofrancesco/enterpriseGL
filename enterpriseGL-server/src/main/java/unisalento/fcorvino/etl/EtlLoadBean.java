@@ -1,6 +1,6 @@
 package unisalento.fcorvino.etl;
 
-import unisalento.fcorvino.beans.Model;
+import unisalento.fcorvino.beans.EntModel;
 
 /**
  *
@@ -13,7 +13,7 @@ public interface EtlLoadBean<T> {
 
     public void addField(Integer id, EtlLoadTypes type, Object value);
     
-    public void addBeanTo(Model m);
+    public void addBeanTo(EntModel m);
     
     public T getBean();
     

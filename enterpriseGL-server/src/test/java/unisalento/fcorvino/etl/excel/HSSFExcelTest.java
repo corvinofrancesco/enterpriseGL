@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.TestCase;
 import org.apache.commons.io.IOUtils;
-import unisalento.fcorvino.beans.Model;
+import unisalento.fcorvino.beans.EntModel;
 import unisalento.fcorvino.etl.EtlContext;
 import unisalento.fcorvino.model.ModelsBuilder;
 
@@ -43,7 +43,7 @@ public class HSSFExcelTest extends TestCase {
     
     public void testHSSFExcel(){
         System.out.println("HSSFExcel");
-//        Model m;
+//        EntModel m;
 //        try {
 //            this.context.setCurrentSource("hssf");
 //            this.context.setCurrentTable("services");

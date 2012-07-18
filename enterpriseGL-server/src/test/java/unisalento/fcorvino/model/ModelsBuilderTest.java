@@ -7,7 +7,7 @@ package unisalento.fcorvino.model;
 import java.util.Iterator;
 import java.util.Set;
 import junit.framework.TestCase;
-import unisalento.fcorvino.beans.Model;
+import unisalento.fcorvino.beans.EntModel;
 
 /**
  *
@@ -50,7 +50,7 @@ public class ModelsBuilderTest extends TestCase {
 //        System.out.println("isValid");
 //        ModelsBuilder instance = new ModelsBuilder();
 //        assertFalse(instance.isValid());
-//        Model m = new Model();
+//        EntModel m = new EntModel();
 //        m.setName("provaUnivoco");
 //        instance.setModel(m);
 //        instance.setType("personal");
@@ -63,7 +63,7 @@ public class ModelsBuilderTest extends TestCase {
     public void testBuild() {
         System.out.println("build");
         ModelsBuilder instance = new ModelsBuilder();
-        Model m = new Model();
+        EntModel m = new EntModel();
         m.setName("provaUnivoco");
         instance.setModel(m);
         instance.setType( (String)

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
-import unisalento.fcorvino.beans.Model.ModelStatus;
+import unisalento.fcorvino.beans.EntModel.ModelStatus;
 import unisalento.fcorvino.model.ModelsBuilder;
 import unisalento.fcorvino.model.ModelsFactory;
 
@@ -20,7 +20,7 @@ import unisalento.fcorvino.model.ModelsFactory;
  */
 @Controller
 @RequestMapping(value = "/")
-@SessionAttributes("modelBean")
+@SessionAttributes({"modelBean","model"})
 public class Welcome {
 
     private ModelsFactory entModelsFactory = new ModelsFactory();
