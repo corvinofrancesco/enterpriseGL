@@ -22,7 +22,11 @@
 
             var configuration = {
                 startReq: { link: "<c:url value='/list'/>"},
-                menu: new MenuController("#content"),
+                menu: new MenuController("#content",{
+                    Models:'<c:url value="/list"/>',
+                    Graphics:'<c:url value="/graphics"/>',
+                    Search:'<c:url value="/search" />'
+                }),
                 link: new LinkController(),
                 cntError: function(xhr){alert("Error! Fail connection at the server.")},
                 prepareAjax: function(req){
@@ -55,10 +59,13 @@
             </div>  
             <div id="controlPanel" >
                 <div id="showButton" class="panelControls">
-                    <a onclick="showPanel();">Show</a>
+                    <a onclick="configuration.menu.showPanel();">Show</a>
                 </div>
                 <div id="hideButton" class="panelControls">
-                    <a onclick="hiddenPanel();">Hidden</a>                   
+                    <a onclick="configuration.menu.hiddenPanels();">Hidden</a> 
+                    <a onclick="configuration.menu.goTo('Graphics')">Graphics</a>
+                    <a onclick="configuration.menu.goTo('Models')">Models</a>
+                    <a onclick="configuration.menu.goTo('Search')">Search</a>
                 </div>
                 <div id="content"></div>
             </div>

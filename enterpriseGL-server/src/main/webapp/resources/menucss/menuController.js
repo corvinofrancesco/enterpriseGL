@@ -1,15 +1,3 @@
-function hiddenPanel(){
-    $("#content").hide();
-    $("#showButton").show();    
-    $("#hideButton").hide();    
-}
-
-function showPanel(){
-    $("#content").show();
-    $("#showButton").hide();    
-    $("#hideButton").show();    
-}
-
 function LinkController(){
     $("a.textLink").click(function(){
         var link = $(this);
@@ -23,11 +11,13 @@ function LinkController(){
     });    
 }
 
-function MenuController(contentId){
+function MenuController(contentId,menu){
     this.contentId = contentId;    
+    this.menu = menu;
 }
 
 MenuController.prototype = {
+    
     changeWith: function(text){
         $(this.contentId).empty();
         $(this.contentId).prepend(text);
@@ -43,6 +33,28 @@ MenuController.prototype = {
             error: function(xhr){configuration.cntError(xhr);}    
         });
         return false;
+    },
+    
+    hiddenPanels: function (){
+        $(this.contentId).hide();
+        $("#showButton").show();    
+        $("#hideButton").hide();    
+    },
+
+    showPanel: function(){
+        $(this.contentId).show();
+        $("#showButton").hide();    
+        $("#hideButton").show();    
+    },
+    
+    goTo: function(menuId){
+        $.ajax({
+            url: this.menu[menuId],
+            dataType: "text",
+            beforeSend: function(req){configuration.prepareAjax(req)},
+            success: function(text){configuration.menu.changeWith(text);},
+            error: function(xhr){configuration.cntError(xhr);}    
+        });
     }
 }
 

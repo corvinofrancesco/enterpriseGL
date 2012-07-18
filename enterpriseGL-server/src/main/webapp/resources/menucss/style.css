@@ -21,9 +21,12 @@ a { text-decoration:none }
 
 .panelControls {
     float:right;
+}
+
+.panelControls a {
     background:#d2e0ea url(../images/buttonbg.png) repeat-x; 
     border:1px solid #899caa; 
-    cursor:pointer;
+    cursor:pointer;    
 }
 
 #descriptionBox {
