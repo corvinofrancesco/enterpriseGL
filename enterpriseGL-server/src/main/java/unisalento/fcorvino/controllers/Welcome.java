@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import unisalento.fcorvino.beans.EntModel;
 import unisalento.fcorvino.beans.EntModel.ModelStatus;
 import unisalento.fcorvino.model.ModelsBuilder;
 import unisalento.fcorvino.model.ModelsFactory;
@@ -55,7 +56,7 @@ public class Welcome {
         ModelsBuilder builder = new ModelsBuilder();
         builder.setName(newModel.getName());
         builder.setStatus(ModelStatus.Incomplete);
-        builder.setType(newModel.getType());
+        builder.setType(newModel.getType());        
         if (builder.build()) {
             return "redirect:/list";
         }
@@ -65,7 +66,7 @@ public class Welcome {
 
     @RequestMapping(value = "edit/{name}")
     public String editModel(@PathVariable String name, Model model) {
-        Object obj = entModelsFactory.getModel(name);
+        EntModel obj = entModelsFactory.getModel(name);
         if(obj==null) {
             model.addAttribute("message","The model "+ name + " don't exist");
             return "redirect:/init";
@@ -86,10 +87,16 @@ public class Welcome {
     public String viewModel(@PathVariable String name, Model model) {
         Object entModel = entModelsFactory.getModel(name);
         if (entModel != null) {
-            model.addAttribute(entModel);
+            model.addAttribute("model", entModel);
         } else {
             //TODO modello non trovato
         }
         return "view";
+    }
+    
+    @RequestMapping(value="load")
+    public String loadModel(@ModelAttribute(value="model") EntModel m){
+        
+        return "graphic";
     }
 }

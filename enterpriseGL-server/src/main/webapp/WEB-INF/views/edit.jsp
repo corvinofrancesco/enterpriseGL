@@ -25,7 +25,7 @@
     });
 </script>
 
-<form id="formEditManager" action="/view" class="commandForm">
+<form id="formEditManager" action="/view/${model.name}"  method="post" class="commandForm">
     <fieldset id="body">
         <h2>Model name: ${model.name}</h1>
         <p>Load or edit model</p>

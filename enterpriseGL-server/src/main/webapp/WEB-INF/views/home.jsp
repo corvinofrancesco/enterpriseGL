@@ -17,7 +17,7 @@
         <script type="text/javascript" src="<c:url value="/resources/jqueryform/2.8/jquery.form.js" />"></script>
         <script type="text/javascript" src="<c:url value="/resources/menucss/menuController.js"/>"></script>
     </head>
-    <body onload="create()">
+    <body>
         <script type="text/javascript">
 
             var configuration = {
@@ -32,14 +32,8 @@
                 prepareAjax: function(req){
                     req.setRequestHeader("Accept", "text/plain;charset=UTF-8");
                     req.setRequestHeader("ajaxRequest", "true");
-                }
+                },
             };
-            /** 
-             * Javascript code for enviroment configurations
-             **/
-            function create(){
-                var enviroment = new EntCanvasManager();
-            }
 
             function log(msg,elem,override){
                 var idLog = "LOG";

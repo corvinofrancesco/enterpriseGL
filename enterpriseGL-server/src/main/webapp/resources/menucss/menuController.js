@@ -62,6 +62,7 @@ MenuController.prototype = {
  * Init menu when page is load
  */
 $(document).ready(function(){
+    new EntCanvasManager();
     $.ajax({
         url: configuration.startReq.link,
         dataType: "text",
