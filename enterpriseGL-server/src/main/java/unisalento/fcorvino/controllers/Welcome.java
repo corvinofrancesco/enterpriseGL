@@ -73,16 +73,6 @@ public class Welcome {
         model.addAttribute("model",obj);
         return "edit";
     }
-    
-    @RequestMapping(value="edit",method= RequestMethod.POST)
-    public void processUpload(
-            @RequestParam(value="file") MultipartFile file,
-            @RequestParam(value="name") String name,
-            Model model){
-        model.addAttribute("message", 
-                "File '" + file.getOriginalFilename() + 
-                "' uploaded successfully");
-    }
 
     @RequestMapping(value = "delete/{name}")
     public String deleteModel(@PathVariable String name) {

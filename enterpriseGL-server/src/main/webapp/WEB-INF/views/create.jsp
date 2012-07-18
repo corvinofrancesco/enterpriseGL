@@ -37,6 +37,7 @@
             <form:select path="type" items="${requestScope['list']}" />
         </fieldset>
         <input type="submit" id="login" value="Create"/>
+        <input type="submit" id="login" value="Cancel"/>
     </fieldset>
 </form:form>
 

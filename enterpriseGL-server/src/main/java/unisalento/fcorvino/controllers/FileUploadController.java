@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
-import unisalento.fcorvino.etl.EtlContext;
 import unisalento.fcorvino.model.ModelsBuilder;
 
 @Controller
@@ -27,25 +26,24 @@ public class FileUploadController {
 	}
 
 	@RequestMapping(method=RequestMethod.POST)
-	public void processUpload(
+	public String processUpload(
                 @RequestParam MultipartFile file, 
                 @RequestParam(value="name") String name,
                 @RequestParam(value="table") String tableId,
                 @RequestParam(value="source") String source,
                 Model model) throws IOException {
             String message = "uploaded successfully";
-            ModelsBuilder builder = new ModelsBuilder();
+            ModelsBuilder builder = new ModelsBuilder();            
             try {
                 builder.loadModel(name);
-                EtlContext context = builder.getContext();
-                context.setCurrentSource(source);
-                context.setCurrentTable(tableId);
-                context.parseFile(file.getBytes());
+                builder.loadTable(source, tableId, file);
             } catch(Exception e){
                 message = e.getMessage();
             }
             model.addAttribute("message", 
                     "File '" + file.getOriginalFilename() + "' " + message);
+            model.addAttribute("model", builder.getModel());
+            return "edit";
 	}
 	
 }

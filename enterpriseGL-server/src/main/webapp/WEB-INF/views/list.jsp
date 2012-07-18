@@ -9,6 +9,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <c:if test="${!ajaxRequest}">
+<%-- response.sendRedirect("/init"); --%>
 </c:if>
 <form id="commandForm" class="commandForm">
     <fieldset id="body">

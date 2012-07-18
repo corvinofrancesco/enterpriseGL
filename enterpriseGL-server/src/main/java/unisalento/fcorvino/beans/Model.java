@@ -2,7 +2,9 @@ package unisalento.fcorvino.beans;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import unisalento.fcorvino.beans.models.ModelType;
@@ -23,6 +25,8 @@ public class Model {
     private ModelType typeModel = null;
     private Date lastChange = null;
     private ModelStatus status;
+    private Map<String,ModelTableInstance> importTables 
+            = new HashMap<String, ModelTableInstance>();
     
     public Model(){
         this.status = ModelStatus.Incomplete;
@@ -81,6 +85,24 @@ public class Model {
 
     public void setTypeModel(ModelType typeModel) {
         this.typeModel = typeModel;
+    }
+
+    /**
+     * Delegate method of put ModelTableInstance
+     * 
+     * @see Map#put(java.lang.Object, java.lang.Object) 
+     */
+    public ModelTableInstance putTable(String key, ModelTableInstance value) {
+        return importTables.put(key, value);
+    }
+
+    /**
+     * Delegate method of get ModelTableInstance
+     * 
+     * @see Map#get(java.lang.Object) 
+     */
+    public ModelTableInstance getTable(String key) {
+        return importTables.get(key);
     }
 
     @Override

@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.web.multipart.MultipartFile;
 import unisalento.fcorvino.beans.Model;
 import unisalento.fcorvino.beans.Model.ModelStatus;
+import unisalento.fcorvino.beans.ModelTableInstance;
 import unisalento.fcorvino.beans.models.ModelTable;
 import unisalento.fcorvino.beans.models.ModelType;
 import unisalento.fcorvino.etl.EtlBaseContext;
@@ -117,6 +119,13 @@ public class ModelsBuilder {
         if(factory.getModel(current.getName())!=null) return false;        
         if(current.getTypeModel()==null) return false;
         if(current.getStatus()!=ModelStatus.Incomplete){
+            for(ModelTable t : current.getTypeModel().getTables()){
+                ModelTableInstance instancet = current.getTable(t.getName());
+                if(instancet!=null){
+                    if(instancet.getIsLoad()) continue;
+                }
+                return false;
+            }
             if(current.getParticles().isEmpty()) return false;
         }
         return true;
@@ -146,10 +155,28 @@ public class ModelsBuilder {
         return true;
     }
     
+    /**
+     * Called by @see unisalento.fcorvino.controllers.FileUploadController
+     * @return 
+     * @deprecated use @see ModelsBuilder#loadTable
+     */
     public EtlContext getContext(){
         EtlBaseContext context = new EtlBaseContext();
         context.setModel(current);
         return context;
+    }
+    
+    public void loadTable(String source,String table,MultipartFile file) throws Exception {
+        EtlBaseContext context = new EtlBaseContext();
+        ModelTableInstance instance = new ModelTableInstance();
+        context.setModel(current);
+        context.setCurrentSource(source);
+        context.setCurrentTable(table);
+        context.parseFile(file.getBytes());
+        instance.setIsLoad(true);
+        instance.setSource(EtlContext.FileType.valueOf(source));
+        instance.setSourceConfig(file.getName());
+        current.putTable(table, instance);
     }
     
     public Boolean save(){

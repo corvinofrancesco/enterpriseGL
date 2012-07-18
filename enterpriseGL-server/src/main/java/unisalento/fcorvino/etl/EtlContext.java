@@ -12,7 +12,7 @@ import unisalento.fcorvino.beans.Model;
  */
 public interface EtlContext {
     public enum FileType {
-        HSSFEXCEL, XSSFEXCEL, TEXTUAL, MYSQL
+        hssf, xssf, TEXTUAL, MYSQL
     };
     
     public enum EntriesType {
