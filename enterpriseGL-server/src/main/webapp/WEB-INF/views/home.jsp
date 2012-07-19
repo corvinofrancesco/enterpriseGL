@@ -33,6 +33,10 @@
                     req.setRequestHeader("Accept", "text/plain;charset=UTF-8");
                     req.setRequestHeader("ajaxRequest", "true");
                 },
+                client: {
+                    infoModelUrl: function(model){return "<c:url value='/loader/config/'/>" + model;},
+                    infoModelLoad: function(index){return "<c:url value='/loader/download/' />" + index;}
+                }
             };
 
             function log(msg,elem,override){

@@ -67,7 +67,6 @@
     </form>
     <script type="text/javascript">
         $(document).ready(function() {
-            $('<input type="hidden" name="ajaxUpload" value="true" />').insertAfter($("#file${table.name}"));
             $("#form${table.name}").ajaxForm({ success: function(html) {
                     configuration.menu.changeWith(html);
                     //$("#msg${table.name}").replaceWith(html);

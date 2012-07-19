@@ -4,10 +4,12 @@
  * * user interfaces; 
  * * models and comunications;
  */
-function EntCanvasManager(){
+function EntController(configurations){
     var containerMng = new ContainerManager({
         info:"descriptionBox",
         main:"container"});
+    
+    this.configuration = configurations | {};
 
     this.model = new EntModel();
 
@@ -20,14 +22,26 @@ function EntCanvasManager(){
     this.ui = new EntInteraction(this.graphics); 
     this.ui.containerManager = containerMng;
     
-    EntCanvasManager.instance = this;
-    EntCanvasManager.update();
+    EntController.instance = this;
+    EntController.update();
 }
 
-EntCanvasManager.update = function(){
-    requestAnimationFrame( EntCanvasManager.update );
-    var instance = EntCanvasManager.instance;
+EntController.update = function(){
+    requestAnimationFrame( EntController.update );
+    var instance = EntController.instance;
     instance.ui.update();
     instance.graphics.update();    
 }
     
+EntController.prototype = {
+    getJson: function(url){
+        
+    },
+    
+    changeModel: function(){
+        var infoModel = $.ajax({
+            url:this.configuration.infoModelUrl,
+            
+        });
+    }
+}
