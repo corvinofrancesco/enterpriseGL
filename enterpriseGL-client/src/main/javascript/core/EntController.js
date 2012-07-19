@@ -9,7 +9,7 @@ function EntController(configurations){
         info:"descriptionBox",
         main:"container"});
     
-    this.configuration = configurations | {};
+    this.configuration = configurations || {};
 
     this.model = new EntModel();
 
@@ -32,16 +32,23 @@ EntController.update = function(){
     instance.ui.update();
     instance.graphics.update();    
 }
-    
-EntController.prototype = {
-    getJson: function(url){
-        
-    },
-    
-    changeModel: function(){
-        var infoModel = $.ajax({
-            url:this.configuration.infoModelUrl,
-            
+
+EntController.changeModel = function(idModel){
+    var conf = EntController.instance.configuration;
+    $.getJSON(conf.infoModelUrl(idModel), function(data){
+        //TODO Configure the graphics builder with data received
+    });
+    EntController.instance.downloadIndex = 0;
+    EntController.instance.downloadModel();
+}
+
+EntController.prototype = {    
+    downloadModel: function(){
+        var url = this.configuration.infoModelLoad(this.downloadIndex);
+        $.getJSON(url, function(data){
+            //TODO parse and elaborate data
+            //TODO if download not already completed make callback
         });
+        this.downloadIndex++;
     }
 }

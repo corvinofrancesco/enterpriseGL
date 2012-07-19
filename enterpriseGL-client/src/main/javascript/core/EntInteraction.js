@@ -18,6 +18,10 @@ function EntInteraction(graphics){
     EntInteraction.instance = this;
 }
 
+EntInteraction.changeModel = function(idModel){
+    EntController.changeModel(idModel);
+}
+
 EntInteraction.onMouseMove = function(event){
     event.preventDefault();
     

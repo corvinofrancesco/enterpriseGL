@@ -1,17 +1,27 @@
-function EntCanvasManager(){var a=new ContainerManager({info:"descriptionBox",main:"container"});
+function EntController(a){var b=new ContainerManager({info:"descriptionBox",main:"container"});
+this.configuration=a||{};
 this.model=new EntModel();
 this.graphics=new EntGraphics();
 this.model.init(this.graphics);
-a.add(this.graphics.renderer.domElement);
+b.add(this.graphics.renderer.domElement);
 this.ui=new EntInteraction(this.graphics);
-this.ui.containerManager=a;
-EntCanvasManager.instance=this;
-EntCanvasManager.update()
-}EntCanvasManager.update=function(){requestAnimationFrame(EntCanvasManager.update);
-var a=EntCanvasManager.instance;
+this.ui.containerManager=b;
+EntController.instance=this;
+EntController.update()
+}EntController.update=function(){requestAnimationFrame(EntController.update);
+var a=EntController.instance;
 a.ui.update();
 a.graphics.update()
 };
+EntController.changeModel=function(b){var a=EntController.instance.configuration;
+$.getJSON(a.infoModelUrl(b),function(c){});
+EntController.instance.downloadIndex=0;
+EntController.instance.downloadModel()
+};
+EntController.prototype={downloadModel:function(){var a=this.configuration.infoModelLoad(this.downloadIndex);
+$.getJSON(a,function(b){});
+this.downloadIndex++
+}};
 function EntGraphics(a){this.width=800;
 this.height=600;
 if(!a){a=new EntGraphicsConfig()
@@ -112,7 +122,9 @@ this.selectElem=null;
 this.graphicsManager=a;
 this.containerManager=null;
 EntInteraction.instance=this
-}EntInteraction.onMouseMove=function(f){f.preventDefault();
+}EntInteraction.changeModel=function(a){EntController.changeModel(a)
+};
+EntInteraction.onMouseMove=function(f){f.preventDefault();
 var d=EntInteraction.instance.mouse;
 var c=EntInteraction.instance.graphicsManager;
 var a=EntInteraction.instance;
