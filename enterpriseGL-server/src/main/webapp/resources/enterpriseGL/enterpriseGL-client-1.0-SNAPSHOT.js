@@ -16,7 +16,9 @@ a.graphics.update()
 EntController.changeModel=function(b){var a=EntController.instance.configuration;
 $.getJSON(a.infoModelUrl(b),function(c){});
 EntController.instance.downloadIndex=0;
-EntController.instance.downloadModel()
+EntController.instance.downloadModel();
+EntController.instance.model.reset();
+EntController.instance.graphics.reset()
 };
 EntController.prototype={downloadModel:function(){var a=this.configuration.infoModelLoad(this.downloadIndex);
 $.getJSON(a,function(b){});
@@ -43,6 +45,9 @@ this.context=new ModelConfiguration(this.system);
 this.context.configure({});
 this.relations={}
 }EntGraphics.prototype={get objectsfunction(){return this.system.objects
+},reset:function(){for(var a in this.system.particles){var b=this.system.particles[a];
+this.removeParticle(b)
+}this.system=new GraphicalSystem()
 },createMouseSelector:function(){return new MouseSelector(this.camera,this.plane,this.system.objects,this.width,this.height)
 },update:function(){this.controls.update();
 this.system.update();
@@ -58,8 +63,8 @@ this.updateParticle(e)
 }}for(var a in d){var b=d[a];
 if(b){this.addParticle(b)
 }}this.updateRelations()
-},updateParticle:function(a){},removeParticle:function(d){var b=this.system.particles[d.id];
-this.system.remove(b);
+},updateParticle:function(a){},removeParticle:function(d){var b=this.system.particles[d.modelReference];
+this.system.remove(d.modelReference);
 this.scene.remove(b);
 for(var a in this.relations[d.modelReference]){var c=this.relations[d.modelReference][a];
 if(c.isOnScene){this.scene.remove(c)
@@ -286,7 +291,7 @@ if(this.particles[c.id]!=undefined){b=GraphicalSystem.events.MODIFY
 this.objects.push(c)
 }this.particles[c.modelReference]=c;
 this.event(b,a)
-},remove:function(d){var b=GraphicalSystem.events.REMOVE,a={primitive:c},c=this.particles[d];
+},remove:function(d){var b=GraphicalSystem.events.REMOVE,c=this.particles[d],a={primitive:c};
 if(c){this.particles[d]=undefined;
 this.numparticles--
 }else{b=GraphicalSystem.events.ERROR

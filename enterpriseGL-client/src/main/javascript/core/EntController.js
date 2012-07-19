@@ -40,6 +40,8 @@ EntController.changeModel = function(idModel){
     });
     EntController.instance.downloadIndex = 0;
     EntController.instance.downloadModel();
+    EntController.instance.model.reset();
+    EntController.instance.graphics.reset();
 }
 
 EntController.prototype = {    

@@ -37,11 +37,30 @@ function EntGraphics(configuration) {
 }
 
 EntGraphics.prototype = {
+    
     /**
      * Getter required by mouse selector to intersect the elements in the scene
      */
     get objects(){
         return this.system.objects;
+    },
+    
+    /**
+     * Remove all painted object in the scene
+     */
+    reset: function(){
+        for(var i in this.system.particles){
+            var id = this.system.particles[i];
+            this.removeParticle(id);
+        }
+        this.system = new GraphicalSystem();
+//        for(var i in this.scene.children){
+//            var obj = this.scene.children[i];
+//            if(obj instanceof THREE.Light) continue;
+//            if(obj instanceof THREE.Camera) continue;
+//            if(obj == this.plane) continue;
+//            this.scene.remove(obj);
+//        }
     },
     
     /**
@@ -104,9 +123,15 @@ EntGraphics.prototype = {
         //TODO control if there is new relations
     },
     
+    /**
+     * Remove a particle from scene and system.
+     * 
+     * @param p is the primitive of the particle, but the function retrive 
+     * for security the primitive from system.
+     */
     removeParticle: function(p){
-        var gPart = this.system.particles[p.id];
-        this.system.remove(gPart);
+        var gPart = this.system.particles[p.modelReference];
+        this.system.remove(p.modelReference);
         this.scene.remove(gPart);
         // remove relations from scene
         for(var ri in this.relations[p.modelReference]){

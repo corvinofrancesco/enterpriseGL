@@ -1,5 +1,6 @@
 package unisalento.fcorvino.beans.models;
 
+import java.util.ArrayList;
 import java.util.List;
 import unisalento.fcorvino.beans.client.EntItem;
 
@@ -10,7 +11,7 @@ import unisalento.fcorvino.beans.client.EntItem;
 public class EntModelPack {
     private Integer idPacket;
     private Boolean lastPacket;
-    private List<EntItem> items; 
+    private List<EntItem> items = new ArrayList<EntItem>(); 
 
     public Integer getIdPacket() {
         return idPacket;

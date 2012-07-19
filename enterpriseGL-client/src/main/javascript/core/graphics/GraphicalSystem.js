@@ -124,8 +124,8 @@ GraphicalSystem.prototype = {
      */
     remove : function(id) {
         var ev = GraphicalSystem.events.REMOVE,
-            props = {primitive:p},
-            p = this.particles[id];
+            p = this.particles[id],
+            props = {primitive:p};
         if(p) {
             this.particles[id] = undefined;
             this.numparticles--;
