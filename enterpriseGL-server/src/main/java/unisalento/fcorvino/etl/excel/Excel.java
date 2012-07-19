@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.DateUtil;
 import unisalento.fcorvino.beans.EntModel;
 import unisalento.fcorvino.etl.EtlContext;
 import unisalento.fcorvino.etl.EtlLoadBean;
@@ -40,7 +41,7 @@ public abstract class Excel implements EtlStrategy {
                     switch(type){
                         case EtlText: value = getStringCell(cell); break;
                         case EtlNumeric: value = getIntegerCell(cell); break;
-                        case EtlData:
+                        case EtlData: value = DateUtil.getJavaDate(getDoubleCell(cell)); break;
                         default:
                             continue;
                     }
