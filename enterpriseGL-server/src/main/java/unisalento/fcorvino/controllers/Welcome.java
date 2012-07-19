@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.multipart.MultipartFile;
 import unisalento.fcorvino.beans.EntModel;
 import unisalento.fcorvino.beans.EntModel.ModelStatus;
 import unisalento.fcorvino.model.ModelsBuilder;
@@ -94,9 +92,4 @@ public class Welcome {
         return "view";
     }
     
-    @RequestMapping(value="load")
-    public String loadModel(@ModelAttribute(value="model") EntModel m){
-        
-        return "graphic";
-    }
 }

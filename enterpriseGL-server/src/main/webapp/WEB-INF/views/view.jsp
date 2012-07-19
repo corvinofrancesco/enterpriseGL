@@ -5,11 +5,16 @@
 --%>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#commandForm").ajaxForm({ success: function(html) {configuration.menu.changeWith(html);}});
+        $("#commandForm").ajaxForm({ 
+            success: function(html) {
+                configuration.menu.changeWith(html);
+                EntInteraction.changeModel("${model.name}");
+            }
+        });
     });
 </script>	
 
-<form id="commandForm" method="post" action="/graphic" class="commandForm">
+<form id="commandForm" method="post" action="/load" class="commandForm">
     <fieldset id="body">
         <h3>View of ${model.name}</h3>
         <fieldset>

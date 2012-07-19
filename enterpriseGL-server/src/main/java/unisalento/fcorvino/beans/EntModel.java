@@ -39,19 +39,19 @@ public class EntModel {
         return particles.ceiling(subj);
     }
     
-    public Set getParticles() {
+    public Set<Particle> getParticles() {
         return particles;
     }
 
-    public void setParticles(Set particles) {
+    public void setParticles(Set<Particle> particles) {
         this.particles = new TreeSet(particles);
     }
 
-    public List getRelations() {
+    public List<Relation> getRelations() {
         return relations;
     }
 
-    public void setRelations(List relations) {
+    public void setRelations(List<Relation> relations) {
         this.relations = relations;
     }
 

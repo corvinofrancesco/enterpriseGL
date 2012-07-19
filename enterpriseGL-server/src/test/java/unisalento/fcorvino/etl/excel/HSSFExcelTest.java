@@ -14,21 +14,21 @@ import unisalento.fcorvino.model.ModelsBuilder;
  * @author Francesco Corvino
  */
 public class HSSFExcelTest extends TestCase {
-//    private EtlContext context = null;
-//    private byte[] bytes;
-//    
+    private EtlContext context = null;
+    private byte[] bytes;
+    
     public HSSFExcelTest(String testName) {
         super(testName);
-//        ModelsBuilder builder = new ModelsBuilder();
-//        builder.setName("prova");
-//        builder.setType("services resources");
-//        this.context = builder.getContext();
-//        try {
-//            bytes = IOUtils.toByteArray(
-//                    HSSFExcelTest.class.getResourceAsStream("100part.xls"));
-//        } catch (IOException ex) {
-//            Logger.getLogger(HSSFExcelTest.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        ModelsBuilder builder = new ModelsBuilder();
+        builder.setName("prova");
+        builder.setType("services resources");
+        this.context = builder.getContext();
+        try {
+            bytes = IOUtils.toByteArray(
+                    HSSFExcelTest.class.getResourceAsStream("100part.xls"));
+        } catch (IOException ex) {
+            Logger.getLogger(HSSFExcelTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Override
@@ -43,15 +43,15 @@ public class HSSFExcelTest extends TestCase {
     
     public void testHSSFExcel(){
         System.out.println("HSSFExcel");
-//        EntModel m;
-//        try {
-//            this.context.setCurrentSource("hssf");
-//            this.context.setCurrentTable("services");
-//            this.context.parseFile(bytes);
-//        }catch(Exception e){
-//            fail("Return error message:" + e.getMessage());
-//        }
+        EntModel m;
+        try {
+            this.context.setCurrentSource("hssf");
+            this.context.setCurrentTable("services");
+            this.context.parseFile(bytes);
+        }catch(Exception e){
+            fail("Return error message:" + e.getMessage());
+        }
         assertTrue(true);
     }
-//
+
 }

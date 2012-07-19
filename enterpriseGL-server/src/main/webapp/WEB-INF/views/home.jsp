@@ -34,8 +34,8 @@
                     req.setRequestHeader("ajaxRequest", "true");
                 },
                 client: {
-                    infoModelUrl: function(model){return "<c:url value='/loader/config/'/>" + model;},
-                    infoModelLoad: function(index){return "<c:url value='/loader/download/' />" + index;}
+                    infoModelUrl: function(model){return "<c:url value='/load/config/'/>" + model;},
+                    infoModelLoad: function(index){return "<c:url value='/load/download/' />" + index;}
                 }
             };
 

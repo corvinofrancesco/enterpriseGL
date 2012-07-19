@@ -179,6 +179,12 @@ public class ModelsBuilder {
         current.putTable(table, instance);
     }
     
+    public ModelParser createParser(){
+        ModelParser parser = new ModelParser(this.current);
+        parser.parse();
+        return parser;
+    }
+    
     public Boolean save(){
         /** TODO make serialization of model */
         return false;

@@ -1,5 +1,8 @@
 package unisalento.fcorvino.beans.models;
 
+import java.util.List;
+import unisalento.fcorvino.beans.client.EntItem;
+
 /**
  *
  * @author Francesco Corvino
@@ -7,6 +10,7 @@ package unisalento.fcorvino.beans.models;
 public class EntModelPack {
     private Integer idPacket;
     private Boolean lastPacket;
+    private List<EntItem> items; 
 
     public Integer getIdPacket() {
         return idPacket;
@@ -22,6 +26,14 @@ public class EntModelPack {
 
     public void setLastPacket(Boolean lastPacket) {
         this.lastPacket = lastPacket;
+    }
+
+    public List<EntItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<EntItem> items) {
+        this.items = items;
     }
     
 }
