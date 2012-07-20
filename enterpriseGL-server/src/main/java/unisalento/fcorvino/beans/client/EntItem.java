@@ -8,18 +8,18 @@ import java.util.Map;
  * @author Francesco Corvino
  */
 public class EntItem {
-    private Integer id;
+    private String id;
     private String type = "particle";
     private String title;
     private String description;
     private String definition;
     private Map<String,Object> properties = new HashMap<String, Object>();
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
