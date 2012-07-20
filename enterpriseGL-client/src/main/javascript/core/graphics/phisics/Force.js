@@ -17,18 +17,19 @@ Force.types = {
 };
 
 /**
- * @param particles array di particelle 
+ * 
  * @param k costante di elasticità
  * @param delta lunghezza minima
  */
-function attractionForce(particles, k, delta){
+function attractionForce( k, delta){
     var f = new Force();
-    f.type = Force.types.LOCAL;
-    f.force = function(p) {
+    f.type = Force.types.ONRELATIONS;
+    f.force = function(p,system) {
         for(var ri in p.relations){
             var r = p.relations[ri],
-                d = particles[r],
+                d = system.particles[r],
                 l = 0;// r.modelReference[1]??
+            if(!d) return;
             // vector D - P
             var dp = d.position.clone().subSelf(p.position);
             l = dp.length();

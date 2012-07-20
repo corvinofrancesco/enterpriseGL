@@ -21,7 +21,7 @@ function SimulationRandomGraph(){
         });
         part.register();
         
-        parts.push(part);
+        parts.push(part.id);
     }
 
 

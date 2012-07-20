@@ -101,13 +101,13 @@ EntGraphics.prototype = {
             var p = ev.posInObjects(i);
             if(p!=-1){
                 elements.split(p,1);
-                this.updateParticle(p);
+                //this.updateParticle(p);
             } else this.removeParticle(p)
         }
         // read particles only for passed event
         for(var i in elements){
-            //var elem = EntObjects.get(elements[i]);
-            var elem = elements[i];           
+            var elem = EntObjects.get(elements[i]);
+            //var elem = elements[i];           
             if(elem) {
                 //TODO get current element
                 //elem = elem.getChange(entEventId);

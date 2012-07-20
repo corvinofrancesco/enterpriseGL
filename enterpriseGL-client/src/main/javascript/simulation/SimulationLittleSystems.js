@@ -62,7 +62,7 @@ function SimulationLittleSystem(){
         id: 'event0',
         nametime: new Date(),
         description: "A fist event for testing graphical system",
-        objects: [part1, part2, part3,part4,part5,part6]
+        objects: ["part1", "part2", "part3","part4","part5","part6"]
     });
     event0.register();
 }

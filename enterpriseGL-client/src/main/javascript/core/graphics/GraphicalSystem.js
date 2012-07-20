@@ -10,7 +10,7 @@ function GraphicalSystem(){
     this.forces = {
         barneshut:new Force(), 
         /// atraction between particles in relation
-        relAttr: attractionForce(this.particles,0.02,2),
+        relAttr: attractionForce(0.02,2),
         centreforce: gravitation(0.009)};
     // other global variables
     this.numparticles = 0;    
@@ -191,8 +191,6 @@ GraphicalSystem.prototype = {
         for(var findex in this.forces){
             // funzione che calcola la forza da applicare
             var force = this.forces[findex].force;
-            // seleziona le relazioni su cui applicare la forza
-            var selector = this.forces[findex].selector;   
             switch(this.forces[findex].type) {
                 case Force.types.GLOBAL:
                     // configura l'algoritmo globale 
@@ -200,17 +198,21 @@ GraphicalSystem.prototype = {
                     this.globalAlg.configureFor(
                         this.forces[findex]);
                     // aggiunge il calcolo delle forze
-                    for(var i in this.particles){
-                        var a = this.globalAlg.getForceFor(this.particles[i]);
+                    for(var j in this.particles){
+                        var a = this.globalAlg.getForceFor(this.particles[j]);
                         log(a.length(), "LOG",true);
-                        this.particles[i].accelerations.addSelf(a);
+                        this.particles[j].accelerations.addSelf(a);
+                    }
+                    break;
+                case Force.types.ONRELATIONS:
+                    for(var k in this.particles){
+                        force(this.particles[k],this);
                     }
                     break;
                 case Force.types.LOCAL:                
                 default:
-                    //for(var i in this.particles.filter(selector)){
-                    for(var i in this.particles){
-                        force(this.particles[i]);
+                    for(var k in this.particles){
+                        force(this.particles[k]);
                     }
                 break;                    
             }

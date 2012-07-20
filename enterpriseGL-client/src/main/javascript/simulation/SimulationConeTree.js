@@ -42,7 +42,7 @@ function SimulationConeTree(){
             relations: rel
         });
         part.register();
-        parts.push(part);
+        parts.push(part.id);
     }
 
     event0.setProperties({

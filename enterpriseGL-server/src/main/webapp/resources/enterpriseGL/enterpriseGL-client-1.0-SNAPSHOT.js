@@ -64,10 +64,9 @@ this.renderer.render(this.scene,this.camera)
 if(!c){return
 }var d=(new Array()).concat(c.objects);
 for(var a in this.system.particles){var e=c.posInObjects(a);
-if(e!=-1){d.split(e,1);
-this.updateParticle(e)
+if(e!=-1){d.split(e,1)
 }else{this.removeParticle(e)
-}}for(var a in d){var b=d[a];
+}}for(var a in d){var b=EntObjects.get(d[a]);
 if(b){this.addParticle(b)
 }}this.updateRelations()
 },updateParticle:function(a){},removeParticle:function(d){var b=this.system.particles[d.modelReference];
@@ -237,7 +236,7 @@ return true
 }};
 function GraphicalSystem(){this.particles={};
 this.objects=[];
-this.forces={barneshut:new Force(),relAttr:attractionForce(this.particles,0.02,2),centreforce:gravitation(0.009)};
+this.forces={barneshut:new Force(),relAttr:attractionForce(0.02,2),centreforce:gravitation(0.009)};
 this.numparticles=0;
 this.forces.barneshut.type=Force.types.GLOBAL;
 this.globalAlg=new BarnesHut()
@@ -280,17 +279,18 @@ e.addSelf(d.velocity.clone().multiplyScalar(a));
 var b=d.accelerations.clone().multiplyScalar(a);
 d.velocity.addSelf(b);
 d.position.addSelf(e)
-}},updateAccelerations:function(){for(var e in this.particles){this.particles[e].accelerations=new THREE.Vector3(0,0,0);
-this.particles[e].velocity=new THREE.Vector3(0,0,0)
+}},updateAccelerations:function(){for(var f in this.particles){this.particles[f].accelerations=new THREE.Vector3(0,0,0);
+this.particles[f].velocity=new THREE.Vector3(0,0,0)
 }this.globalAlg.update();
-for(var d in this.forces){var f=this.forces[d].force;
-var b=this.forces[d].selector;
+for(var d in this.forces){var g=this.forces[d].force;
 switch(this.forces[d].type){case Force.types.GLOBAL:this.globalAlg.configureFor(this.forces[d]);
-for(var e in this.particles){var c=this.globalAlg.getForceFor(this.particles[e]);
-log(c.length(),"LOG",true);
-this.particles[e].accelerations.addSelf(c)
+for(var e in this.particles){var b=this.globalAlg.getForceFor(this.particles[e]);
+log(b.length(),"LOG",true);
+this.particles[e].accelerations.addSelf(b)
 }break;
-case Force.types.LOCAL:default:for(var e in this.particles){f(this.particles[e])
+case Force.types.ONRELATIONS:for(var c in this.particles){g(this.particles[c],this)
+}break;
+case Force.types.LOCAL:default:for(var c in this.particles){g(this.particles[c])
 }break
 }}}};
 function ModelConfiguration(a){this.pbuilder=new ParticleBuilder(a);
@@ -403,19 +403,20 @@ function Force(){this.selector=function(){return true
 this.force=function(){};
 this.type=Force.types.LOCAL
 }Force.types={GLOBAL:"global",LOCAL:"local",ONRELATIONS:"onRelations"};
-function attractionForce(b,a,d){var c=new Force();
-c.type=Force.types.LOCAL;
-c.force=function(h){for(var f in h.relations){var g=h.relations[f],i=b[g],e=0;
-var j=i.position.clone().subSelf(h.position);
-e=j.length();
-if(e==0){j.set(Math.random(),Math.random(),Math.random())
-}if(e<d-0.5){j.negate()
-}else{if(e<d+0.5){continue
-}}j.multiplyScalar(a);
-h.accelerations.addSelf(j)
-}log(h.modelReference+" -> "+h.accelerations.length(),"LOG"+h.modelReference,true)
+function attractionForce(a,c){var b=new Force();
+b.type=Force.types.ONRELATIONS;
+b.force=function(i,h){for(var f in i.relations){var g=i.relations[f],j=h.particles[g],e=0;
+if(!j){return
+}var k=j.position.clone().subSelf(i.position);
+e=k.length();
+if(e==0){k.set(Math.random(),Math.random(),Math.random())
+}if(e<c-0.5){k.negate()
+}else{if(e<c+0.5){continue
+}}k.multiplyScalar(a);
+i.accelerations.addSelf(k)
+}log(i.modelReference+" -> "+i.accelerations.length(),"LOG"+i.modelReference,true)
 };
-return c
+return b
 }function gravitation(a){var b=new Force();
 b.type=Force.types.LOCAL;
 b.force=function(c){var d=c.position.clone().normalize();
@@ -764,7 +765,7 @@ if(EntObjects.get(k)){c.push(k)
 }else{alert(k+" non esiste!: "+b[s].row+" - "+(Math.floor(Math.random()*b[s].estr)))
 }}p.setProperties({id:"part"+r,title:"Particella "+r,definition:"Particella d'esempio numero "+r,relations:c});
 p.register();
-n.push(p)
+n.push(p.id)
 }l.setProperties({id:"event0",nametime:new Date(),description:"Event for testing cone tree relations",objects:n});
 l.register()
 };
@@ -782,7 +783,7 @@ b.setProperties({id:"part5",title:"Particella 05",definition:"Particella d'esemp
 b.register();
 a.setProperties({id:"part6",title:"Particella 06",definition:"Particella d'esempio numero 06",relations:["part1"]});
 a.register();
-d.setProperties({id:"event0",nametime:new Date(),description:"A fist event for testing graphical system",objects:[g,f,e,c,b,a]});
+d.setProperties({id:"event0",nametime:new Date(),description:"A fist event for testing graphical system",objects:["part1","part2","part3","part4","part5","part6"]});
 d.register()
 };
 function SimulationRandomGraph(){var l=new EntEvent(),d=[],h=5000;
@@ -797,17 +798,17 @@ var a="part"+c;
 if(EntObjects.get(a)){k.push(a)
 }}b.setProperties({id:"part"+f,title:"Particella "+f,definition:"Particella d'esempio numero "+f,relations:k});
 b.register();
-d.push(b)
+d.push(b.id)
 }l.setProperties({id:"event0",nametime:new Date(),description:"A fist event for testing graphical system",objects:d});
 l.register()
 };
 function SimulationTwoParticles(){var a=new EntEvent();
 var c=new EntParticle(),b=new EntParticle();
-c.setProperties({id:"part1",title:"Particella 01",definition:"Particella d'esempio numero 01",relations:["part2","part3"]});
+c.setProperties({id:"part1",title:"Particella 01",definition:"Particella d'esempio numero 01",relations:[]});
 c.register();
-b.setProperties({id:"part2",title:"Particella 02",definition:"Particella d'esempio numero 02",relations:["part3"]});
+b.setProperties({id:"part2",title:"Particella 02",definition:"Particella d'esempio numero 02",relations:["part1"]});
 b.register();
-a.setProperties({id:"event0",nametime:new Date(),description:"A fist event for testing graphical system",objects:[c,b]});
+a.setProperties({id:"event0",nametime:new Date(),description:"A fist event for testing graphical system",objects:["part1","part2"]});
 a.register()
 };
 function FixedParticles(){}FixedParticles.prototype={popolate:function(a){a.add((new Particle(0)),null);
