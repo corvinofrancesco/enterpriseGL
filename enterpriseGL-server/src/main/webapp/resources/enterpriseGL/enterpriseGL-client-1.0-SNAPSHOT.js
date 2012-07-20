@@ -1,31 +1,33 @@
-function EntController(a){var b=new ContainerManager({info:"descriptionBox",main:"container"});
-this.configuration=a||{};
+function EntController(b){var a=new ContainerManager({info:"descriptionBox",main:"container"});
 this.model=new EntModel();
-if(!a.defaultModel){SimulationLittleSystem()
-}else{a.defaultModel()
-}this.graphics=new EntGraphics();
-this.model.init(this.graphics);
-b.add(this.graphics.renderer.domElement);
+this.graphics=new EntGraphics();
+a.add(this.graphics.renderer.domElement);
 this.ui=new EntInteraction(this.graphics);
-this.ui.containerManager=b;
-EntController.instance=this;
+this.ui.containerManager=a;
+this.configuration=b||{};
+if(!this.configuration.defaultModel){this.configuration.defaultModel=SimulationLittleSystem
+}EntController.instance=this;
+this.configuration.defaultModel();
 EntController.update()
 }EntController.update=function(){requestAnimationFrame(EntController.update);
 var a=EntController.instance;
 a.ui.update();
-a.graphics.update()
+if(a.model.hasChange()){a.graphics.updateModel(a.model.currentEventId)
+}a.graphics.update()
 };
 EntController.changeModel=function(b){var a=EntController.instance.configuration;
-$.getJSON(a.infoModelUrl(b),function(c){});
-EntController.instance.downloadIndex=0;
-EntController.instance.downloadModel();
 EntController.instance.model.reset();
-EntController.instance.graphics.reset()
-};
+EntController.instance.graphics.reset();
+if(a.infoModelUrl){$.getJSON(a.infoModelUrl(b),function(c){})
+}else{a.defaultModel()
+}if(a.infoModelLoad){EntController.instance.downloadIndex=0;
+EntController.instance.downloadModel()
+}};
 EntController.prototype={downloadModel:function(){var b=this.configuration.infoModelLoad(this.downloadIndex);
 var a=this.model;
 $.getJSON(b,function(c){a.addObjects(c.items);
-if(!c.lastPacket){EntController.instance.downloadModel()
+if(!c.idPacket==0){EntController.instance.model.init()
+}if(!c.lastPacket){EntController.instance.downloadModel()
 }});
 this.downloadIndex++
 }};
@@ -190,18 +192,17 @@ this.containerManager.hiddenInfo()
 if(this.containerManager){this.containerManager.container.style.cursor="move"
 }},update:function(){}};
 function EntModel(){this.timeline=[];
-this.loader=new Loader();
-this.loader.callback=this.update;
-this.graphics=null;
 this.currentEventId="event0";
 this.currentEventPos=0;
+this.lastCheckSize=0;
+this._hasChange=false;
 new EntObjects()
-}EntModel.prototype={init:function(b){this.graphics=b;
-var a=EntObjects.get(this.currentEventId);
-if(a){this.graphics.updateModel(this.currentEventId)
-}else{this.loader.wait()
-}},getTimeLine:function(){this.timeline=EntObjects.instance.getEvents();
-return this.timeline.sort(function(d,c){return(d.date>c.date)-(d.date<c.date)
+}EntModel.prototype={init:function(){this.getTimeLine();
+this.currentEventPos=0;
+this.currentEventId=this.timeline[0].id
+},getTimeLine:function(){this.timeline=EntObjects.instance.getEvents();
+if(this.timeline.length==0){this.timeline=[new EntEvent()]
+}return this.timeline.sort(function(d,c){return(d.date>c.date)-(d.date<c.date)
 })
 },getNextEvent:function(){if(this.timeline.length<=this.currentEventPos){return this.currentEventId
 }var a=this.currentEventPos+1;
@@ -209,13 +210,15 @@ return this.timeline[a].id
 },getPrevEvent:function(){if(this.currentEventPos<=0){return this.currentEventId
 }var a=this.currentEventPos-11;
 return this.timeline[a].id
-},setToEvent:function(b,c){if(EntObjects.get(b)){this.currentEventId=b;
+},setToEvent:function(b,c){this._hasChange=true;
+if(EntObjects.get(b)){this.currentEventId=b;
 if(c){if(this.timeline[c].id==b){this.currentEventPos=c;
 return c
 }}for(var a in this.timeline){if(this.timeline[a].id==b){this.currentEventPos=a;
 return a
 }}}return null
-},update:function(){},reset:function(){EntObjects.instance.objects={}
+},update:function(){},reset:function(){EntObjects.instance.objects={};
+this.lastCheckSize=0
 },addObjects:function(b){for(var a in b){var c=null;
 switch(b[a].type){case"particle":c=new EntParticle();
 break;
@@ -224,7 +227,14 @@ break;
 default:continue
 }c.setProperties(b[a]);
 c.register()
-}}};
+}},hasChange:function(){if(this._hasChange){this._hasChange=false;
+return true
+}var a=0;
+for(key in EntObjects.instance.objects){a++
+}if(this.lastCheckSize!=a){this.lastCheckSize=a;
+return true
+}return false
+}};
 function GraphicalSystem(){this.particles={};
 this.objects=[];
 this.forces={barneshut:new Force(),relAttr:attractionForce(this.particles,0.02,2),centreforce:gravitation(0.009)};

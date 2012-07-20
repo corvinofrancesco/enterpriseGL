@@ -3,11 +3,10 @@
  */
 function  EntModel(){
     this.timeline = [];
-    this.loader = new Loader();
-    this.loader.callback = this.update;
-    this.graphics = null;
     this.currentEventId = "event0"; 
     this.currentEventPos = 0;
+    this.lastCheckSize = 0;
+    this._hasChange = false;
     new EntObjects();
 }
 
@@ -16,15 +15,10 @@ EntModel.prototype = {
     /**
      * Go to the init event of system
      */
-    init : function(graphics){
-        this.graphics = graphics;
-        //TODO configure loader
-        var firstEv = EntObjects.get(this.currentEventId);
-        // try to visualize the first event
-        if(firstEv) this.graphics.updateModel(this.currentEventId);
-        else { // otherwise try to connect to the server
-            this.loader.wait();
-        }
+    init : function(){
+        this.getTimeLine();
+        this.currentEventPos = 0;                            
+        this.currentEventId = this.timeline[0].id;                            
     },
     
     /**
@@ -32,6 +26,9 @@ EntModel.prototype = {
      */
     getTimeLine: function() {
         this.timeline = EntObjects.instance.getEvents();
+        if(this.timeline.length==0) {
+            this.timeline = [new EntEvent()];
+        }
         return this.timeline.sort(function(a,b){
             return (a.date > b.date)-(a.date < b.date);
         });        
@@ -68,6 +65,7 @@ EntModel.prototype = {
      * @return the number of order of event setted
      */
     setToEvent: function(eventId,pos){
+        this._hasChange = true;
         // control if the event is valid
         if(EntObjects.get(eventId)){
             this.currentEventId = eventId;
@@ -100,6 +98,7 @@ EntModel.prototype = {
      */
     reset : function(){
         EntObjects.instance.objects = {};
+        this.lastCheckSize = 0;
     },
     
     /**
@@ -116,6 +115,20 @@ EntModel.prototype = {
             obj.setProperties(objects[i]);
             obj.register();
         }
+    },
+    
+    hasChange: function(){
+        if(this._hasChange){
+            this._hasChange = false;
+            return true;
+        }
+        var size = 0;
+        for (key in EntObjects.instance.objects) size++;       
+        if(this.lastCheckSize != size) {
+            this.lastCheckSize = size;
+            return true;
+        }
+        return false;
     }
     
 }
