@@ -35,7 +35,8 @@
                 },
                 client: {
                     infoModelUrl: function(model){return "<c:url value='/load/config/'/>" + model;},
-                    infoModelLoad: function(index){return "<c:url value='/load/download/' />" + index;}
+                    infoModelLoad: function(index){return "<c:url value='/load/download/' />" + index;},
+                    defaultModel: SimulationLittleSystem
                 }
             };
 

@@ -12,6 +12,9 @@ function EntController(configurations){
     this.configuration = configurations || {};
 
     this.model = new EntModel();
+    
+    if(!configurations.defaultModel) SimulationLittleSystem();
+    else configurations.defaultModel();
 
     this.graphics = new EntGraphics();
     
@@ -47,9 +50,14 @@ EntController.changeModel = function(idModel){
 EntController.prototype = {    
     downloadModel: function(){
         var url = this.configuration.infoModelLoad(this.downloadIndex);
+        var model = this.model;
         $.getJSON(url, function(data){
-            //TODO parse and elaborate data
-            //TODO if download not already completed make callback
+            // parse and elaborate data
+            model.addObjects(data.items);
+            // if download not already completed make callback
+            if(!data.lastPacket) {
+                EntController.instance.downloadModel();
+            }
         });
         this.downloadIndex++;
     }

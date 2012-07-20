@@ -16,7 +16,8 @@ EntParticle.prototype.constructor = EntParticle;
 EntParticle.prototype.getDescription = function(){
     var text = "";
     text += "<h1>" + this.title +"</h1>";
-    text += "<p>" + this.body + "</p>";
+    text += "<p>" + this.definition + "</p>";
+    text += "<p>" + this.description + "</p>";
     if(this.relations.length>0){
         text += "<ul>";
         for(var i in this.relations){
@@ -31,8 +32,9 @@ EntParticle.prototype.getDescription = function(){
 EntParticle.prototype.setProperties = function(prop){
     this.setId(prop.id);
     this.title = prop.title || this.title;
-    this.body = prop.body || this.body;
     this.relations = this.relations.concat(prop.relations);
+    this.description = prop.description || "there isn't description for this element!";
+    this.definition = prop.definition || "not defined!";
 }
 
 EntParticle.prototype.getChange = function(id){

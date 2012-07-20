@@ -3,6 +3,7 @@
  */
 function EntObjects(){
     this.objects = {};
+    this.array = [];
     this.undefLink = "Undefined Object";
     this.callbackName = "EntInteraction.clickOnObject";
     EntObjects.instance = this;    
@@ -32,6 +33,19 @@ EntObjects.prototype = {
             if(e instanceof EntElement) retArray.push(e);
         }
         return retArray;
+    },
+    
+    /**
+     * This function returns all events registered
+     * @see EntModel class that invokes this method for timeline
+     */
+    getEvents: function(){
+        var retArray = [];
+        for(var i in this.objects){
+            var e = this.objects[i];
+            if(e instanceof EntEvent) retArray.push(e);
+        }
+        return retArray;        
     }
 };
 

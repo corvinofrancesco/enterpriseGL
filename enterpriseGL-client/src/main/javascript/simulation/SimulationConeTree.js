@@ -38,7 +38,7 @@ function SimulationConeTree(){
         part.setProperties({
             id: 'part' + i,
             title: "Particella "+ i,
-            body: "Particella d'esempio numero " + i,
+            definition: "Particella d'esempio numero " + i,
             relations: rel
         });
         part.register();
