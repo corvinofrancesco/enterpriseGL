@@ -23,11 +23,16 @@ if(a.infoModelUrl){$.getJSON(a.infoModelUrl(b),function(c){})
 }if(a.infoModelLoad){EntController.instance.downloadIndex=0;
 EntController.instance.downloadModel()
 }};
+EntController.completeDownload=function(){EntController.instance.model.init();
+var b=EntController.instance.graphics,a=EntController.instance.model.currentEventId;
+b.updateModel(a);
+EntController.instance.ui.mouse=b.createMouseSelector()
+};
 EntController.prototype={downloadModel:function(){var b=this.configuration.infoModelLoad(this.downloadIndex);
 var a=this.model;
 $.getJSON(b,function(c){a.addObjects(c.items);
-if(!c.idPacket==0){EntController.instance.model.init()
-}if(!c.lastPacket){EntController.instance.downloadModel()
+if(!c.idPacket==0){}if(!c.lastPacket){EntController.instance.downloadModel()
+}else{EntController.completeDownload()
 }});
 this.downloadIndex++
 }};
@@ -64,7 +69,7 @@ this.renderer.render(this.scene,this.camera)
 if(!c){return
 }var d=(new Array()).concat(c.objects);
 for(var a in this.system.particles){var e=c.posInObjects(a);
-if(e!=-1){d.split(e,1)
+if(e!=-1){d.splice(e,1)
 }else{this.removeParticle(e)
 }}for(var a in d){var b=EntObjects.get(d[a]);
 if(b){this.addParticle(b)
@@ -461,7 +466,7 @@ var g=b.lengthSq();
 if(g<j){if(c instanceof Region){for(var d in c.childs){f.push({elem:c.childs[d],dsq:j*0.25})
 }}else{if(c!=this){h.addSelf(this.getForce(c,b,g))
 }}}else{h.addSelf(this.getForce(c,b,g))
-}}return h.multiplyScalar(e.getMass())
+}}return h
 },getForce:function(e,g,f){var d=1/Math.sqrt(f+BarnesHutConfig.epssq()),c=g.clone(),b=e.getMass();
 if(c.lengthSq()<0.01){c.set(Math.random(),Math.random(),Math.random()).normalize()
 }c.multiplyScalar(b*d*d*d/100);

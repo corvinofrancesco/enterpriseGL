@@ -11,6 +11,7 @@ public class Particle implements Comparable<Particle> {
     private String definition;
     private String description;
     private Date assumption;
+    private Date end = null;
     
     public Particle(Integer id){
         this.id = id;
@@ -52,5 +53,12 @@ public class Particle implements Comparable<Particle> {
         return this.id - o.id;
     }
 
+    public Date getEnd() {
+        return end;
+    }
+
+    public void setEnd(Date end) {
+        this.end = end;
+    }
     
 }

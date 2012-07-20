@@ -55,6 +55,16 @@ EntController.changeModel = function(idModel){
     }
 }
 
+EntController.completeDownload = function(){
+    // set the timeline to the first event
+    EntController.instance.model.init();                
+    var graphic = EntController.instance.graphics,
+        event = EntController.instance.model.currentEventId;
+    graphic.updateModel(event);
+    EntController.instance.ui.mouse 
+        = graphic.createMouseSelector();
+}
+
 EntController.prototype = {    
     downloadModel: function(){
         var url = this.configuration.infoModelLoad(this.downloadIndex);
@@ -63,13 +73,11 @@ EntController.prototype = {
             // parse and elaborate data
             model.addObjects(data.items);
             if(!data.idPacket==0){
-                // set the timeline to the first event
-                EntController.instance.model.init();                
             }
             // if download not already completed make callback
             if(!data.lastPacket) {
                 EntController.instance.downloadModel();
-            }
+            } else EntController.completeDownload();
         });
         this.downloadIndex++;
     }

@@ -100,7 +100,7 @@ EntGraphics.prototype = {
         for(var i in this.system.particles){
             var p = ev.posInObjects(i);
             if(p!=-1){
-                elements.split(p,1);
+                elements.splice(p,1);
                 //this.updateParticle(p);
             } else this.removeParticle(p)
         }

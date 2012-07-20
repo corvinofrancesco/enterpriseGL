@@ -112,7 +112,7 @@ BarnesHut.prototype = {
                 // le particelle come un unico corpo
                 a.addSelf(this.getForce(node,dr,drsq));
         }        
-        return a.multiplyScalar(particle.getMass());
+        return a;
     },
 
     /**

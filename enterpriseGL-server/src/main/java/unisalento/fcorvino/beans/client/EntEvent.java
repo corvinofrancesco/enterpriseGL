@@ -9,7 +9,9 @@ import java.util.Date;
  */
 public class EntEvent extends EntItem implements Comparable<EntEvent> {
 
-    private ArrayList<Integer> objects = new ArrayList<Integer>();
+    private ArrayList<String> objects = new ArrayList<String>();
+    
+    private ArrayList<EntChange> changes = new ArrayList<EntChange>();
     
     private Date date = new Date();
         
@@ -25,12 +27,20 @@ public class EntEvent extends EntItem implements Comparable<EntEvent> {
         this.date = date;
     }
 
-    public ArrayList<Integer> getObjects() {
+    public ArrayList<String> getObjects() {
         return objects;
     }
 
-    public void setObjects(ArrayList<Integer> objects) {
+    public void setObjects(ArrayList<String> objects) {
         this.objects = objects;
+    }
+
+    public ArrayList<EntChange> getChanges() {
+        return changes;
+    }
+
+    public void setChanges(ArrayList<EntChange> changes) {
+        this.changes = changes;
     }
 
     public int compareTo(EntEvent o) {
@@ -38,5 +48,5 @@ public class EntEvent extends EntItem implements Comparable<EntEvent> {
         else if(o.getDate().before(date)) return -1;
         else return 0;
     }
-    
+        
 }
