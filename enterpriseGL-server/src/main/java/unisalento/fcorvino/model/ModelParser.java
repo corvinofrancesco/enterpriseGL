@@ -22,7 +22,7 @@ public class ModelParser {
     
     private SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
     
-    private ArrayList<EntItem> items = new ArrayList<EntItem>(); 
+    private ArrayList<EntParticle> particles = new ArrayList<EntParticle>(); 
     
     private TreeMap<Date,EntEvent> events = new TreeMap<Date , EntEvent>();
 
@@ -32,6 +32,19 @@ public class ModelParser {
         this.model = model;
     }
     
+    private EntParticle getHotParticle(String id){
+        EntParticle p = new EntParticle(id);
+        Integer index = particles.indexOf(p);
+        if(index > 0) return particles.get(index);
+        return null;
+    }
+    
+    /**
+     * Private method used to create o modify an event.
+     * @param date identificator of event
+     * @param change element that describe the type of change
+     * @return the event created
+     */
     private EntEvent createEvent(Date date,EntChange change){
         if(date==null) return null;
         EntEvent event = new EntEvent();
@@ -77,12 +90,16 @@ public class ModelParser {
             e.setDefinition(p.getDefinition());
             e.setDescription(p.getDescription());
             pack.getItems().add(e);
+            particles.add(e);
             createEvent(p.getAssumption(), new EntChange(EntChange.EntChangeTypes.INIT,e));
             createEvent(p.getEnd(),new EntChange(EntChange.EntChangeTypes.END,e));
         }
         // controls relations
         for(Relation r : model.getRelations()){
-            
+            try {
+                EntParticle p = getHotParticle(r.getSource().getId().toString());
+                p.getRelations().add(r.getDestination().getId().toString());
+            } catch(Exception e){}
         }
         if(!events.isEmpty()){
             EntEvent prec = null;

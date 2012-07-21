@@ -1,5 +1,7 @@
 package unisalento.fcorvino.beans;
 
+import java.util.Date;
+
 /**
  *
  * @author Francesco Corvino
@@ -7,6 +9,9 @@ package unisalento.fcorvino.beans;
 public class Relation {
     private Particle source;
     private Particle destination;
+    
+    private Date init = null;
+    private Date end = null;
     
     public Relation(Particle source, Particle destination){
         this.source = source;
@@ -27,6 +32,22 @@ public class Relation {
 
     public void setSource(Particle source) {
         this.source = source;
+    }
+
+    public Date getEnd() {
+        return end;
+    }
+
+    public void setEnd(Date end) {
+        this.end = end;
+    }
+
+    public Date getInit() {
+        return init;
+    }
+
+    public void setInit(Date init) {
+        this.init = init;
     }
         
 }

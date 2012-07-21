@@ -15,6 +15,13 @@ public class EntParticle extends EntItem {
 
     public void setRelations(ArrayList<String> relations) {
         this.relations = relations;
-    }        
+    }
+
+    public EntParticle() {
+    }
+
+    public EntParticle(String id) {
+        super(id);
+    }
     
 }
