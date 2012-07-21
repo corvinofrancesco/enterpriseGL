@@ -58,7 +58,16 @@ Region.prototype = {
     
     resize : function (range) {
         this.range = range;
-    }, 
+    },
+    
+    remove: function(child){
+        for(var i in this.childs){
+            if(this.childs[i] == child) {
+                this.childs[i] = undefined;
+                return;
+            }
+        }
+    },
     
     forEach : function(func){        
         this.childs.forEach(function(e,i,a){

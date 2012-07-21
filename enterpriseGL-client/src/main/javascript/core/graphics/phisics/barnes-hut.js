@@ -1,8 +1,3 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 function BarnesHut(){
     this.root = new Region(0,0,0);
     this.root.range = 100;
