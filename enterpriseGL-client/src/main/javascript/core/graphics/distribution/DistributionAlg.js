@@ -49,6 +49,27 @@ DistributionAlg.prototype = {
     },
     
     /**
+     * Search a particle in the tree
+     * @param p graphical particle
+     * @return RegionLeaf or null if the particle is not found
+     */
+    _search: function(p){
+        var q = [this._root], curr = null;
+        while(q.length>0){
+            curr = q.shift();
+            if(curr instanceof Region){
+                if(curr.contains(p)){
+                    for(var c in curr.childs)
+                        q.push(curr.childs[c]);
+                }
+            }
+            if(curr instanceof RegionLeaf)
+                if(curr.have(p)) return curr;
+        }
+        return null;
+    },
+    
+    /**
      * This function must return a position for a particle
      * @param p is a graphical particle 
      */

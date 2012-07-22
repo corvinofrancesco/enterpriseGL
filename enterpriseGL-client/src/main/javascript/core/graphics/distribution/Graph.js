@@ -24,7 +24,7 @@ DistributionGraph.prototype.getPositionFor = function(p){
             return this.euristicFreePosition();
         case 1:
             // crea una regione libera vicino all'altra particella
-            // restituisce il centro delle regione
+            // restituisce il centro delle regione            
             break;
         default:
             // calcola la media delle posizioni delle particelle relazionate
