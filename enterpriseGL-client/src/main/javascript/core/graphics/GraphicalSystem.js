@@ -7,30 +7,17 @@ function GraphicalSystem(){
     // objects for graphical elaboration
     this.objects = [];
     // phisics configurations 
+    this._distributionAlg = new DistributionAlg();
     this.forces = {
-        barneshut:new Force(), 
         /// atraction between particles in relation
         relAttr: attractionForce(0.02,2),
-        centreforce: gravitation(0.009)};
+        centreforce: gravitation(0.009)
+    };
     // other global variables
     this.numparticles = 0;    
-    
-    /// basrnes-hut
-    this.forces.barneshut.type = Force.types.GLOBAL;
-    this.globalAlg = new BarnesHut();
-        
+            
 }
 
-/**
- * GraphicalSystem types of event
- */
-GraphicalSystem.events = {
-    ADD: "add",
-    MODIFY: "modify",
-    REMOVE: "remove",
-    ERROR: "error"
-};
-    
 GraphicalSystem.prototype = {
 
 
@@ -40,34 +27,14 @@ GraphicalSystem.prototype = {
     
     /**
      * This function return the first area free, so we can collocate new particles
+     * If the particle have relations.. this method try to return the nearest 
+     * free position to relational particles
+     * 
+     * @param p graphical particle to create
      * @return if the space is empty return (0,0,0)
      */
-    getFreeSpace: function(){
-       // use global algorithm to find a free space
-        if(this.size()>0){
-            var res =  this.globalAlg.getFreeRegion();
-            if(!(res instanceof THREE.Vector3)) {
-                res = new THREE.Vector3(2,2,0); 
-                res.addSelf(this.objects[this.size()-1].position);
-            } 
-            return res;
-        }
-       return new THREE.Vector3(0,0,0);
-    },
-    
-    /**
-     * Try to return the nearest free position to a particle
-     * @return null if the particle don't exist
-     */
-    getSpaceNextTo: function(idParticle){        
-       //TODO use global algorith to find a free space next to particle
-       var p = this.particles[idParticle],v = new THREE.Vector3(0,0,2);       
-       try {
-           var pos = this.globalAlg.getFreeRegion(p.barneshut.region);
-           if(pos instanceof THREE.Vector3) return pos;
-           return v.addSelf(p.position);
-       } catch(e){ }
-       return null;
+    getFreeSpace: function(p){
+       return this._distributionAlg.getPositionFor(p);
     },
     
     /***************************************************************************
@@ -103,62 +70,31 @@ GraphicalSystem.prototype = {
      * @param p primitive of a particle
      */
     add : function(p) {
-        var genEvent = GraphicalSystem.events.ADD,
-            props = {primitive: p};
         if(this.particles[p.id] != undefined) {
-            genEvent = GraphicalSystem.events.MODIFY;
         } else {
             this.numparticles ++;
             this.objects.push(p);
         }
         this.particles[p.modelReference] = p;
-        // register event
-        this.event(genEvent, props);
     },
     
     /**
      * Si occupa di rimuovere una particella dal sistema,
-     * Se la particella non esiste genera un evento ERROR
      * @param id reference model id of particle to remove
      * @return the object removed, null otherwise
      */
     remove : function(id) {
-        var ev = GraphicalSystem.events.REMOVE,
-            p = this.particles[id],
-            props = {primitive:p};
+        var p = this.particles[id];
         if(p) {
             this.particles[id] = undefined;
             this.numparticles--;
-        } else ev = GraphicalSystem.events.ERROR;
-        this.event(ev,props);
+        }
         return p;
     },
     
     /***************************************************************************
      * System management functions
      */
-    
-    /**
-     * Manage system events
-     * @param type is a GraphicalSystem.events value, defines what happen
-     * @param props 
-     */
-    event : function(type, props) {
-        switch(type){
-            case GraphicalSystem.events.ADD:
-                // TODO per le particelle effettuare l'insert nell'algoritmo globale
-                this.globalAlg.insert(props.primitive);
-                break;
-            case GraphicalSystem.events.MODIFY:
-                // TODO avviare l'aggiornamento delle forze
-                break;
-            case GraphicalSystem.events.REMOVE:
-                // TODO avviare l'aggiornamento delle forze
-                break;
-            default:                
-        }
-        // TODO make something
-    },
 
     update: function(){
         this.updateAccelerations();
@@ -187,7 +123,7 @@ GraphicalSystem.prototype = {
             this.particles[i].accelerations = new THREE.Vector3(0,0,0);
             this.particles[i].velocity = new THREE.Vector3(0,0,0);
         }
-        this.globalAlg.update();
+        this._distributionAlg.update(this);
         for(var findex in this.forces){
             // funzione che calcola la forza da applicare
             var force = this.forces[findex].force;
@@ -200,7 +136,6 @@ GraphicalSystem.prototype = {
                     // aggiunge il calcolo delle forze
                     for(var j in this.particles){
                         var a = this.globalAlg.getForceFor(this.particles[j]);
-                        log(a.length(), "LOG",true);
                         this.particles[j].accelerations.addSelf(a);
                     }
                     break;
@@ -217,5 +152,18 @@ GraphicalSystem.prototype = {
                 break;                    
             }
         }
-    }    
+    },    
+    
+    /***************************************************************************
+     *  Configuration functions
+     */
+    
+    changeDistribution: function(distribution){
+        if(!(distribution instanceof DistributionAlg)) return false;
+        this._distributionAlg = distribution;
+        for(var p in this.particles)
+            this._distributionAlg.insert(this.particles[p]);
+        return true;        
+    }
+
 }

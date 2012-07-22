@@ -137,41 +137,6 @@ BarnesHut.prototype = {
         return a;
     },
     
-    getFreeRegion: function(region){
-        var q = [region || this.root],
-            pointRegions = [],
-            peso = 0, head;
-        while(q.length>0){
-            var rcurr = q.shift();
-            if(!rcurr.childs) return rcurr.centre;
-            if(rcurr.childs.length==0) return rcurr.centre;
-            for(var rInd=0; rInd<8; rInd++){
-                var elem = rcurr.childs[rInd];
-                if(!elem) return rcurr.getCentreForSubRegion(rInd);
-                else if(elem instanceof Region){                    
-                    peso+= 0.125;
-                    q.push(elem);
-                    if(pointRegions.length>0){ // ci sono punti in coda
-                        head = pointRegions[0];
-                        if(head.peso - peso >= 1){ 
-                            // conviene creare un punto affianco al punto in coda 
-                            return head.region.getPosNextTo(head.index, head.particle);
-                        }
-                    }
-                } else {
-                    // aggiunge regione del punto
-                    pointRegions.push({
-                        region: rcurr, 
-                        index: rInd, 
-                        level: Math.round(peso), 
-                        particle: elem});
-                }
-            }            
-        }
-        head = pointRegions[0];
-        return head.region.getPosNextTo(head.index, head.particle);
-    },
-    
     /**
      * Se richiamata si occupa di configurare i valori dell'algoritmo.
      */

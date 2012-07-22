@@ -16,17 +16,6 @@ function Region(x, y, z){
     this.index = 0;
 }
 
-Region.centerVectors = [
-  new THREE.Vector3(-1,-1,-1),  
-  new THREE.Vector3( 1,-1,-1),  
-  new THREE.Vector3(-1, 1,-1),  
-  new THREE.Vector3( 1, 1,-1),  
-  new THREE.Vector3(-1,-1, 1),  
-  new THREE.Vector3( 1,-1, 1),  
-  new THREE.Vector3(-1, 1, 1),  
-  new THREE.Vector3( 1, 1, 1) 
-];
-
 Region.prototype = {
     
     /**
@@ -75,86 +64,14 @@ Region.prototype = {
         });
     },
     
-    getPosNextTo: function(subRegionIndex,existP){
-        // ricava il centro della sotto regione 
-        // dove saranno collocati i due punti
-        var centre = this.getCentreForSubRegion(subRegionIndex);
-        // ricava l'indice del punto esistente nella sua regione
-        var r = new Region(centre.x,centre.y,centre.z);
-        var occIndex = r.getIndexRegionForParticle(existP);
-        // ritorna la posizione nella regione affianco al punto
-        return r.getCentreForSubRegion((occIndex+1)%8);        
-    },
-    
-    getCentreForSubRegion: function(regionIndex){
-        var offset = Region.centerVectors[regionIndex].clone()
-            .multiplyScalar(this.range * 0.5);
-        return this.centre.clone().addSelf(offset);        
-    },
-    
-    getIndexRegionForParticle: function(part){
-        var i =0;
-        if(this.centre.x < part.position.x) i = 1;
-        if(this.centre.y < part.position.y) i += 2;
-        if(this.centre.z < part.position.z) i += 4;
-        return i;
-    },
-    
-    createSubRegion: function(regionIndex,addedP){
-        var r = new Region(),
-            p = this.childs[regionIndex],
-            newRange = this.range * 0.5;
-        var offset = Region.centerVectors[regionIndex].clone()
-            .multiplyScalar(newRange);
-        r.centre = this.centre.clone().addSelf(offset);
-        r.range = newRange;
-        r.parent = this;
-        r.index = regionIndex;
-        var distance = new THREE.Vector3().copy(p.position).subSelf(addedP.position);
-        if(distance.lengthSq()<1) {
-            r.insert(p);
-            var freeIndices = Math.max(7,this.childs.length);
-            this.childs[freeIndices++] = addedP;
-            return;
-        }
-        r.insert(p);
-        // control adding particles at same position
-        r.insert(addedP);
-        this.childs[regionIndex] = r;        
-    },
-    
     /**
      * Inserisce nella regione this la particella 
      * passata con il parametro part 
      * @param part particles to insert in the region
      */ 
     insert: function(part){
-        var i=this.getIndexRegionForParticle(part);
-        // update the region of particle
-        part.barneshut.region = this;
-        if(this.childs[i] == undefined) this.childs[i] = part;
-        else if(this.childs[i] instanceof Region) {
-            this.childs[i].insert(part, this.range);
-        } else this.createSubRegion(i,part);
+        this.childs.push(part);        
     }, 
-    
-    /**
-     * @param part node to reinsert
-     * @param from region where part is collocate actually
-     */
-    reinsert: function(part,from){
-        // remove particle from origin if exist
-        if(from) for(var i in from.childs)
-            if(from.childs[i]== part) 
-                from.childs[i]=undefined;
-        // control if the part is effectly in the region
-        if(!this.contains(part)){
-            if(this.parent)
-                this.parent.reinsert(part);
-            return;
-        }          
-        this.insert(part);
-    },
     
     computeCenterOfMass: function(){
         var mass=0,
@@ -175,6 +92,13 @@ Region.prototype = {
     
     getMass : function(){
         return this.mass;
+    },
+    
+    isEmpty: function(){
+        if(this.childs.length==0) return true;
+        for(var i in this.childs) 
+            if(this.childs[i]) return false;
+        return true;
     }
     
 }
