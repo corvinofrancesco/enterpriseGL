@@ -46,4 +46,33 @@ describe('DistributionGraph Test', function(){
         
     });
     
+
+        describe("getPositionFor() test", function(){
+           var graph = new DistributionGraph();
+           
+           it("Control if the position free is 0,0,0", function(){
+               var point = graph.getPositionFor({relations:[0]});
+               expect(point.x).toBe(0);
+               expect(point.y).toBe(0);
+               expect(point.z).toBe(0);
+           });
+           
+           it("Insert (0,0,0) control new free space", function(){
+               var p = {position: new THREE.Vector3(0,0,0)},
+                   t,v;
+               graph.insert(p);
+               t = {position: graph.getPositionFor({relations:[]})};
+               expect(t.position.x).not.toBe(0);
+               expect(t.position.y).not.toBe(0);
+               expect(t.position.z).not.toBe(0);                              
+               v = {position: graph.insert(t)};
+               expect(v.position.x).not.toBe(t.position.x);
+               expect(v.position.y).not.toBe(t.position.y);
+               expect(v.position.z).not.toBe(t.position.z);                              
+           })
+           
+
+        });
+    
+    
 });

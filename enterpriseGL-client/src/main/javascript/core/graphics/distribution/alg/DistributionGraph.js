@@ -61,9 +61,10 @@ DistributionGraph.prototype.getPositionFor = function(p){
  * @return THREE.Vector3
  */
 DistributionGraph.prototype.euristicFreePosition = function(startRegion){
-    var q = [startRegion || this.root], pointRegions = [], head;
+    var q = [startRegion || this.root()], pointRegions = [], head;
     while(q.length>0){
         var rcurr = q.shift();
+        alert(rcurr);
         if(rcurr.isEmpty()) return rcurr.centre;
         for(var rInd=0; rInd<rcurr.childs; rInd++){
             var elem = rcurr.childs[rInd];
