@@ -73,10 +73,12 @@ Region.prototype = {
         var mass=0,
             p = new THREE.Vector3(0,0,0);
         for(var i in this.childs){
-            var ch = this.childs[i];
-            if(ch instanceof Region)
+            var ch = this.childs[i], m = 0;
+            if(ch==null || ch==undefined) continue;
+            if(ch instanceof Region){
                 ch.computeCenterOfMass();                    
-            var m = ch.getMass();
+            } 
+            if(ch.getMass instanceof Function) m = ch.getMass();
             mass += m;
             p.addSelf(ch.position
                 .clone().multiplyScalar(m));

@@ -50,8 +50,8 @@ DistributionGraph.prototype.getPositionFor = function(p){
             }
             // if mean elaboration have a faillure
             if(div<2) return  this.euristicFreePosition();
-            relP.multiplyScalar(1/div);
-            return relP;
+            retPos.multiplyScalar(1/div);
+            return retPos;
     }
 };
 

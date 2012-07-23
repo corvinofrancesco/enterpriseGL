@@ -59,5 +59,19 @@ describe("DistributionAlg Test", function(){
         
     });
     
+    describe("Update testing",function(){
+       var alg = new DistributionAlg(), precLeaf;
+       //     munkSys = {particles:particles}; 
+       alg.reset(); alg._getInfoFor = getInfoFor;
+       alg.insert(origin); alg.insert(nextOrigin); 
+       precLeaf = alg.insert(otherPoint); alg.insert(middle);
+       otherPoint.position= new THREE.Vector3(-70,-60,-65);
+       alg.update();//alg.update(munkSys)
+       
+       it("control if otherPoint leaf change", function(){
+           var result = alg._search(otherPoint);
+           expect(result).not.toBe(precLeaf);
+       })
+    });
     
 });

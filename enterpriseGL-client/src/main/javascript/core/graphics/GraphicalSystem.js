@@ -8,6 +8,7 @@ function GraphicalSystem(){
     this.objects = [];
     // phisics configurations 
     this._distributionAlg = new DistributionAlg();
+    this._distributionAlg.setSystemRepos(this);
     this.forces = {
         /// atraction between particles in relation
         relAttr: attractionForce(0.02,2),
@@ -161,9 +162,30 @@ GraphicalSystem.prototype = {
     changeDistribution: function(distribution){
         if(!(distribution instanceof DistributionAlg)) return false;
         this._distributionAlg = distribution;
-        for(var p in this.particles)
-            this._distributionAlg.insert(this.particles[p]);
+        this._distributionAlg.setSystemRepos(this);
+        for(var p in this.particles){
+            var curr = this.particles[p];
+            curr.position.copy(this._distributionAlg.getPositionFor(curr));
+            this._distributionAlg.insert(curr);            
+        }
         return true;        
+    },
+    
+    reset: function(){
+        // system objects
+        this.particles = {};
+        // objects for graphical elaboration
+        this.objects = [];
+        // phisics configurations 
+        this._distributionAlg = new DistributionAlg();
+        this._distributionAlg.setSystemRepos(this);
+        this.forces = {
+            /// atraction between particles in relation
+            relAttr: attractionForce(0.02,2),
+            centreforce: gravitation(0.009)
+        };
+        // other global variables
+        this.numparticles = 0;    
     }
 
 }

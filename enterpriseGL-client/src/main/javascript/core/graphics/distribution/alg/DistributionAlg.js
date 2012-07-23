@@ -88,30 +88,39 @@ DistributionAlg.prototype = {
     },
     
     update: function(system){
-        var q = [this.root], exitQueque = [];
+        if(arguments.length>0) this.setSystemRepos(system);
+        var q = [this.root()], exitQueque = [];
         while(q.length>0){
             var node = q.shift();
             if(node instanceof Region){
                 node.computeCenterOfMass();
                 if(node.isEmpty()) this._remove(node);
-                else q.push(node.childs);
+                else q = q.concat(node.childs);
             } else if(node instanceof RegionLeaf){
-                var points = [], r = node.parent;
+                var points = [], r = node.parent,alg = this;
                 node.getOrigin().forEach(function(e){
-                    var p = system.particles[e];
+                    var p = alg._getInfoFor(e);
                     if(!p) node.remove({modelReference:e});
                     else points.push(p);
                 });
-                node.update(points);
-                if(r!=null) if(!r.contains(node)) {
-                    exitQueque.push(node);
-                    if(r.parent){
-                        r.parent.reinsert(node,r)
-                    }
-                }
-                if(node.isEmpty()) this._remove(node);
+                this._updateLeaf(node,points);
             }
         }        
+    },
+    
+    _updateLeaf: function(leaf, newPoints){
+        for(var i in newPoints){
+            var p = newPoints[i];
+            if(leaf.samePosition(p)) continue;
+            else {    
+                leaf.remove(p);
+                var newLeaf = this.createLeafRegion(p);                
+                this._leaves.push(newLeaf);
+                this._insert(newLeaf,leaf.parent);
+            }
+        }
+        leaf.update(newPoints);
+        if(leaf.isEmpty()) this._remove(leaf);        
     },
     
     insert: function(p){
