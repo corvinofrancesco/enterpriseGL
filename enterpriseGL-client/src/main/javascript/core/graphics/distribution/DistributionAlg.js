@@ -3,9 +3,19 @@ function DistributionAlg(){
     this._root.range = 100;
     this._regions = [this._root];
     this._leaves = [];
+    this._infoRepository = null;
 }
 
 DistributionAlg.prototype = {
+    
+    setSystemRepos: function(system){ this._infoRepository = system;},
+    _getInfoFor: function(id){
+        var p = null;
+        try{
+            p = this._infoRepository.particles[id];
+        } catch(e){ return null;}
+        return p;
+    },
     
     /**
      * Remove internal region-regionleaf

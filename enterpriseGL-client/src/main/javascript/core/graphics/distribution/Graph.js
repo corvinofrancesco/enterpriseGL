@@ -17,18 +17,41 @@ DistributionGraph.centerVectors = [
   new THREE.Vector3( 1, 1, 1) 
 ];
 
+/**
+ * Se p non ha relazioni: 
+ * crea una regione libera restituisce il centro della regione;
+ * Se p ha un unica relazione:
+ * crea una regione libera vicino all'altra particella
+ * restituisce il centro delle regione            
+ * Altrimenti:
+ * calcola la media delle posizioni delle particelle relazionate
+ * restituisce la media calcolata
+ *
+ * @param p particle to assign position
+ * @return THREE.Vector3
+ */
 DistributionGraph.prototype.getPositionFor = function(p){
     switch(p.relations){
         case 0: case undefined: case null:
-            // crea una regione libera restituisce il centro della regione
             return this.euristicFreePosition();
         case 1:
-            // crea una regione libera vicino all'altra particella
-            // restituisce il centro delle regione            
-            break;
+            var pNext = this._getInfoFor(p.relations[0]), leaf = null;
+            leaf = this._search(pNext);
+            if(leaf==null) return this.euristicFreePosition();
+            return this.euristicNextPosition(pNext,leaf.parent);
         default:
-            // calcola la media delle posizioni delle particelle relazionate
-            // restituisce la media calcolata
+            var retPos = new THREE.Vector3(0,0,0),div=0;
+            for(var i in p.relations){
+                var relP = this._getInfoFor(p.relations[i]);
+                if(relP!=null) {
+                    retPos.addSelf(relP.position);
+                    div ++;
+                }
+            }
+            // if mean elaboration have a faillure
+            if(div<2) return  this.euristicFreePosition();
+            relP.multiplyScalar(1/div);
+            return relP;
     }
 };
 
@@ -117,7 +140,7 @@ DistributionGraph.prototype._insert = function(leaf, suggestLeaf){
     while(q.length>0){
         curr = q.shift();
         var i=this.getIndexFor(leaf,curr);
-        candidate = curr.clilds[i];
+        candidate = curr.childs[i];
         if(candidate instanceof Region){
             q.push(candidate);
         } else if(candidate instanceof RegionLeaf){
@@ -132,47 +155,47 @@ DistributionGraph.prototype._insert = function(leaf, suggestLeaf){
     
 
 
-DistributionGraph.prototype = {
-        
-    createRegion: function(parent, regionIndex,addedP){
-        var r = new Region(),
-            p = this.childs[regionIndex],
-            newRange = this.range * 0.5;
-        var offset = Region.centerVectors[regionIndex].clone()
-            .multiplyScalar(newRange);
-        r.centre = this.centre.clone().addSelf(offset);
-        r.range = newRange;
-        r.parent = this;
-        r.index = regionIndex;
-        var distance = new THREE.Vector3().copy(p.position).subSelf(addedP.position);
-        if(distance.lengthSq()<1) {
-            r.insert(p);
-            var freeIndices = Math.max(7,this.childs.length);
-            this.childs[freeIndices++] = addedP;
-            return;
-        }
-        r.insert(p);
-        // control adding particles at same position
-        r.insert(addedP);
-        this.childs[regionIndex] = r;        
-    },
-    
-    /**
-     * @param part node to reinsert
-     * @param from region where part is collocate actually
-     */
-    reinsert: function(part,from){
-        // remove particle from origin if exist
-        if(from) for(var i in from.childs)
-            if(from.childs[i]== part) 
-                from.childs[i]=undefined;
-        // control if the part is effectly in the region
-        if(!this.contains(part)){
-            if(this.parent)
-                this.parent.reinsert(part);
-            return;
-        }          
-        this.insert(part);
-    }    
-    
-}
+//DistributionGraph.prototype = {
+//        
+//    createRegion: function(parent, regionIndex,addedP){
+//        var r = new Region(),
+//            p = this.childs[regionIndex],
+//            newRange = this.range * 0.5;
+//        var offset = Region.centerVectors[regionIndex].clone()
+//            .multiplyScalar(newRange);
+//        r.centre = this.centre.clone().addSelf(offset);
+//        r.range = newRange;
+//        r.parent = this;
+//        r.index = regionIndex;
+//        var distance = new THREE.Vector3().copy(p.position).subSelf(addedP.position);
+//        if(distance.lengthSq()<1) {
+//            r.insert(p);
+//            var freeIndices = Math.max(7,this.childs.length);
+//            this.childs[freeIndices++] = addedP;
+//            return;
+//        }
+//        r.insert(p);
+//        // control adding particles at same position
+//        r.insert(addedP);
+//        this.childs[regionIndex] = r;        
+//    },
+//    
+//    /**
+//     * @param part node to reinsert
+//     * @param from region where part is collocate actually
+//     */
+//    reinsert: function(part,from){
+//        // remove particle from origin if exist
+//        if(from) for(var i in from.childs)
+//            if(from.childs[i]== part) 
+//                from.childs[i]=undefined;
+//        // control if the part is effectly in the region
+//        if(!this.contains(part)){
+//            if(this.parent)
+//                this.parent.reinsert(part);
+//            return;
+//        }          
+//        this.insert(part);
+//    }    
+//    
+//}
