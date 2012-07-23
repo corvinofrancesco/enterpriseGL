@@ -22,4 +22,14 @@ describe("RegionLeaf Test", function(){
             expect(r.parent).toBe(null);            
         });
     });
+    
+    describe("properties testing", function(){
+        it("testing isEmpty()", function(){
+            var leaf = new RegionLeaf();
+            expect(leaf.isEmpty()).toBe(true);
+            leaf.unionWith({position:new THREE.Vector3(1,1,1),modelReference:"test"});
+            expect(leaf.isEmpty()).toBe(false);
+        });
+        
+    })
 });

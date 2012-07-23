@@ -39,6 +39,31 @@ DistributionAlg.prototype = {
             }
         }
     },
+    
+    /**
+     * @param leaf foglia da aggiornare
+     * @param newPoints precedenti punti registrati per la foglia
+     */
+    _updateLeaf: function(leaf, newPoints){
+        alert("update leaf with " + leaf.getOrigin());
+        for(var i in newPoints){
+            var p = newPoints[i];
+            if(leaf.samePosition(p)) continue;
+            else if(leaf.isOnlyFor(p)) leaf.update(newPoints);
+            else {    
+                alert("creo una foglia: " + p.modelReference);
+                leaf.remove(p);
+                //this.insert(p);
+                var newLeaf = this.createLeafRegion(p);                
+                this._leaves.push(newLeaf);
+                this._insert(newLeaf,leaf.parent);
+            }
+        }
+        if(leaf.isEmpty()) {
+            alert("mangio una foglia.."+ leaf.getOrigin());
+            this._remove(leaf);        
+        }
+    },
 
     _insert: function(leaf, suggestLeaf){
         var q = [this._root], candidateParent = null, curr;
@@ -64,6 +89,7 @@ DistributionAlg.prototype = {
      * @return RegionLeaf or null if the particle is not found
      */
     _search: function(p){
+        if(p == undefined || p==null) return null;
         var q = [this._root], curr = null;
         while(q.length>0){
             curr = q.shift();
@@ -97,7 +123,7 @@ DistributionAlg.prototype = {
                 if(node.isEmpty()) this._remove(node);
                 else q = q.concat(node.childs);
             } else if(node instanceof RegionLeaf){
-                var points = [], r = node.parent,alg = this;
+                var points = [], alg = this;
                 node.getOrigin().forEach(function(e){
                     var p = alg._getInfoFor(e);
                     if(!p) node.remove({modelReference:e});
@@ -106,21 +132,6 @@ DistributionAlg.prototype = {
                 this._updateLeaf(node,points);
             }
         }        
-    },
-    
-    _updateLeaf: function(leaf, newPoints){
-        for(var i in newPoints){
-            var p = newPoints[i];
-            if(leaf.samePosition(p)) continue;
-            else {    
-                leaf.remove(p);
-                var newLeaf = this.createLeafRegion(p);                
-                this._leaves.push(newLeaf);
-                this._insert(newLeaf,leaf.parent);
-            }
-        }
-        leaf.update(newPoints);
-        if(leaf.isEmpty()) this._remove(leaf);        
     },
     
     insert: function(p){

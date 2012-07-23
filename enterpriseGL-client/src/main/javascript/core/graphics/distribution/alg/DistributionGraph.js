@@ -152,7 +152,23 @@ DistributionGraph.prototype._insert = function(leaf, suggestLeaf){
         }
     }
 }
-    
+
+//DistributionGraph.prototype.update = function(){}
+//DistributionGraph.prototype._updateLeaf = function(leaf, newPoints){
+//    for(var i in newPoints){
+//        var p = newPoints[i];
+//        if(leaf.samePosition(p)) continue;        
+//        else {    
+//            leaf.remove(p);
+//            var newLeaf = this.createLeafRegion(p);                
+//            this._leaves.push(newLeaf);
+//            this._insert(newLeaf,leaf.parent);
+//        }
+//    }
+//    leaf.update(newPoints);
+//    if(leaf.isEmpty()) this._remove(leaf);            
+//}
+//    
 /**
  * Create a region from a leaf
  * @param leaf object RegionLeaf source of new region
@@ -170,25 +186,3 @@ DistributionGraph.prototype.createRegion = function(leaf,index,centre){
     parent.childs[i] = pRegion;
     return pRegion;
 }
-
-//DistributionGraph.prototype = {
-//    
-//    /**
-//     * @param part node to reinsert
-//     * @param from region where part is collocate actually
-//     */
-//    reinsert: function(part,from){
-//        // remove particle from origin if exist
-//        if(from) for(var i in from.childs)
-//            if(from.childs[i]== part) 
-//                from.childs[i]=undefined;
-//        // control if the part is effectly in the region
-//        if(!this.contains(part)){
-//            if(this.parent)
-//                this.parent.reinsert(part);
-//            return;
-//        }          
-//        this.insert(part);
-//    }    
-//    
-//}

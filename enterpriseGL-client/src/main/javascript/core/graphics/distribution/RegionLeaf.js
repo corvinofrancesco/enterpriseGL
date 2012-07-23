@@ -41,6 +41,7 @@ RegionLeaf.prototype = {
             cont = r.modelReference;
             pos = r.position;
             if(cont==null || cont==undefined) return;
+            cont = [cont];
         }
         this._container = this._container.concat(cont);
         // calculate the mean position
@@ -95,10 +96,13 @@ RegionLeaf.prototype = {
     update: function(points){        
         this.position = new THREE.Vector3(0,0,0);
         if(points.length==0) return;
+        var pointNum = 0;
         for(var i in points){
+            if(!this.have(points[i])) continue;
             this.position.addSelf(points[i].position);
+            pointNum ++;
         }
-        this.position.multiplyScalar(1/points.length);
+        if(pointNum>1) this.position.multiplyScalar(1/points.length);
     }
     
 }

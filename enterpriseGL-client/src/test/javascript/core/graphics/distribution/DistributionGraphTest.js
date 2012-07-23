@@ -1,13 +1,14 @@
 describe('DistributionGraph Test', function(){
     var p = [
-        {position: new THREE.Vector3(15,15,15), barneshut: {}, getMass:function(){return 1;}},
-        {position: new THREE.Vector3( 8, 8, 8), barneshut: {}, getMass:function(){return 1;}},
-        {position: new THREE.Vector3(12, 8, 8), barneshut: {}, getMass:function(){return 4;}},
-        {position: new THREE.Vector3( 8,12, 8), barneshut: {}, getMass:function(){return 4;}},
-        {position: new THREE.Vector3(12,12, 8), barneshut: {}, getMass:function(){return 1;}},
-        {position: new THREE.Vector3( 8, 8,12), barneshut: {}, getMass:function(){return 1;}},
-        {position: new THREE.Vector3(12,12,16), barneshut: {}, getMass:function(){return 1;}},
-        {position: new THREE.Vector3(12,12,17), barneshut: {}, getMass:function(){return 1;}}
+        {position: new THREE.Vector3(15,15,15), relations: [], modelReference:"part1"},
+        {position: new THREE.Vector3( 8, 8, 8), relations: ["part1"], modelReference:"part2"},
+        {position: new THREE.Vector3(12, 8, 8), relations: ["part1"], modelReference:"part3"},
+        {position: new THREE.Vector3( 8,12, 8), relations: ["part2"], modelReference:"part4"},
+        {position: new THREE.Vector3(12,12, 8), relations: ["part2"], modelReference:"part5"},
+        {position: new THREE.Vector3( 8, 8,12), relations: ["part2"], modelReference:"part6"},
+        {position: new THREE.Vector3(12,12,16), relations: ["part3"], modelReference:"part7"},
+        {position: new THREE.Vector3(12,12,16), relations: ["part3"], modelReference:"part9"},
+        {position: new THREE.Vector3(12,12,17), relations: ["part3","part2"], modelReference:"part8"}
     ];
     
     describe('insert() Test', function(){
@@ -103,5 +104,45 @@ describe('DistributionGraph Test', function(){
            
     });
     
+    describe("testing distribution", function(){
+        var graph = new DistributionGraph(), sysmock = {};
+        graph.reset();
+        for(var i in p) sysmock[p[i].modelReference] = p[i];
+        graph._getInfoFor = function(part){return sysmock[part];};
+        for(var i in p) graph.insert(p[i]);
+        
+        it("control if leaf is all and with correct configurations", function(){
+            expect(graph._leaves.length).toBe(8);
+            for(var i in graph._leaves){
+                var examLeaf = graph._leaves[i];
+                expect(examLeaf.parent).not.toBe(null);                
+                examLeaf.getOrigin().forEach(function(elem){
+                    var examP = graph._getInfoFor(elem);
+                    expect(graph._search(examP)).not.toBe(null);
+                });
+            }
+        });
+        
+        it("control after update",function(){
+            for(var i in p) p[i].position.addSelf(
+                new THREE.Vector3(Math.random()*10,Math.random()*10,Math.random()*10));            
+                
+            expect(graph._leaves.length).toBe(8);
+            
+            graph.update();
+            
+            expect(graph._leaves.length).toBe(9);
+            for(var i in graph._leaves){
+                var examLeaf = graph._leaves[i];
+                expect(examLeaf.parent).not.toBe(null);                
+                examLeaf.getOrigin().forEach(function(elem){
+                    var examP = graph._getInfoFor(elem);
+                    expect(graph._search(examP)).not.toBe(null);
+                });
+            }
+            
+        });
+        
+    });
     
 });
