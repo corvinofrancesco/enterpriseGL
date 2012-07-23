@@ -1,5 +1,20 @@
 describe("DistributionAlg Test", function(){
-
+   var origin = {
+           position: new THREE.Vector3(0,0,0),
+           relations: [], modelReference:"0"
+       },
+       nextOrigin = {
+           relations:["0"],modelReference:"N"
+       },
+       otherPoint = {
+           relations:[],modelReference:"P"
+       },
+       middle = {
+           relations:["0","P"],modelReference:"M"
+       },
+       particles = {"0":origin,"N":nextOrigin,"P":otherPoint,"M":middle},
+       getInfoFor = function(p){return particles[p];};
+       
     describe('Testing spacial management methods', function(){
         var alg = new DistributionAlg();
         
@@ -27,6 +42,20 @@ describe("DistributionAlg Test", function(){
     });
     
     describe("Management regions methods", function(){
+        var alg = new DistributionAlg();
+        alg._getInfoFor = getInfoFor;
+        alg.insert(origin);
+        
+        it("Insert have create almost one leaf",function(){
+            expect(alg._leaves.length>0).toBe(true);
+        });
+        
+        it("We can search the leaf created", function(){
+            var result = alg._search(origin);
+            expect(result instanceof RegionLeaf).toBe(true);
+            expect(result.have(origin)).toBe(true);
+            expect(result.parent).toBe(alg._root);
+        });
         
     });
     

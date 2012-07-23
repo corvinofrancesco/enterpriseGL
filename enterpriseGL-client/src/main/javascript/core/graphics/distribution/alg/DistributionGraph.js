@@ -65,7 +65,7 @@ DistributionGraph.prototype.euristicFreePosition = function(startRegion){
     while(q.length>0){
         var rcurr = q.shift();
         if(rcurr.isEmpty()) return rcurr.centre;
-        for(var rInd=0; rInd<rcurr.childs; rInd++){
+        for(var rInd=0; rInd<8; rInd++){
             var elem = rcurr.childs[rInd];
             if(elem instanceof Region){                    
                 q.push(elem);
@@ -93,7 +93,8 @@ DistributionGraph.prototype.euristicFreePosition = function(startRegion){
  * @return THREE.Vector3
  */
 DistributionGraph.prototype.euristicNextPosition = function(point, space, spaceindex){
-    if(arguments.length>2) spaceindex = this.getIndexFor(point,space);
+    space = space || this.root();
+    if(arguments.length>=2) spaceindex = this.getIndexFor(point,space);
     // ricava il centro della sotto regione dove saranno collocati i due punti
     var subSpace = {
         centre: this.getCentreFor(spaceindex,space),
@@ -153,7 +154,10 @@ DistributionGraph.prototype._insert = function(leaf, suggestLeaf){
 }
     
 /**
- *
+ * Create a region from a leaf
+ * @param leaf object RegionLeaf source of new region
+ * @param index location of leaf in the parent region (optional)
+ * @param centre centre of subregion where must be created new region (optional)
  */
 DistributionGraph.prototype.createRegion = function(leaf,index,centre){
     var parent = leaf.parent || this._root;

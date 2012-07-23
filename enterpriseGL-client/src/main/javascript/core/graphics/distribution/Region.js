@@ -65,6 +65,7 @@ Region.prototype = {
      * @param part particles to insert in the region
      */ 
     insert: function(part){
+        part.parent = this;
         this.childs.push(part);        
     }, 
     

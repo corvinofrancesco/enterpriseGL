@@ -63,33 +63,44 @@ describe('DistributionGraph Test', function(){
            particles = {"0":origin,"N":nextOrigin,"P":otherPoint,"M":middle};
            graph._getInfoFor = function(p){return particles[p];};
                      
-           
-       it("Control if the position free is 0,0,0", function(){
-           var point = graph.getPositionFor({relations:[]});
-           expect(point.x).toBe(0);
-           expect(point.y).toBe(0);
-           expect(point.z).toBe(0);
+       describe("testing euristicNextPosition", function(){
+           var region = new Region(5,5,5),
+               leaf = new RegionLeaf(origin);
+           var result = graph.euristicNextPosition(leaf,region);
+           expect(result instanceof THREE.Vector3).toBe(true);
+           var dist = result.lengthSq();
+           expect(dist).not.toBe(0);
        });
-           
-       it("Insert (0,0,0) control new free space", function(){
-           graph.insert(origin);
-           var t =  graph.getPositionFor({relations:[]});
-           expect(t.x).not.toBe(0);
-           expect(t.y).not.toBe(0);
-           expect(t.z).not.toBe(0);               
-       })
-
-       it("Insert point with relations",function(){
+       
+       describe("testing main function getPositionFor",function(){
            graph.reset();
-           graph.insert(origin);
-           var v = graph.getPositionFor(nextOrigin);
-           expect(v.x).not.toBe(origin.position.x);
-           expect(v.y).not.toBe(origin.position.y);
-           expect(v.z).not.toBe(origin.position.z);                              
+           it("Control if the position free is 0,0,0", function(){
+               var point = graph.getPositionFor({relations:[]});
+               expect(point.x).toBe(0);
+               expect(point.y).toBe(0);
+               expect(point.z).toBe(0);
+           });
 
-       });
+           it("Insert (0,0,0) control new free space", function(){
+               graph.insert(origin);
+               var t =  graph.getPositionFor({relations:[]});
+               expect(t.x).not.toBe(0);
+               expect(t.y).not.toBe(0);
+               expect(t.z).not.toBe(0);               
+           })
+
+           it("Insert point with relations",function(){
+               graph.reset();
+               graph.insert(origin);
+               var v = graph.getPositionFor(nextOrigin);
+               expect(v.x).not.toBe(origin.position.x);
+               expect(v.y).not.toBe(origin.position.y);
+               expect(v.z).not.toBe(origin.position.z);                              
+
+           });
            
-
+       });  
+           
     });
     
     
