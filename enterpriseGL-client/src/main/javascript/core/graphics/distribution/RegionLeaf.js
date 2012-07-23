@@ -1,7 +1,8 @@
-function RegionLeaf(){
+function RegionLeaf(p){
+    var point = p || {position:null,modelReference:null};
     this.parent = null;
-    this.position = new THREE.Vector3(0,0,0);
-    this._conteiner = [];
+    this.position = point.position || new THREE.Vector3(0,0,0);
+    this._container = point.modelReference?[p.modelReference]:[];
     this.error = 0.009;
     this.mass = 0;
 }
@@ -13,7 +14,7 @@ RegionLeaf.prototype = {
     },
     
     getOrigin: function(){
-      return this._conteiner;  
+      return this._container;  
     },
     
     /**
@@ -33,10 +34,18 @@ RegionLeaf.prototype = {
      * @return union region
      */
     unionWith: function(r){
-        this._conteiner = this._conteiner.concat(r._conteiner);
+        var cont,pos;
+        if(r instanceof RegionLeaf){
+            cont = r._container; pos = r.position;
+        } else { 
+            cont = r.modelReference;
+            pos = r.position;
+            if(cont==null || cont==undefined) return;
+        }
+        this._container = this._container.concat(cont);
         // calculate the mean position
-        this.position.addSelf(r.position).multiplyScalar(0.5);        
-        this.mass++;
+        this.position.addSelf(pos).multiplyScalar(0.5);        
+        this.mass++;            
     },
     
     /**
@@ -45,8 +54,8 @@ RegionLeaf.prototype = {
      * @return true if the region contains only the passed particle
      */
     isOnlyFor: function(p){
-        if(this._conteiner.length>1) return false;
-        if(this._conteiner[0] == p.modelReference) return true;
+        if(this._container.length>1) return false;
+        if(this._container[0] == p.modelReference) return true;
         return false;
     },
     
@@ -56,8 +65,8 @@ RegionLeaf.prototype = {
      * @return true if the region contains the passed particle
      */
     have: function(p){
-        for(var e in this._conteiner){
-            if(this._conteiner[e]== p.modelReference) 
+        for(var e in this._container){
+            if(this._container[e]== p.modelReference) 
                 return true;
         }
         return false;
@@ -69,9 +78,9 @@ RegionLeaf.prototype = {
      * @return true if it removes correctly particle 
      */
     remove: function(p){
-        for(var e in this._conteiner){
-            if(this._conteiner[e]== p.modelReference){
-                this._conteiner.splice(e,1);
+        for(var e in this._container){
+            if(this._container[e]== p.modelReference){
+                this._container.splice(e,1);
                 return true;                
             } 
         }
@@ -79,7 +88,7 @@ RegionLeaf.prototype = {
     },
     
     isEmpty: function(){
-        if(this._conteiner.length==0) return true;
+        if(this._container.length==0) return true;
         return false;
     },
 

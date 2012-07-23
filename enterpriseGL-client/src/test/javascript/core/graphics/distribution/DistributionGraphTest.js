@@ -29,50 +29,68 @@ describe('DistributionGraph Test', function(){
         });
     });
     
-    describe("createSubRegion() Testing",function(){
-        var r = new Region(20,20,20);
-        r.range = 20;
+    describe("createRegion() Testing",function(){
+        var graph = new DistributionGraph();
+        var r = new RegionLeaf(); 
+        r.position.set(20,20,20);
         
         it("Control sub region correct centre values ", function(){
-            var regionI = 0;
-            // set child to exchange
-            r.childs[regionI] = p[1];
-            // call subRegion
-            r.createSubRegion(regionI,p[0]);
+            // call createRegion
+            var resultReg = graph.createRegion(r);
             // control result
-            var result = r.childs[regionI].centre;
-            expect(result.subSelf({x:10,y:10,z:10}).lengthSq()).toBe(0);
+            expect(resultReg.parent).toBe(graph._root);
+            expect(resultReg.childs.length>0).toBe(true);
         });
         
     });
     
 
-        describe("getPositionFor() test", function(){
-           var graph = new DistributionGraph();
+    describe("getPositionFor() test", function(){
+       var graph = new DistributionGraph();
+       var origin = {
+               position: new THREE.Vector3(0,0,0),
+               relations: [], modelReference:"0"
+           },
+           nextOrigin = {
+               relations:["0"],modelReference:"N"
+           },
+           otherPoint = {
+               relations:[],modelReference:"P"
+           },
+           middle = {
+               relations:["0","P"],modelReference:"M"
+           },
+           particles = {"0":origin,"N":nextOrigin,"P":otherPoint,"M":middle};
+           graph._getInfoFor = function(p){return particles[p];};
+                     
            
-           it("Control if the position free is 0,0,0", function(){
-               var point = graph.getPositionFor({relations:[0]});
-               expect(point.x).toBe(0);
-               expect(point.y).toBe(0);
-               expect(point.z).toBe(0);
-           });
+       it("Control if the position free is 0,0,0", function(){
+           var point = graph.getPositionFor({relations:[]});
+           expect(point.x).toBe(0);
+           expect(point.y).toBe(0);
+           expect(point.z).toBe(0);
+       });
            
-           it("Insert (0,0,0) control new free space", function(){
-               var p = {position: new THREE.Vector3(0,0,0)},
-                   t,v;
-               graph.insert(p);
-               t = {position: graph.getPositionFor({relations:[]})};
-               expect(t.position.x).not.toBe(0);
-               expect(t.position.y).not.toBe(0);
-               expect(t.position.z).not.toBe(0);                              
-               v = {position: graph.insert(t)};
-               expect(v.position.x).not.toBe(t.position.x);
-               expect(v.position.y).not.toBe(t.position.y);
-               expect(v.position.z).not.toBe(t.position.z);                              
-           })
+       it("Insert (0,0,0) control new free space", function(){
+           graph.insert(origin);
+           var t =  graph.getPositionFor({relations:[]});
+           expect(t.x).not.toBe(0);
+           expect(t.y).not.toBe(0);
+           expect(t.z).not.toBe(0);               
+       })
+
+       it("Insert point with relations",function(){
+           graph.reset();
+           graph.insert(origin);
+           var v = graph.getPositionFor(nextOrigin);
+           expect(v.x).not.toBe(origin.position.x);
+           expect(v.y).not.toBe(origin.position.y);
+           expect(v.z).not.toBe(origin.position.z);                              
+
+       });
            
 
-        });
+    });
     
     
 });

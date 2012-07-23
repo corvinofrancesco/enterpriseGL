@@ -1,8 +1,3 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 function Region(x, y, z){
     this.type = "defcube";
     // define the centre of region

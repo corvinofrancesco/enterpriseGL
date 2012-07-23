@@ -31,7 +31,7 @@ DistributionGraph.centerVectors = [
  * @return THREE.Vector3
  */
 DistributionGraph.prototype.getPositionFor = function(p){
-    switch(p.relations){
+    switch(p.relations.length){
         case 0: case undefined: case null:
             return this.euristicFreePosition();
         case 1:
@@ -64,7 +64,6 @@ DistributionGraph.prototype.euristicFreePosition = function(startRegion){
     var q = [startRegion || this.root()], pointRegions = [], head;
     while(q.length>0){
         var rcurr = q.shift();
-        alert(rcurr);
         if(rcurr.isEmpty()) return rcurr.centre;
         for(var rInd=0; rInd<rcurr.childs; rInd++){
             var elem = rcurr.childs[rInd];
@@ -145,8 +144,7 @@ DistributionGraph.prototype._insert = function(leaf, suggestLeaf){
         if(candidate instanceof Region){
             q.push(candidate);
         } else if(candidate instanceof RegionLeaf){
-            //TODO creare regione da RegionLeaf
-            this.createSubRegion(i,leaf); //????
+            this.createRegion(leaf);
         } else {
             curr.insert(leaf);
             return;
@@ -154,32 +152,22 @@ DistributionGraph.prototype._insert = function(leaf, suggestLeaf){
     }
 }
     
-
+/**
+ *
+ */
+DistributionGraph.prototype.createRegion = function(leaf,index,centre){
+    var parent = leaf.parent || this._root;
+    var i = index || this.getIndexFor(leaf, parent);
+    var c = centre || this.getCentreFor(i, parent);
+    var pRegion = new Region(c.x,c.y,c.z);
+    pRegion.parent = parent;
+    pRegion.range = parent.range * 0.5;
+    pRegion.childs[this.getIndexFor(leaf,pRegion)] = leaf;
+    parent.childs[i] = pRegion;
+    return pRegion;
+}
 
 //DistributionGraph.prototype = {
-//        
-//    createRegion: function(parent, regionIndex,addedP){
-//        var r = new Region(),
-//            p = this.childs[regionIndex],
-//            newRange = this.range * 0.5;
-//        var offset = Region.centerVectors[regionIndex].clone()
-//            .multiplyScalar(newRange);
-//        r.centre = this.centre.clone().addSelf(offset);
-//        r.range = newRange;
-//        r.parent = this;
-//        r.index = regionIndex;
-//        var distance = new THREE.Vector3().copy(p.position).subSelf(addedP.position);
-//        if(distance.lengthSq()<1) {
-//            r.insert(p);
-//            var freeIndices = Math.max(7,this.childs.length);
-//            this.childs[freeIndices++] = addedP;
-//            return;
-//        }
-//        r.insert(p);
-//        // control adding particles at same position
-//        r.insert(addedP);
-//        this.childs[regionIndex] = r;        
-//    },
 //    
 //    /**
 //     * @param part node to reinsert

@@ -125,7 +125,7 @@ DistributionAlg.prototype = {
             var minLen = 2000, minLeaf = 0;
             if(this._leaves.length > 1 ) for(var l in this._leaves){
                 var curr = this._leaves[l];
-                var currLen = curr.position.clone().subSelf(p.position).lengthSq();
+                var currLen = curr.position.clone().subSelf(r.position).lengthSq();
                 if(currLen<minLen){minLen = currLen;minLeaf = l;}    
             }
             suggestedLeaf = this._leaves[minLeaf];
@@ -163,15 +163,25 @@ DistributionAlg.prototype = {
         return this._root;
     },
     
+    /**
+     *
+     */
     createLeafRegion: function(p){
-        var r = new RegionLeaf();
-        r.position = p.position;
+        var r = new RegionLeaf(p);
         return r;
     },
     
+    /**
+     * Function used to create a region from a leaf region
+     * To insert the leaf in the new region this method recall @see Region.insert
+     * @param r leaf region to promote
+     * @return Region
+     */
     createRegion: function(r){
-        var pRegion = new Region();
-        
+        var p = r.position,
+            pRegion = new Region(p.x,p.y,p.z);
+        pRegion.parent = r.parent || this._root;
+        pRegion.insert(r);
         return pRegion;
     }
 }
