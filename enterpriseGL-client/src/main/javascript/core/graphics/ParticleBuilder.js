@@ -25,19 +25,10 @@ ParticleBuilder.prototype = {
     build : function(p){
         var object = this.generator(this.geometry,this.properties);
         // select particle position
-        var pos = null;
-        if(p.relations.length>0){ // next to particle with relations
-            for(var i in p.relations){
-                pos = this.system.getSpaceNextTo(p.relations[i]);
-                if(pos != null) break;
-            }
-        } 
-        // if no valid relations insert in free space
-        if(pos==null) pos = this.system.getFreeSpace();
-        object.position = pos;
         object.modelReference = p.id;
         object.type = "particle";
         object.relations = p.relations;
+        object.position = this.system.getFreeSpace(object);
         object.accelerations = new THREE.Vector3(0,0,0);
         object.velocity = new THREE.Vector3(0,0,0);
         return object;
