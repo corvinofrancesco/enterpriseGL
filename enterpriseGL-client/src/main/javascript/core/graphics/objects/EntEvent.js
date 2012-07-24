@@ -1,16 +1,23 @@
-function EntEvent(){
-    this._element = null;
-    this._duration = 0;
-    this._timeStart = new Date();
+function EntEvent(element, action, duration){
+    this._element = element;
+    this._duration = duration;
+    this._timeStart = null;
+    this._runningFunction = action;
 }
 
 EntEvent.prototype = {
     isDied: function(){
+        if(this._timeStart == null) return false; 
         var r = (new Date()) - this._timeStart; 
         return r > this._duration;
     },
     
     applyOn: function(scene){
-        
+        if(this._timeStart == null) this.startTimer();
+        this._runningFunction(this,scene,this._element);
+    },
+    
+    startTimer: function(){
+        this._timeStart = new Date();
     }
 }
