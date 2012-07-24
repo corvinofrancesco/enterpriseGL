@@ -46,6 +46,8 @@ EntController.changeModel = function(idModel){
     if(conf.infoModelUrl){
         $.getJSON(conf.infoModelUrl(idModel), function(data){
             //TODO Configure the graphics builder with data received
+            EntController.instance.graphics.system.changeDistribution(
+                DistributionAlg.Algoritms(data.typeDiagram));
         });        
     } else conf.defaultModel();
     // prepare download

@@ -6,6 +6,14 @@ function DistributionAlg(){
     this._infoRepository = null;
 }
 
+DistributionAlg.Algoritms = function(name){
+    switch(name){
+        case "graph": return new DistributionGraph();
+        case "conetree": return new DistributionConeTree();
+        default: return new DistributionAlg();
+    }
+}
+
 DistributionAlg.prototype = {
     
     setSystemRepos: function(system){ this._infoRepository = system;},
