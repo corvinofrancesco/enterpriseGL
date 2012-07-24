@@ -45,22 +45,20 @@ DistributionAlg.prototype = {
      * @param newPoints precedenti punti registrati per la foglia
      */
     _updateLeaf: function(leaf, newPoints){
-        alert("update leaf with " + leaf.getOrigin());
         for(var i in newPoints){
             var p = newPoints[i];
             if(leaf.samePosition(p)) continue;
             else if(leaf.isOnlyFor(p)) leaf.update(newPoints);
             else {    
-                alert("creo una foglia: " + p.modelReference);
                 leaf.remove(p);
-                //this.insert(p);
-                var newLeaf = this.createLeafRegion(p);                
-                this._leaves.push(newLeaf);
-                this._insert(newLeaf,leaf.parent);
+                this.insert(p);
+//                var newLeaf = this.createLeafRegion(p);
+//                newLeaf.parent = leaf.parent;
+//                this._leaves.push(newLeaf);
+//                this._insert(newLeaf,leaf.parent);
             }
         }
         if(leaf.isEmpty()) {
-            alert("mangio una foglia.."+ leaf.getOrigin());
             this._remove(leaf);        
         }
     },
@@ -115,7 +113,7 @@ DistributionAlg.prototype = {
     
     update: function(system){
         if(arguments.length>0) this.setSystemRepos(system);
-        var q = [this.root()], exitQueque = [];
+        var q = [this.root()];
         while(q.length>0){
             var node = q.shift();
             if(node instanceof Region){

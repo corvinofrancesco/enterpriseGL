@@ -145,44 +145,58 @@ DistributionGraph.prototype._insert = function(leaf, suggestLeaf){
         if(candidate instanceof Region){
             q.push(candidate);
         } else if(candidate instanceof RegionLeaf){
-            this.createRegion(leaf);
+            var newReg = this.createRegion(candidate,false,false,leaf);
+            this._regions.push(newReg);
+            return;
         } else {
-            curr.insert(leaf);
+            curr.childs[i] = leaf;
+            leaf.parent = curr;
             return;
         }
     }
 }
 
-//DistributionGraph.prototype.update = function(){}
-//DistributionGraph.prototype._updateLeaf = function(leaf, newPoints){
-//    for(var i in newPoints){
-//        var p = newPoints[i];
-//        if(leaf.samePosition(p)) continue;        
-//        else {    
-//            leaf.remove(p);
-//            var newLeaf = this.createLeafRegion(p);                
-//            this._leaves.push(newLeaf);
-//            this._insert(newLeaf,leaf.parent);
-//        }
-//    }
-//    leaf.update(newPoints);
-//    if(leaf.isEmpty()) this._remove(leaf);            
-//}
-//    
+/**
+ * Search a particle in the tree
+ * @param p graphical particle
+ * @return RegionLeaf or null if the particle is not found
+ */
+DistributionGraph.prototype._search = function(p){
+    if(p == undefined || p==null) return null;
+    for(var l in this._leaves){
+        var curr = this._leaves[l];
+        if(curr.have(p)) return curr;
+    }
+    return null;
+}
+    
 /**
  * Create a region from a leaf
  * @param leaf object RegionLeaf source of new region
  * @param index location of leaf in the parent region (optional)
  * @param centre centre of subregion where must be created new region (optional)
+ * @param otherLeaf 
  */
-DistributionGraph.prototype.createRegion = function(leaf,index,centre){
+DistributionGraph.prototype.createRegion = function(leaf,index,centre,otherLeaf){
     var parent = leaf.parent || this._root;
     var i = index || this.getIndexFor(leaf, parent);
     var c = centre || this.getCentreFor(i, parent);
     var pRegion = new Region(c.x,c.y,c.z);
     pRegion.parent = parent;
     pRegion.range = parent.range * 0.5;
-    pRegion.childs[this.getIndexFor(leaf,pRegion)] = leaf;
+    var firstP = this.getIndexFor(leaf,pRegion);
+    pRegion.childs[firstP] = leaf;
+    leaf.parent = pRegion;
     parent.childs[i] = pRegion;
+    if(otherLeaf){
+        var otherP = this.getIndexFor(otherLeaf,pRegion);
+        if(otherP!=firstP){
+            parent.childs[otherP] = otherLeaf;
+            otherLeaf.parent = pRegion;
+        } else {
+            otherLeaf.parent = pRegion;
+            leaf.unionWith(otherLeaf);
+        }
+    }
     return pRegion;
 }
