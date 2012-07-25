@@ -89,7 +89,7 @@ EntGraphics.prototype = {
         while(events.length>0){
             var curr = events.shift();
             if(curr.isDied()) this.settings.remove(i);
-            else curr.applyOn(this.scene);
+            else curr.applyOn(this.scene,this.system);
             i++;
         }
         this.renderer.render(this.scene,this.camera);
@@ -160,19 +160,22 @@ EntGraphics.prototype = {
     
     addParticle: function(pEnt){
         // manage system configuration and return primitives
-        var result = this.settings.register(GraphicalSettings.EventType.ADD,elem);
+        var result = this.settings.register(
+            GraphicalSettings.EventType.ADD,pEnt);
         if(result==null) return;
-        //var p = this.context.elaborate(pEnt);  
-        this.system.add(result.getElement());
         this.relations[pEnt.id] = [];
-        var b = this.context.relationBuilder();
-        // create relations
-        b.reset(p);
+//        var b = this.context.relationBuilder();
+//        // create relations
+//        b.reset(p);
         for(var ri in pEnt.relations){
-            var pend = this.system.findParticle(pEnt.relations[ri]);
-            var r = b.build(pend);
-            if(!r.hasExtremis) r.modelReference[1] = pEnt.relations[ri];
-            this.relations[pEnt.id].push(r);    
+            var relation = new EntRelation();
+            //TODO set source and destination
+            this.settings.register(
+                GraphicalSettings.EventType.ADD,relation);
+//            var pend = this.system.findParticle(pEnt.relations[ri]);
+//            var r = b.build(pend);
+//            if(!r.hasExtremis) r.modelReference[1] = pEnt.relations[ri];
+//            this.relations[pEnt.id].push(r);    
         }
     },
     

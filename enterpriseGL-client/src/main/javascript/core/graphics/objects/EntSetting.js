@@ -2,7 +2,7 @@ function EntSetting(condition, action){
     this.id = "new";
     this.eventType = GraphicalSettings.EventType.ADD;
     this.elementType = EntGL.ElementType.Particle;       
-    this.defaultAction = action || function(event,scene,element){};
+    this.defaultAction = action || function(event,scene,element,system){};
     this._condition = condition || function(element){return true;};
 }
 
@@ -19,13 +19,14 @@ EntSetting.prototype = {
 
 EntSetting.createParticleFunctions = {
     particleCube: function(){
-        var sett =  new EntSetting(null,function(event,scene,element){
+        var sett =  new EntSetting(null,function(event,scene,element,system){
             if(element instanceof EntElement){
                 // creation of element
                 var cube = new ParticleGeomPrimitive();
                 cube.dimension = 1;        
                 event._element = cube;
                 scene.add(cube.create());
+                system.add(cube.element)
                 return;
             }
         });        
@@ -33,7 +34,7 @@ EntSetting.createParticleFunctions = {
         return sett;
     },
     particleSphere: function(){
-        var sett = new EntSetting(null,function(event,scene,element){
+        var sett = new EntSetting(null,function(event,scene,element,system){
             if(element instanceof EntElement){
                 // creation of element
                 var sphere = new ParticleGeomPrimitive();
@@ -41,6 +42,7 @@ EntSetting.createParticleFunctions = {
                 sphere.typePrimitive = ParticleGeomPrimitive.Primitive.SPHERE;
                 event._element = sphere;
                 scene.add(sphere.create());
+                system.add(sphere.element)
                 return;
             }        
         }); 
@@ -51,7 +53,7 @@ EntSetting.createParticleFunctions = {
 
 EntSetting.createFunctions = {
     relationAdding: function(){
-        var retSet = new EntSetting(null,function(event,scene,element){
+        var retSet = new EntSetting(null,function(event,scene,element,system){
         
         });
         retSet.elementType =  EntGL.ElementType.RELATION;
@@ -62,8 +64,8 @@ EntSetting.createFunctions = {
 
 EntSetting.removeFunctions = {
     removeSimple: function(){ 
-        var sett =  new EntSetting(null,function(event,scene,element){
-            scene.remove(element.element);
+        var sett =  new EntSetting(null,function(event,scene,element,system){
+            scene.remove(element.element);            
         });
         sett.id = "remove";
         return sett;

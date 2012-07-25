@@ -12,9 +12,9 @@ EntGraphicalEvent.prototype = {
         return r > this._duration;
     },
     
-    applyOn: function(scene){
+    applyOn: function(scene,system){
         if(this._timeStart == null) this.startTimer();
-        this._runningFunction(this,scene,this._element);
+        this._runningFunction(this,scene,this._element,system);
     },
     
     startTimer: function(){
