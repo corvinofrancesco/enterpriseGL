@@ -10,7 +10,7 @@ describe('Region Testing', function(){
         {position: new THREE.Vector3(12,12,17), barneshut: {}, getMass:function(){return 1;}}
     ];
     
-    describe('Testing constutor', function(){
+    describe('Testing construtor', function(){
         var r = new Region(9,4,4);
         it('Control number of childs', function(){
             expect(r.childs.length).toBe(0);

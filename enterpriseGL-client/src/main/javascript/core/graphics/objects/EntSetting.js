@@ -1,4 +1,5 @@
 function EntSetting(condition, action){
+    this.id = "new";
     this.eventType = GraphicalSettings.EventType.ADD;
     this.elementType = GraphicalSettings.ElementType.Particle;       
     this.defaultAction = action || function(event,scene,element){};
@@ -18,7 +19,7 @@ EntSetting.prototype = {
 
 EntSetting.createParticleFunctions = {
     particleCube: function(){
-        return new EntSetting(null,function(event,scene,element){
+        var sett =  new EntSetting(null,function(event,scene,element){
             if(element instanceof EntElement){
                 // creation of element
                 var cube = new ParticleGeomPrimitive();
@@ -28,9 +29,11 @@ EntSetting.createParticleFunctions = {
                 return;
             }
         });        
+        sett.id = "createParticleCube";
+        return sett;
     },
     particleSphere: function(){
-        return new EntSetting(null,function(event,scene,element){
+        var sett = new EntSetting(null,function(event,scene,element){
             if(element instanceof EntElement){
                 // creation of element
                 var sphere = new ParticleGeomPrimitive();
@@ -40,7 +43,9 @@ EntSetting.createParticleFunctions = {
                 scene.add(sphere.create());
                 return;
             }        
-        });        
+        }); 
+        sett.id = "createParticleSphere";
+        return sett;
     } 
 }
 
@@ -50,14 +55,19 @@ EntSetting.createFunctions = {
         
         });
         retSet.elementType =  GraphicalSettings.ElementType.RELATION;
+        retSet.id = "createSimpleRelation"
         return retSet;
     }
 }
 
 EntSetting.removeFunctions = {
-    removeSimple: function(){ return new EntSetting(null,function(event,scene,element){
-        scene.remove(element.element);
-    })}
+    removeSimple: function(){ 
+        var sett =  new EntSetting(null,function(event,scene,element){
+            scene.remove(element.element);
+        });
+        sett.id = "remove";
+        return sett;
+    }
 }
 
 EntSetting.defaultValues = function(){
@@ -87,6 +97,7 @@ EntSetting.defaultValues = function(){
             curr = EntSetting.removeFunctions[index]();
             curr.eventType = GraphicalSettings.EventType.REMOVE;
             curr.elementType = GraphicalSettings.ElementType[types];
+            curr.id = curr.id + types;
             arr.push(curr)
         }
     }

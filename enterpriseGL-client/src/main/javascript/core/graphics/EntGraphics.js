@@ -32,6 +32,7 @@ function EntGraphics(configuration) {
     this.system = new GraphicalSystem();
     // strategy for objects creation
     this.context = new ModelConfiguration(this.system);
+    this.settings = new GraphicalSettings();
     this.context.configure({});
     this.relations = {};
 }
