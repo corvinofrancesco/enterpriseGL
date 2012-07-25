@@ -8,21 +8,20 @@ GraphicalSettings.EventType = {
     ADD: "add", REMOVE: "remove", UPDATE: "update"
 }
 
-GraphicalSettings.ElementType = {
-    PARTICLE: "particle", EVENT: "event", RELATION: "relation", AGGREGATION: "aggregation"
-}
-
 GraphicalSettings.prototype = {
     register: function(eventType, element){
-        var q = new Array(this.settings), setting;
+        var q = this.getSettings(), setting;
         while(q.length>0){
             setting = q.shift();
             if(eventType == setting.eventType)
                 if(element.type == setting.elementType)
                     if(setting.verifyCondition(element)){
-                        this.events.push(setting.create(element));
+                        var event = setting.create(element);
+                        this.events.push(event);
+                        return event;
                     }
         }
+        return null;
     },
     
     remove: function(eventId){
@@ -31,7 +30,7 @@ GraphicalSettings.prototype = {
     },
     
     getEvents: function(){
-        var ret = new Array(this.events);
+        var ret = (new Array()).concat(this.events);
         return ret;
     },
     

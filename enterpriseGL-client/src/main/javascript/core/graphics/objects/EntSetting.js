@@ -1,7 +1,7 @@
 function EntSetting(condition, action){
     this.id = "new";
     this.eventType = GraphicalSettings.EventType.ADD;
-    this.elementType = GraphicalSettings.ElementType.Particle;       
+    this.elementType = EntGL.ElementType.Particle;       
     this.defaultAction = action || function(event,scene,element){};
     this._condition = condition || function(element){return true;};
 }
@@ -54,7 +54,7 @@ EntSetting.createFunctions = {
         var retSet = new EntSetting(null,function(event,scene,element){
         
         });
-        retSet.elementType =  GraphicalSettings.ElementType.RELATION;
+        retSet.elementType =  EntGL.ElementType.RELATION;
         retSet.id = "createSimpleRelation"
         return retSet;
     }
@@ -75,7 +75,7 @@ EntSetting.defaultValues = function(){
     for(index in EntSetting.createParticleFunctions ){
         curr = EntSetting.createParticleFunctions[index]();
         curr.eventType = GraphicalSettings.EventType.ADD;
-        curr.elementType = GraphicalSettings.ElementType.PARTICLE;
+        curr.elementType = EntGL.ElementType.PARTICLE;
         curr._condition = function(element){
             var cond = Math.floor(Math.random()*2);
             if(cond>1) {element._conditionSel=true; return true;}
@@ -93,10 +93,10 @@ EntSetting.defaultValues = function(){
         arr.push(curr);
     }
     for(index in EntSetting.removeFunctions){
-        for(var types in GraphicalSettings.ElementType){
+        for(var types in EntGL.ElementType){
             curr = EntSetting.removeFunctions[index]();
             curr.eventType = GraphicalSettings.EventType.REMOVE;
-            curr.elementType = GraphicalSettings.ElementType[types];
+            curr.elementType = EntGL.ElementType[types];
             curr.id = curr.id + types;
             arr.push(curr)
         }

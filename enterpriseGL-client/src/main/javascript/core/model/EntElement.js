@@ -1,5 +1,5 @@
 function EntElement(){
-    this.type = "particle";
+    this.type = EntGL.ElementType.PARTICLE;
     this.description = "This is an empty object of enterprise";
     this.id = 0;
 }

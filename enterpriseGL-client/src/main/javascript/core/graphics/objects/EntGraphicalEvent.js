@@ -19,5 +19,9 @@ EntGraphicalEvent.prototype = {
     
     startTimer: function(){
         this._timeStart = new Date();
+    },
+    
+    getElement: function(){
+        return this._element;
     }
 }

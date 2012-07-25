@@ -3,7 +3,7 @@
  */
 function EntEvent(){
     EntElement.call(this);
-    this.type = "event";
+    this.type = EntGL.ElementType.EVENT;
     this.graphicalModel = null;
     this.title = "event";
     this.date = new Date();

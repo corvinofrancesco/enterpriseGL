@@ -32,7 +32,10 @@ function EntGraphics(configuration) {
     this.system = new GraphicalSystem();
     // strategy for objects creation
     this.context = new ModelConfiguration(this.system);
+    
     this.settings = new GraphicalSettings();
+    this.settings.addSettings(EntSetting.defaultValues());
+    
     this.context.configure({});
     this.relations = {};
 }
@@ -82,6 +85,13 @@ EntGraphics.prototype = {
         this.controls.update();
         this.system.update();
         this.updateRelations();
+        var events = this.settings.getEvents(), i = 0;
+        while(events.length>0){
+            var curr = events.shift();
+            if(curr.isDied()) this.settings.remove(i);
+            else curr.applyOn(this.scene);
+            i++;
+        }
         this.renderer.render(this.scene,this.camera);
     },
    
@@ -102,8 +112,14 @@ EntGraphics.prototype = {
             var p = ev.posInObjects(i);
             if(p!=-1){
                 elements.splice(p,1);
+                var gPart = EntObjects.get(p);
+                this.settings.register(GraphicalSettings.EventType.UPDATE,gPart);
                 //this.updateParticle(p);
-            } else this.removeParticle(p)
+            } else {
+                var gPart = EntObjects.get(p);
+                this.settings.register(GraphicalSettings.EventType.REMOVE,gPart);                
+                //this.removeParticle(p);
+            }
         }
         // read particles only for passed event
         for(var i in elements){
@@ -144,9 +160,10 @@ EntGraphics.prototype = {
     
     addParticle: function(pEnt){
         // manage system configuration and return primitives
-        var p = this.context.elaborate(pEnt);  
-        this.system.add(p)
-        this.scene.add(p);        
+        var result = this.settings.register(GraphicalSettings.EventType.ADD,elem);
+        if(result==null) return;
+        //var p = this.context.elaborate(pEnt);  
+        this.system.add(result.getElement());
         this.relations[pEnt.id] = [];
         var b = this.context.relationBuilder();
         // create relations
