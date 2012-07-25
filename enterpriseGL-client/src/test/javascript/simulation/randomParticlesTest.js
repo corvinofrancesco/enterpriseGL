@@ -1,4 +1,36 @@
-//describe('Testing simulation', function(){
+//
+//describe("Try jasmine", function(){
+//   describe("Simulation of error ", function(){
+//       it("Control if false is true", function(){
+//          expect(false).toBe(true);          
+//       });
+//       
+//       it("Control if false is not false", function(){
+//          expect(false).not.toBe(false);                     
+//       });
+//   });
+//   
+//   describe("Correct test", function(){
+//      var a = 45, b = 44;
+//      
+//      it("Control Math.min",function(){
+//          expect(Math.min(a, b)).toBe(b);
+//      });
+//   });
+//});
+
+
+
+
+
+
+
+
+
+
+
+
+////describe('Testing simulation', function(){
 //    var  sSystem = new SimulSystem();
 //    var sys = new GraphicalSystem();
 //    var numPar = 100, numRel = 120;
