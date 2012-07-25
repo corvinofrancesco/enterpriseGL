@@ -1,11 +1,11 @@
-function EntEvent(element, action, duration){
+function EntGraphicalEvent(element, action, duration){
     this._element = element;
     this._duration = duration;
     this._timeStart = null;
     this._runningFunction = action;
 }
 
-EntEvent.prototype = {
+EntGraphicalEvent.prototype = {
     isDied: function(){
         if(this._timeStart == null) return false; 
         var r = (new Date()) - this._timeStart; 

@@ -11,7 +11,7 @@ EntSetting.prototype = {
     },
     
     create: function(element){
-        var e = new EntEvent(element,this.defaultAction,0);
+        var e = new EntGraphicalEvent(element,this.defaultAction,0);
         return e;
     }
 }
