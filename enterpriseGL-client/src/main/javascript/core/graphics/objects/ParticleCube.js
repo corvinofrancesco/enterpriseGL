@@ -2,7 +2,9 @@
  * Draw a Cube Particle 
  */
 function ParticleCube(){
-    
+    this.dimension = 1;
+    this.colorMaterial = Math.random() * 0xffffff;
+    this.element = null;
 }
 
 ParticleCube.prototype = {
@@ -22,5 +24,19 @@ ParticleCube.prototype = {
         object.castShadow = true;
         object.receiveShadow = true;
         return object;
+    },
+    
+    create: function(){
+        var material = new THREE.MeshLambertMaterial( { color: this.colorMaterial } );
+        var object = new THREE.Mesh( 
+            new THREE.CubeGeometry( this.dimension, this.dimension, this.dimension ), material);
+        //object.material.ambient = object.material.color;
+        object.rotation = new THREE.Vector3(0, 0, 0);
+        object.scale = new THREE.Vector3(1, 1, 1);
+        object.castShadow = true;
+        object.receiveShadow = true;
+        this.element = object;
+        return object;
     }
+    
 };

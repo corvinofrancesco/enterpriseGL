@@ -4,6 +4,14 @@ function GraphicalSettings(){
     //TODO set default
 }
 
+GraphicalSettings.EventType = {
+    ADD: "add", REMOVE: "remove", UPDATE: "update"
+}
+
+GraphicalSettings.ElementType = {
+    PARTICLE: "particle", EVENT: "event", RELATION: "relation", AGGREGATION: "aggregation"
+}
+
 GraphicalSettings.prototype = {
     register: function(eventType, element){
         var q = new Array(this.settings), setting;

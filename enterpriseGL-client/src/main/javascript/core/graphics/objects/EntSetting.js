@@ -17,5 +17,17 @@ EntSetting.prototype = {
 }
 
 EntSetting.createFunctions = {
-    
+    particleCube: new EntSetting(null,function(event,scene,element){
+        if(element instanceof EntElement){
+            // creation of element
+            var cube = new ParticleCube();
+            cube.dimension = 1;        
+            event._element = cube;
+            scene.add(cube.create());
+            return;
+        }
+    }),
+    particleSphere: new EntSetting(null,function(event,scene,element){
+        
+    })
 }

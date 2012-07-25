@@ -192,12 +192,12 @@ function EntGraphicsConfig(){
 EntGraphicsConfig.prototype = {
     lightConfig: function(camera){
         var light = new THREE.SpotLight( 0xffffff, 1.5 );
-        light.position.set( 0, 500, 2000 );
+        light.position.set( 0, 5, 20 );
         light.castShadow = true;
 
-        light.shadowCameraNear = 200;
+        light.shadowCameraNear = 2;
         light.shadowCameraFar = camera.far;
-        light.shadowCameraFov = 50;
+        light.shadowCameraFov = 20;
 
         light.shadowBias = -0.00022;
         light.shadowDarkness = 0.5;
