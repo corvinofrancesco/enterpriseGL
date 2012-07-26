@@ -165,14 +165,10 @@ EntGraphics.prototype = {
         if(result==null) return;
         this.relations[pEnt.id] = [];
         for(var ri in pEnt.relations){
-            var relation = new EntRelation();
+            var relation = new EntRelation(pEnt.id, pEnt.relations[ri]);
             //TODO set source and destination
-            this.settings.register(
-                GraphicalSettings.EventType.ADD,relation);
-//            var pend = this.system.findParticle(pEnt.relations[ri]);
-//            var r = b.build(pend);
-//            if(!r.hasExtremis) r.modelReference[1] = pEnt.relations[ri];
-//            this.relations[pEnt.id].push(r);    
+            this.settings.register( GraphicalSettings.EventType.ADD,relation);
+            //this.relations[pEnt.id].push(r);    
         }
     },
     

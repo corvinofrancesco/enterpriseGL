@@ -60,7 +60,7 @@ EntSetting.createParticleFunctions = {
 EntSetting.createFunctions = {
     relationAdding: function(){
         var retSet = new EntSetting(null,function(event,scene,element,system){
-        
+            
         });
         retSet.elementType =  EntGL.ElementType.RELATION;
         retSet.id = "createSimpleRelation"

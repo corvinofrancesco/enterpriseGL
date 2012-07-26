@@ -5,15 +5,27 @@ ParticleGeomPrimitive.superclass = ParticleBase.prototype;
 function ParticleGeomPrimitive(){
     this.typePrimitive = null;
     this.colorMaterial = Math.random() * 0xffffff;
+    this.typeMaterial = null;
 }
 
 ParticleGeomPrimitive.Primitive = {
     CUBE: "cube", SPHERE: "sphere"
 }
 
+ParticleGeomPrimitive.Material = {
+    LAMBERT: "lambert", PHONG: "phong"
+}
+
 ParticleGeomPrimitive.prototype.create = function(){
-    var material = new THREE.MeshLambertMaterial( { color: this.colorMaterial } );
-    var object = null;
+    var material = null, object = null;
+    switch(this.typeMaterial){
+        case ParticleGeomPrimitive.Material.PHONG:
+            material = new THREE.MeshPhongMaterial( { color: this.colorMaterial } );
+            break
+        case ParticleGeomPrimitive.Material.LAMBERT: 
+        default: 
+            material = new THREE.MeshLambertMaterial( { color: this.colorMaterial } );
+    }
     switch(this.typePrimitive){
         case ParticleGeomPrimitive.Primitive.SPHERE:
             var radius = this.radius || 0.7,
