@@ -25,3 +25,27 @@ EntGraphicalEvent.prototype = {
         return this._element;
     }
 }
+
+EntGraphicalEventControlledEnd.prototype = new EntGraphicalEvent(null,null,0);
+EntGraphicalEventControlledEnd.constructor = EntGraphicalEventControlledEnd;
+EntGraphicalEventControlledEnd.superclass = EntGraphicalEvent.prototype;
+
+EntGraphicalEventControlledEnd = function(element, action, endCondition){
+    this._element = element;
+    this._duration = 0;
+    this._timeStart = null;
+    this._runningFunction = action;
+    // extended properties
+    this._endCondition = endCondition || function(){return false;}; // default never end
+    this._numIteration = 0;
+}
+
+/**
+ * Override parent method to verify the condition first, if endCondition is true then 
+ * start the timer.
+ */
+EntGraphicalEventControlledEnd.prototype.applyOn = function(scene,system){
+    if(this._endCondition(this,scene,system)) this.startTimer();
+    this._runningFunction(this,scene,this._element,system);    
+    this._numIteration++;
+}
