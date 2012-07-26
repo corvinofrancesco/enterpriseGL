@@ -26,11 +26,7 @@ EntGraphicalEvent.prototype = {
     }
 }
 
-EntGraphicalEventControlledEnd.prototype = new EntGraphicalEvent(null,null,0);
-EntGraphicalEventControlledEnd.constructor = EntGraphicalEventControlledEnd;
-EntGraphicalEventControlledEnd.superclass = EntGraphicalEvent.prototype;
-
-EntGraphicalEventControlledEnd = function(element, action, endCondition){
+var EntGraphicalEventControlledEnd = function(element, action, endCondition){
     this._element = element;
     this._duration = 0;
     this._timeStart = null;
@@ -39,6 +35,10 @@ EntGraphicalEventControlledEnd = function(element, action, endCondition){
     this._endCondition = endCondition || function(){return false;}; // default never end
     this._numIteration = 0;
 }
+
+EntGraphicalEventControlledEnd.prototype = new EntGraphicalEvent(null,null,0);
+EntGraphicalEventControlledEnd.constructor = EntGraphicalEventControlledEnd;
+EntGraphicalEventControlledEnd.superclass = EntGraphicalEvent.prototype;
 
 /**
  * Override parent method to verify the condition first, if endCondition is true then 

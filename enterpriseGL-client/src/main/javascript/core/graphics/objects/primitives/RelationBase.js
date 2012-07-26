@@ -1,7 +1,7 @@
 /**
  * Class for relation graphics element
  */
-function RelationBase() {
+var RelationBase  = function () {
     this.geometry = RelationBase.defaultGeometry;    
     this.entRelation = null;
     this.lineColor = { color: 0xFF33FF };
@@ -12,25 +12,6 @@ function RelationBase() {
 RelationBase.defaultGeometry = new THREE.Geometry();
 RelationBase.defaultGeometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
 RelationBase.defaultGeometry.vertices.push( new THREE.Vector3( 0, 1, 0 ) );
-
-RelationBase.SimpleAddingSetting = function(){
-   var retSet = new EntSetting(null,function(event,scene,element,system){
-        if(element instanceof EntElement){
-            // creation of element
-            var primitive = new RelationBase();
-            primitive.linkToModel(element);
-            if(primitive.create()==null) return;
-            event._element = primitive;
-            event.settingGen = "createParticleGeom";
-            scene.add(primitive.getElement());
-            system.add(primitive.getElement())
-            return;
-        }            
-    });
-    retSet.elementType =  EntGL.ElementType.RELATION;
-    retSet.id = "createSimpleRelation";
-    return retSet;     
-}
 
 RelationBase.prototype =  {
     create: function(){
@@ -51,6 +32,17 @@ RelationBase.prototype =  {
         
     changeExtremis: function(entRelation){
         this.linkToModel(entRelation);
+    },
+    
+    getElemInSystem: function(system){
+        var idS,idD, ret = [null,null];
+        try {
+            idS = this.entRelation.idSource;
+            idD = this.entRelation.idDestination;
+            ret[0] = system.particles[idS];
+            ret[1] = system.particles[idD];
+        } catch(e){}
+        return ret;
     },
     
     update: function(pSource, pDest){

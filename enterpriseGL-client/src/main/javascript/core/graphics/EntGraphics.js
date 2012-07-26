@@ -31,12 +31,13 @@ function EntGraphics(configuration) {
     /// init objects
     this.system = new GraphicalSystem();
     // strategy for objects creation
-    this.context = new ModelConfiguration(this.system);
+    //this.context = new ModelConfiguration(this.system);
     
     this.settings = new GraphicalSettings();
-    this.settings.addSettings(EntSetting.defaultValues());
+    var settingDefault = new EntGL.SettingsDefault();
+    this.settings.addSettings(settingDefault.popolate());//EntSetting.defaultValues());
     
-    this.context.configure({});
+//    this.context.configure({});
     this.relations = {};
 }
 
