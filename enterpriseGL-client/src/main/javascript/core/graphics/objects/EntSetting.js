@@ -4,6 +4,7 @@ function EntSetting(condition, action){
     this.elementType = EntGL.ElementType.Particle;       
     this.defaultAction = action || function(event,scene,element,system){};
     this._condition = condition || function(element){return true;};
+    this.duration = 0;
 }
 
 EntSetting.prototype = {
@@ -12,41 +13,46 @@ EntSetting.prototype = {
     },
     
     create: function(element){
-        var e = new EntGraphicalEvent(element,this.defaultAction,0);
+        var e = new EntGraphicalEvent(
+            element,
+            this.defaultAction,
+            this.duration);
         return e;
     }
 }
 
 EntSetting.createParticleFunctions = {
-    particleCube: function(){
-        var sett =  new EntSetting(null,function(event,scene,element,system){
+    particleGeom: function(){
+        var action = function(event,scene,element,system){
             if(element instanceof EntElement){
                 // creation of element
-                var cube = new ParticleGeomPrimitive();
-                cube.dimension = 1;        
-                event._element = cube;
-                scene.add(cube.create());
-                system.add(cube.element)
+                var primitive = new ParticleGeomPrimitive();
+                primitive.linkToModel(element);
+                var cond = Math.random();
+                if(cond<0.5){ // sphere
+                    primitive.typePrimitive = ParticleGeomPrimitive.Primitive.SPHERE;                  
+                } else { // cube
+                    primitive.dimension = 1;                            
+                }
+                if(primitive.create()==null) return;
+                event._element = primitive;
+                event.settingGen = "createParticleGeom";
+                scene.add(primitive.getElement());
+                system.add(primitive.getElement())
                 return;
             }
-        });        
-        sett.id = "createParticleCube";
+        };
+        // all particles
+        var condition = function(element){return true;};
+        var sett =  new EntSetting(condition,action);        
+        sett.id = "createParticleGeom";
         return sett;
     },
-    particleSphere: function(){
-        var sett = new EntSetting(null,function(event,scene,element,system){
-            if(element instanceof EntElement){
-                // creation of element
-                var sphere = new ParticleGeomPrimitive();
-                sphere.dimension = 1;       
-                sphere.typePrimitive = ParticleGeomPrimitive.Primitive.SPHERE;
-                event._element = sphere;
-                scene.add(sphere.create());
-                system.add(sphere.element)
-                return;
-            }        
-        }); 
-        sett.id = "createParticleSphere";
+    particleAthom: function(){
+        var sett = new EntSetting(
+            function(element){return false;},
+            function(event,scene,element,system){}); 
+        sett.id = "createParticleAthom";
         return sett;
     } 
 }
@@ -78,15 +84,6 @@ EntSetting.defaultValues = function(){
         curr = EntSetting.createParticleFunctions[index]();
         curr.eventType = GraphicalSettings.EventType.ADD;
         curr.elementType = EntGL.ElementType.PARTICLE;
-        curr._condition = function(element){
-            var cond = Math.floor(Math.random()*2);
-            if(cond>1) {element._conditionSel=true; return true;}
-            if(element._conditionSel == undefined) element._conditionSel = false;
-            else {
-                if(!element._conditionSel) return true;
-            }
-            return false;
-        }
         arr.push(curr);
     }
     for(index in EntSetting.createFunctions){

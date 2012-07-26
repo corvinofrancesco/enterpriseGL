@@ -164,9 +164,6 @@ EntGraphics.prototype = {
             GraphicalSettings.EventType.ADD,pEnt);
         if(result==null) return;
         this.relations[pEnt.id] = [];
-//        var b = this.context.relationBuilder();
-//        // create relations
-//        b.reset(p);
         for(var ri in pEnt.relations){
             var relation = new EntRelation();
             //TODO set source and destination

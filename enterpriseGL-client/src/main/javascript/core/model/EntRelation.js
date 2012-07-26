@@ -1,5 +1,5 @@
 function EntRelation(){
-    
+    this.type = EntGL.ElementType.RELATION;    
 }
 
 
