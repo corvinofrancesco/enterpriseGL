@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
+import unisalento.fcorvino.beans.EntModel;
+import unisalento.fcorvino.beans.models.ModelTable;
 import unisalento.fcorvino.model.ModelsBuilder;
 
 @Controller
@@ -45,5 +47,19 @@ public class FileUploadController {
             model.addAttribute("model", builder.getModel());
             return "edit";
 	}
+        
+        @RequestMapping("/formUpload")
+        public String requestForm(
+                @RequestParam(value="name") String name,
+                @ModelAttribute("model") EntModel entModel,
+                Model model){
+            for(ModelTable table : entModel.getTypeModel().getTables()){
+                if(table.getName().equals(name)){
+                    model.addAttribute("table", model);                
+                    return "formupload";                    
+                }
+            }
+            return "error";
+        }
 	
 }

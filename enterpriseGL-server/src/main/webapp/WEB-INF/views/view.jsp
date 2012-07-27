@@ -3,6 +3,10 @@
     Created on : 12-lug-2012, 16.07.07
     Author     : Francesco Corvino
 --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+
 <script type="text/javascript">
     $(document).ready(function() {
         $("#commandForm").ajaxForm({ 

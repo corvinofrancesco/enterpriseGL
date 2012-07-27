@@ -31,7 +31,7 @@
         <p>Load or edit model</p>
         <ul>
         <c:forEach var="table" items="${model.typeModel.tables}">
-            <li onmousemove="EditForm_showImportTable('${table.name}');">
+            <li onclick="EditForm_showImportTable('${table.name}');">
                 ${table.name} - 
                 <c:choose>
                     <c:when test="${model.getTable(table.name).isLoad}">Complete</c:when>
@@ -40,6 +40,7 @@
             </li>
         </c:forEach>    
         </ul>   
+        Click on table to load.
         <c:if test="${not empty message}">
             <div id="message" class="success">${message}</div>	
         </c:if>
@@ -47,31 +48,5 @@
         <input type="submit" id="login" value="View"/>
     </fieldset>               
 </form>
-    
-<c:forEach var="table" items="${model.typeModel.tables}">
-    <form id="form${table.name}" method="post" action="/fileupload" 
-          enctype="multipart/form-data" class="commandForm" style="display:none;">
-        <input type="hidden" name="name" value="${model.name}" />            
-        <input type="hidden" name="table" value="${table.name}" />            
-        <fieldset>
-            <legend>${table.name} Table</legend>
-            <select name="source">
-                <option value="hssf">Excel 2003</option>
-                <option value="xssf">Excel 2007</option>
-            </select>
-            <input id="file${table.name}" type="file" name="file"/>
-            <p>${table.description}</p>
-            <input type="submit" id="login" value="Load"/>
-        </fieldset>
-        <span id="msg${table.name}"></span>
-    </form>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#form${table.name}").ajaxForm({ success: function(html) {
-                    configuration.menu.changeWith(html);
-                    //$("#msg${table.name}").replaceWith(html);
-                }
-            });
-        });
-    </script>	
-</c:forEach>    
+
+<div id="areaForTable"></div>    
