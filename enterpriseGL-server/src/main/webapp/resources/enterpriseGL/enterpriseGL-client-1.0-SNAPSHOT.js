@@ -18,7 +18,8 @@ if(a.model.hasChange()){a.graphics.updateModel(a.model.currentEventId)
 EntController.changeModel=function(b){var a=EntController.instance.configuration;
 EntController.instance.model.reset();
 EntController.instance.graphics.reset();
-if(a.infoModelUrl){$.getJSON(a.infoModelUrl(b),function(c){})
+if(a.infoModelUrl){$.getJSON(a.infoModelUrl(b),function(c){EntController.instance.graphics.system.changeDistribution(DistributionAlg.Algoritms(c.typeDiagram))
+})
 }else{a.defaultModel()
 }if(a.infoModelLoad){EntController.instance.downloadIndex=0;
 EntController.instance.downloadModel()
@@ -36,25 +37,86 @@ if(!c.idPacket==0){}if(!c.lastPacket){EntController.instance.downloadModel()
 }});
 this.downloadIndex++
 }};
-function EntGraphics(a){this.width=800;
+var EntGL=function(){};
+EntGL.ElementType={PARTICLE:"particle",EVENT:"event",RELATION:"relation",AGGREGATION:"aggregation"};
+EntGL.SettingsDefault=function(){};
+EntGL.SettingsDefault.prototype={createParticleFunctions:{particleGeom:function(){var b=function(h,i,e,g){if(e instanceof EntElement){var d=new ParticleGeomPrimitive();
+d.linkToModel(e);
+var f=Math.random();
+if(f<0.5){d.typePrimitive=ParticleGeomPrimitive.Primitive.SPHERE
+}else{d.dimension=1
+}if(d.create()==null){return
+}h._element=d;
+h.settingGen="createParticleGeom";
+i.add(d.getElement());
+g.add(d.getElement());
+return
+}};
+var c=function(d){return true
+};
+var a=new EntSetting(c,b);
+a.id="createParticleGeom";
+return a
+},particleAthom:function(){var a=new EntSetting(function(b){return false
+},function(d,e,b,c){});
+a.id="createParticleAthom";
+return a
+}},createFunctions:{relationAdding:function(){var b=new EntSetting(null,function(g,h,e,f){if(e instanceof RelationBase){var d=e.getElemInSystem(f);
+e.update(d[0],d[1])
+}else{if(e instanceof EntRelation){var c=new RelationBase();
+c.linkToModel(e);
+if(c.create()==null){return
+}g._element=c
+}}});
+var a=function(f,h,d){var g=f.getElement();
+if(g instanceof RelationBase){var c=g.getElemInSystem(d);
+if((c[0]==null)||(c[1]==null)){return true
+}h.add(g.getElement())
+}return false
+};
+b.configureForAdvEvent(EntGraphicalEventControlledEnd,a);
+b.elementType=EntGL.ElementType.RELATION;
+b.id="createSimpleRelation";
+return b
+}},removeFunctions:{removeSimple:function(){var a=new EntSetting(null,function(d,e,b,c){e.remove(b.element)
+});
+a.id="remove";
+return a
+}},popolate:function(){var a=[],d,b;
+for(b in this.createParticleFunctions){d=this.createParticleFunctions[b]();
+d.eventType=GraphicalSettings.EventType.ADD;
+d.elementType=EntGL.ElementType.PARTICLE;
+a.push(d)
+}for(b in this.createFunctions){d=this.createFunctions[b]();
+d.eventType=GraphicalSettings.EventType.ADD;
+a.push(d)
+}for(b in this.removeFunctions){for(var c in EntGL.ElementType){d=this.removeFunctions[b]();
+d.eventType=GraphicalSettings.EventType.REMOVE;
+d.elementType=EntGL.ElementType[c];
+d.id=d.id+c;
+a.push(d)
+}}return a
+}};
+function EntGraphics(b){this.width=800;
 this.height=600;
-if(!a){a=new EntGraphicsConfig()
-}this.configuration=a;
-this.scene=new THREE.Scene();
-this.camera=a.cameraConfig(this.scene,this.width,this.height);
-this.controls=a.controlsConfig(this.camera);
-this.scene.add(new THREE.AmbientLight(5263440));
-this.scene.add(a.lightConfig(this.camera));
-this.scene.add(this.plane=a.planeConfig());
-this.projector=new THREE.Projector();
+if(!b){b=new EntGraphicsConfig()
+}this.configuration=b;
 this.renderer=new THREE.WebGLRenderer({antialias:true});
 this.renderer.sortObjects=false;
 this.renderer.setSize(this.width,this.height);
 this.renderer.shadowMapEnabled=true;
 this.renderer.shadowMapSoft=true;
+this.scene=new THREE.Scene();
+this.camera=b.cameraConfig(this.scene,this.width,this.height);
+this.controls=b.controlsConfig(this.camera,this.renderer.domElement);
+this.scene.add(new THREE.AmbientLight(5263440));
+this.scene.add(b.lightConfig(this.camera));
+this.scene.add(this.plane=b.planeConfig());
+this.projector=new THREE.Projector();
 this.system=new GraphicalSystem();
-this.context=new ModelConfiguration(this.system);
-this.context.configure({});
+this.settings=new GraphicalSettings();
+var a=new EntGL.SettingsDefault();
+this.settings.addSettings(a.popolate());
 this.relations={}
 }EntGraphics.prototype={get objectsfunction(){return this.system.objects
 },reset:function(){for(var a in this.system.particles){var b=this.system.particles[a];
@@ -63,53 +125,46 @@ this.removeParticle(b)
 },createMouseSelector:function(){return new MouseSelector(this.camera,this.plane,this.system.objects,this.width,this.height)
 },update:function(){this.controls.update();
 this.system.update();
-this.updateRelations();
-this.renderer.render(this.scene,this.camera)
-},updateModel:function(f){var c=EntObjects.get(f);
-if(!c){return
-}var d=(new Array()).concat(c.objects);
-for(var a in this.system.particles){var e=c.posInObjects(a);
-if(e!=-1){d.splice(e,1)
-}else{this.removeParticle(e)
-}}for(var a in d){var b=EntObjects.get(d[a]);
-if(b){this.addParticle(b)
-}}this.updateRelations()
-},updateParticle:function(a){},removeParticle:function(d){var b=this.system.particles[d.modelReference];
+var b=this.settings.getEvents(),a=0;
+while(b.length>0){var c=b.shift();
+if(c.isDied()){this.settings.remove(a)
+}else{c.applyOn(this.scene,this.system)
+}a++
+}this.renderer.render(this.scene,this.camera)
+},updateModel:function(g){var d=EntObjects.get(g);
+if(!d){return
+}var e=(new Array()).concat(d.objects);
+for(var b in this.system.particles){var f=d.posInObjects(b);
+if(f!=-1){e.splice(f,1);
+var a=EntObjects.get(f);
+this.settings.register(GraphicalSettings.EventType.UPDATE,a)
+}else{var a=EntObjects.get(f);
+this.settings.register(GraphicalSettings.EventType.REMOVE,a)
+}}for(var b in e){var c=EntObjects.get(e[b]);
+if(c){this.addParticle(c)
+}}},updateParticle:function(a){},removeParticle:function(d){var b=this.system.particles[d.modelReference];
 this.system.remove(d.modelReference);
 this.scene.remove(b);
 for(var a in this.relations[d.modelReference]){var c=this.relations[d.modelReference][a];
 if(c.isOnScene){this.scene.remove(c)
 }}this.relations[d.modelReference]=undefined
-},addParticle:function(g){var f=this.context.elaborate(g);
-this.system.add(f);
-this.scene.add(f);
-this.relations[g.id]=[];
-var a=this.context.relationBuilder();
-a.reset(f);
-for(var c in g.relations){var e=this.system.findParticle(g.relations[c]);
-var d=a.build(e);
-if(!d.hasExtremis){d.modelReference[1]=g.relations[c]
-}this.relations[g.id].push(d)
-}},updateRelations:function(){for(var a in this.relations){for(var b in this.relations[a]){var c=this.relations[a][b];
-if(!c.isOnScene){if(!c.hasExtremis){var d=this.system.findParticle(c.modelReference[1]);
-if(!d){continue
-}c.change(d)
-}this.scene.add(c);
-c.isOnScene=true
-}c.update()
-}}}};
+},addParticle:function(d){var a=this.settings.register(GraphicalSettings.EventType.ADD,d);
+if(a==null){return
+}for(var b in d.relations){var c=new EntRelation(d.id,d.relations[b]);
+this.settings.register(GraphicalSettings.EventType.ADD,c)
+}}};
 function EntGraphicsConfig(){}EntGraphicsConfig.prototype={lightConfig:function(b){var a=new THREE.SpotLight(16777215,1.5);
-a.position.set(0,500,2000);
+a.position.set(0,5,20);
 a.castShadow=true;
-a.shadowCameraNear=200;
+a.shadowCameraNear=2;
 a.shadowCameraFar=b.far;
-a.shadowCameraFov=50;
+a.shadowCameraFov=20;
 a.shadowBias=-0.00022;
 a.shadowDarkness=0.5;
 a.shadowMapWidth=1024;
 a.shadowMapHeight=1024;
 return a
-},controlsConfig:function(b){var a=new THREE.TrackballControls(b);
+},controlsConfig:function(b,c){var a=new THREE.TrackballControls(b,c);
 a.rotateSpeed=1;
 a.zoomSpeed=1.2;
 a.panSpeed=0.8;
@@ -126,6 +181,770 @@ return b
 a.geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI/2));
 a.visible=false;
 return a
+}};
+function GraphicalSettings(){this.settings={};
+this.events=[]
+}GraphicalSettings.EventType={ADD:"add",REMOVE:"remove",UPDATE:"update"};
+GraphicalSettings.prototype={register:function(b,a){var e=this.getSettings(),c;
+while(e.length>0){c=e.shift();
+if(b==c.eventType){if(a.type==c.elementType){if(c.verifyCondition(a)){var d=c.create(a);
+this.events.push(d);
+return d
+}}}}return null
+},remove:function(a){},getEvents:function(){var a=(new Array()).concat(this.events);
+return a
+},changeSetting:function(a){if(a instanceof EntSetting){this.settings[a.id]=a
+}},removeSetting:function(a){this.settings[a.id]=undefined
+},getSettings:function(){var a=[];
+for(var b in this.settings){if(this.settings[b] instanceof EntSetting){a.push(this.settings[b])
+}}return a
+},addSettings:function(b){for(var a in b){this.changeSetting(b[a])
+}}};
+function GraphicalSystem(){this.particles={};
+this.objects=[];
+this._distributionAlg=new DistributionGraph();
+this._distributionAlg.setSystemRepos(this);
+this.forces={relAttr:attractionForce(0.02,2),centreforce:gravitation(0.009)};
+this.numparticles=0
+}GraphicalSystem.prototype={getFreeSpace:function(a){return this._distributionAlg.getPositionFor(a)
+},findParticle:function(b){for(var a in this.particles){var c=this.particles[a];
+if(c.modelReference==b){return c
+}}return null
+},size:function(){return this.numparticles
+},add:function(a){if(this.particles[a.id]!=undefined){}else{this.numparticles++;
+this.objects.push(a)
+}this.particles[a.modelReference]=a
+},remove:function(b){var a=this.particles[b];
+if(a){this.particles[b]=undefined;
+this.numparticles--
+}return a
+},update:function(){this.updateAccelerations();
+var a=0.5;
+for(var c in this.particles){var d=this.particles[c];
+var e=d.accelerations.clone().multiplyScalar(0.5*a*a);
+e.addSelf(d.velocity.clone().multiplyScalar(a));
+var b=d.accelerations.clone().multiplyScalar(a);
+d.velocity.addSelf(b);
+d.position.addSelf(e)
+}},updateAccelerations:function(){for(var f in this.particles){this.particles[f].accelerations=new THREE.Vector3(0,0,0);
+this.particles[f].velocity=new THREE.Vector3(0,0,0)
+}this._distributionAlg.update(this);
+for(var d in this.forces){var g=this.forces[d].force;
+switch(this.forces[d].type){case Force.types.GLOBAL:this.globalAlg.configureFor(this.forces[d]);
+for(var e in this.particles){var b=this.globalAlg.getForceFor(this.particles[e]);
+this.particles[e].accelerations.addSelf(b)
+}break;
+case Force.types.ONRELATIONS:for(var c in this.particles){g(this.particles[c],this)
+}break;
+case Force.types.LOCAL:default:for(var c in this.particles){g(this.particles[c])
+}break
+}}},changeDistribution:function(a){if(!(a instanceof DistributionAlg)){return false
+}this._distributionAlg=a;
+this._distributionAlg.setSystemRepos(this);
+for(var c in this.particles){var b=this.particles[c];
+b.position.copy(this._distributionAlg.getPositionFor(b));
+this._distributionAlg.insert(b)
+}return true
+},reset:function(){this.particles={};
+this.objects=[];
+this._distributionAlg=new DistributionAlg();
+this._distributionAlg.setSystemRepos(this);
+this.forces={relAttr:attractionForce(0.02,2),centreforce:gravitation(0.009)};
+this.numparticles=0
+}};
+function ModelConfiguration(a){this.pbuilder=new ParticleBuilder(a);
+this.rbuilder=new RelationBuilder(a);
+this.system=a
+}ModelConfiguration.prototype={elaborate:function(a){var b=this.pbuilder.build(a);
+return b
+},elaborateRelation:function(c,b){var a=this.rbuilder.build(c,b);
+return a
+},relationBuilder:function(){return this.rbuilder
+},configure:function(a){var c=new ParticleCube();
+this.pbuilder.setGeometry(c.geometries.CUBE01);
+this.pbuilder.setGenerator(c.generator);
+this.pbuilder.setProperties(a);
+var b=new Relation();
+this.rbuilder.setGeometry(b.geometry);
+this.rbuilder.setGenerator(b.generator);
+this.rbuilder.setProperties(a)
+}};
+function ParticleBuilder(a){this.geometry=null;
+this.generator=null;
+this.properties=null;
+this.system=a
+}ParticleBuilder.prototype={setGeometry:function(a){this.geometry=a
+},setGenerator:function(a){this.generator=a
+},setProperties:function(a){this.properties=a
+},build:function(b){var a=this.generator(this.geometry,this.properties);
+a.modelReference=b.id;
+a.type="particle";
+a.relations=b.relations;
+a.position=this.system.getFreeSpace(a);
+a.accelerations=new THREE.Vector3(0,0,0);
+a.velocity=new THREE.Vector3(0,0,0);
+return a
+}};
+function RelationBuilder(a){this.geometry=null;
+this.generator=null;
+this.properties=null;
+this.system=a;
+this.object=null;
+this.originPoint=null
+}RelationBuilder.prototype={setGeometry:function(a){this.geometry=a
+},setGenerator:function(a){this.generator=a
+},setProperties:function(a){this.properties=a
+},reset:function(a){this.originPoint=a
+},build:function(a){this.object=this.generator(this.geometry,this.properties);
+this.object.type="relation";
+this.object.modelReference=[this.originPoint.modelReference];
+this.object.hasExtremis=false;
+this.object.isOnScene=false;
+this.object.position=this.originPoint.position;
+this.object.change=RelationBuilder.changeExtremis;
+this.object.update=RelationBuilder.updateRelation;
+this.object.change(a);
+return this.object
+}};
+RelationBuilder.changeExtremis=function(a){this.extremis=a;
+if(a!=null){this.modelReference[1]=a.modelReference;
+this.update();
+this.hasExtremis=true
+}};
+RelationBuilder.updateRelation=function(){var g=this.extremis;
+var f=g.position.clone().subSelf(this.position);
+var c=f.length(),a=f.normalize();
+var b=new THREE.Vector3(0,1,0).crossSelf(f);
+var d=Math.acos(new THREE.Vector3(0,1,0).dot(a));
+this.matrix=new THREE.Matrix4().makeRotationAxis(b.normalize(),d);
+this.scale.set(c,c,c);
+this.rotation.getRotationFromMatrix(this.matrix)
+};
+function Region(a,c,b){this.type="defcube";
+this.centre=new THREE.Vector3(a,c,b);
+this.position=new THREE.Vector3(a,c,b);
+this.mass=1;
+this.range=10;
+this.parent=null;
+this.childs=[];
+this.index=0
+}Region.prototype={contains:function(c){var b=this.range;
+var g=c.position.clone().subSelf(this.centre);
+if(this.type=="spherical"){return(b*b>=g.lengthSq())
+}var f=Math.abs(g.x),e=Math.abs(g.y),d=Math.abs(g.z);
+var a=Math.max(f,e,d);
+if(this.type=="defcube"){return b>=a
+}else{return b>a
+}},move:function(a,c,b){this.centre.set(a,c,b)
+},resize:function(a){this.range=a
+},remove:function(b){for(var a in this.childs){if(this.childs[a]==b){this.childs[a]=undefined;
+return
+}}},forEach:function(a){this.childs.forEach(function(d,c,b){a(d)
+})
+},insert:function(a){a.parent=this;
+this.childs.push(a)
+},computeCenterOfMass:function(){var c=0,e=new THREE.Vector3(0,0,0);
+for(var b in this.childs){var d=this.childs[b],a=0;
+if(d==null||d==undefined){continue
+}if(d instanceof Region){d.computeCenterOfMass()
+}if(d.getMass instanceof Function){a=d.getMass()
+}c+=a;
+e.addSelf(d.position.clone().multiplyScalar(a))
+}this.position=e.multiplyScalar(1/c);
+this.mass=c
+},getMass:function(){return this.mass
+},isEmpty:function(){if(this.childs.length==0){return true
+}for(var a in this.childs){if(this.childs[a]){return false
+}}return true
+}};
+function RegionLeaf(b){var a=b||{position:null,modelReference:null};
+this.parent=null;
+this.position=a.position||new THREE.Vector3(0,0,0);
+this._container=a.modelReference?[b.modelReference]:[];
+this.error=0.009;
+this.mass=0
+}RegionLeaf.prototype={getMass:function(){return this.mass
+},getOrigin:function(){return this._container
+},samePosition:function(a){var b=this.position.clone().subSelf(a.position).lengthSq();
+if(b<=this.error){return true
+}return false
+},unionWith:function(b){var a,c;
+if(b instanceof RegionLeaf){a=b._container;
+c=b.position
+}else{a=b.modelReference;
+c=b.position;
+if(a==null||a==undefined){return
+}a=[a]
+}this._container=this._container.concat(a);
+this.position.addSelf(c).multiplyScalar(0.5);
+this.mass++
+},isOnlyFor:function(a){if(this._container.length>1){return false
+}if(this._container[0]==a.modelReference){return true
+}return false
+},have:function(b){for(var a in this._container){if(this._container[a]==b.modelReference){return true
+}}return false
+},remove:function(b){for(var a in this._container){if(this._container[a]==b.modelReference){this._container.splice(a,1);
+return true
+}}return false
+},isEmpty:function(){if(this._container.length==0){return true
+}return false
+},update:function(b){this.position=new THREE.Vector3(0,0,0);
+if(b.length==0){return
+}var c=0;
+for(var a in b){if(!this.have(b[a])){continue
+}this.position.addSelf(b[a].position);
+c++
+}if(c>1){this.position.multiplyScalar(1/b.length)
+}}};
+function DistributionAlg(){this._root=new Region(0,0,0);
+this._root.range=100;
+this._regions=[this._root];
+this._leaves=[];
+this._infoRepository=null
+}DistributionAlg.Algoritms=function(a){switch(a){case"graph":return new DistributionGraph();
+case"conetree":return new DistributionConeTree();
+default:return new DistributionAlg()
+}};
+DistributionAlg.prototype={setSystemRepos:function(a){this._infoRepository=a
+},_getInfoFor:function(c){var b=null;
+try{b=this._infoRepository.particles[c]
+}catch(a){return null
+}return b
+},_remove:function(c){var b=[];
+if(c instanceof Region){b=this._regions
+}else{if(c instanceof RegionLeaf){b=this._leaves
+}}if(c.parent!=null){c.parent.remove(c)
+}for(var a in b){if(b[a]==c){b.splice(a,1);
+return
+}}},_updateLeaf:function(a,c){for(var b in c){var d=c[b];
+if(a.samePosition(d)){continue
+}else{if(a.isOnlyFor(d)){a.update(c)
+}else{a.remove(d);
+this.insert(d)
+}}}if(a.isEmpty()){this._remove(a)
+}},_insert:function(a,b){var f=[this._root],e=null,g;
+while(f.length>0){g=f.shift();
+if(g instanceof Region){if(g.contains(a)){e=g;
+for(var h in g.childs){f.push(h)
+}}}}if(e!=null){e.insert(a)
+}else{var d=this.createRegion(a);
+this._root.insert(d);
+this._regions.push(d)
+}},_search:function(d){if(d==undefined||d==null){return null
+}var a=[this._root],b=null;
+while(a.length>0){b=a.shift();
+if(b instanceof Region){if(b.contains(d)){for(var e in b.childs){a.push(b.childs[e])
+}}}if(b instanceof RegionLeaf){if(b.have(d)){return b
+}}}return null
+},getPositionFor:function(a){return new THREE.Vector3(0,0,0)
+},update:function(c){if(arguments.length>0){this.setSystemRepos(c)
+}var d=[this.root()];
+while(d.length>0){var b=d.shift();
+if(b instanceof Region){b.computeCenterOfMass();
+if(b.isEmpty()){this._remove(b)
+}else{d=d.concat(b.childs)
+}}else{if(b instanceof RegionLeaf){var a=[],e=this;
+b.getOrigin().forEach(function(g){var f=e._getInfoFor(g);
+if(!f){b.remove({modelReference:g})
+}else{a.push(f)
+}});
+this._updateLeaf(b,a)
+}}}},insert:function(g){var d,h=null;
+if(!(g.position instanceof THREE.Vector3)){g.position=this.getPositionFor(g)
+}d=this.createLeafRegion(g);
+if(this._leaves.length>0){var b=2000,c=0;
+if(this._leaves.length>1){for(var a in this._leaves){var f=this._leaves[a];
+var e=f.position.clone().subSelf(d.position).lengthSq();
+if(e<b){b=e;
+c=a
+}}}h=this._leaves[c];
+if(this._leaves[c].samePosition(d)){return h.unionWith(d)
+}}this._leaves.push(d);
+this._insert(d,h);
+return d
+},remove:function(b){for(var a in this._leaves){if(this._leaves[a].have(b)){if(this._leaves[a].isOnlyFor(b)){this._remove(this._leaves[a])
+}else{this._leaves[a].remove(b)
+}return
+}}},reset:function(){this._root=new Region(0,0,0);
+this._root.range=100;
+this._regions=[];
+this._leaves=[]
+},root:function(){return this._root
+},createLeafRegion:function(b){var a=new RegionLeaf(b);
+return a
+},createRegion:function(b){var c=b.position,a=new Region(c.x,c.y,c.z);
+a.parent=b.parent||this._root;
+a.insert(b);
+return a
+}};
+DistributionConeTree.prototype=new DistributionAlg();
+DistributionConeTree.constructor=DistributionConeTree;
+DistributionConeTree.superclass=DistributionAlg.prototype;
+function DistributionConeTree(){};
+DistributionGraph.prototype=new DistributionAlg();
+DistributionGraph.constructor=DistributionGraph;
+DistributionGraph.superclass=DistributionAlg.prototype;
+function DistributionGraph(){}DistributionGraph.centerVectors=[new THREE.Vector3(-1,-1,-1),new THREE.Vector3(1,-1,-1),new THREE.Vector3(-1,1,-1),new THREE.Vector3(1,1,-1),new THREE.Vector3(-1,-1,1),new THREE.Vector3(1,-1,1),new THREE.Vector3(-1,1,1),new THREE.Vector3(1,1,1)];
+DistributionGraph.prototype.getPositionFor=function(e){switch(e.relations.length){case 0:case undefined:case null:return this.euristicFreePosition();
+case 1:var b=this._getInfoFor(e.relations[0]),a=null;
+a=this._search(b);
+if(a==null){return this.euristicFreePosition()
+}return this.euristicNextPosition(b,a.parent);
+default:var f=new THREE.Vector3(0,0,0),g=0;
+for(var c in e.relations){var d=this._getInfoFor(e.relations[c]);
+if(d!=null){f.addSelf(d.position);
+g++
+}}if(g<2){return this.euristicFreePosition()
+}f.multiplyScalar(1/g);
+return f
+}};
+DistributionGraph.prototype.euristicFreePosition=function(g){var e=[g||this.root()],b=[],c;
+while(e.length>0){var f=e.shift();
+if(f.isEmpty()){return f.centre
+}for(var a=0;
+a<8;
+a++){var d=f.childs[a];
+if(d instanceof Region){e.push(d)
+}else{if(d instanceof RegionLeaf){b.push({region:f,index:a,particle:d})
+}else{return this.getCentreFor(a,f)
+}}}if(b.length>0){c=b[0];
+return this.euristicNextPosition(c.particle,c.region,c.index)
+}}return new THREE.Vector3(0,0,0)
+};
+DistributionGraph.prototype.euristicNextPosition=function(b,e,a){e=e||this.root();
+if(arguments.length>=2){a=this.getIndexFor(b,e)
+}var d={centre:this.getCentreFor(a,e),range:e.range*0.5};
+var c=this.getIndexFor(b,d);
+return this.getCentreFor((c+1)%8,d)
+};
+DistributionGraph.prototype.getIndexFor=function(a,c){var b=0;
+if(c.centre.x<a.position.x){b=1
+}if(c.centre.y<a.position.y){b+=2
+}if(c.centre.z<a.position.z){b+=4
+}return b
+};
+DistributionGraph.prototype.getCentreFor=function(a,b){var c=DistributionGraph.centerVectors[a].clone().multiplyScalar(b.range*0.5);
+return b.centre.clone().addSelf(c)
+};
+DistributionGraph.prototype._insert=function(a,c){var e=[this._root],f,d;
+while(e.length>0){f=e.shift();
+var b=this.getIndexFor(a,f);
+d=f.childs[b];
+if(d instanceof Region){e.push(d)
+}else{if(d instanceof RegionLeaf){var g=this.createRegion(d,false,false,a);
+this._regions.push(g);
+return
+}else{f.childs[b]=a;
+a.parent=f;
+return
+}}}};
+DistributionGraph.prototype._search=function(c){if(c==undefined||c==null){return null
+}for(var a in this._leaves){var b=this._leaves[a];
+if(b.have(c)){return b
+}}return null
+};
+DistributionGraph.prototype.createRegion=function(f,d,a,k){var l=f.parent||this._root;
+var b=d||this.getIndexFor(f,l);
+var h=a||this.getCentreFor(b,l);
+var j=new Region(h.x,h.y,h.z);
+j.parent=l;
+j.range=l.range*0.5;
+var e=this.getIndexFor(f,j);
+j.childs[e]=f;
+f.parent=j;
+l.childs[b]=j;
+if(k){var g=this.getIndexFor(k,j);
+if(g!=e){l.childs[g]=k;
+k.parent=j
+}else{k.parent=j;
+f.unionWith(k)
+}}return j
+};
+function EntGraphicalEvent(a,b,c){this._element=a;
+this._duration=c;
+this._timeStart=null;
+this._runningFunction=b
+}EntGraphicalEvent.prototype={isDied:function(){if(this._timeStart==null){return false
+}var a=(new Date())-this._timeStart;
+return a>this._duration
+},applyOn:function(b,a){if(this._timeStart==null){this.startTimer()
+}this._runningFunction(this,b,this._element,a)
+},startTimer:function(){this._timeStart=new Date()
+},getElement:function(){return this._element
+}};
+var EntGraphicalEventControlledEnd=function(a,c,b){this._element=a;
+this._duration=0;
+this._timeStart=null;
+this._runningFunction=c;
+this._endCondition=b||function(){return false
+};
+this._numIteration=0
+};
+EntGraphicalEventControlledEnd.prototype=new EntGraphicalEvent(null,null,0);
+EntGraphicalEventControlledEnd.constructor=EntGraphicalEventControlledEnd;
+EntGraphicalEventControlledEnd.superclass=EntGraphicalEvent.prototype;
+EntGraphicalEventControlledEnd.prototype.applyOn=function(b,a){if(this._endCondition(this,b,a)){this.startTimer()
+}this._runningFunction(this,b,this._element,a);
+this._numIteration++
+};
+function EntSetting(c,b,a){this.id="new";
+this.eventType=GraphicalSettings.EventType.ADD;
+this.elementType=EntGL.ElementType.Particle;
+this.defaultAction=b||function(f,g,d,e){};
+this._condition=c||function(d){return true
+};
+this.duration=0;
+this._isAdvancedEvent=false;
+this._advConstructor=EntGraphicalEvent;
+this._advProps=[]
+}EntSetting.prototype={verifyCondition:function(a){return this._condition(a)
+},configureForAdvEvent:function(b,a){this._advConstructor=b;
+this._advProps=a;
+this._isAdvancedEvent=true
+},create:function(a){var b=null;
+if(this._isAdvancedEvent){b=new this._advConstructor(a,this.defaultAction,this._advProps)
+}else{b=new EntGraphicalEvent(a,this.defaultAction,this.duration)
+}b.settingGen=this.id;
+return b
+}};
+function ParticleCube(){this.dimension=1;
+this.colorMaterial=Math.random()*16777215;
+this.element=null
+}ParticleCube.prototype={geometries:{CUBE01:new THREE.CubeGeometry(1,1,1),CUBE10:new THREE.CubeGeometry(10,10,10),CUBE20:new THREE.CubeGeometry(20,20,20),CUBE40:new THREE.CubeGeometry(40,40,40)},generator:function(b,d){var c=new THREE.MeshLambertMaterial({color:Math.random()*16777215});
+var a=new THREE.Mesh(b,c);
+a.material.ambient=a.material.color;
+a.rotation=new THREE.Vector3(0,0,0);
+a.scale=new THREE.Vector3(1,1,1);
+a.castShadow=true;
+a.receiveShadow=true;
+return a
+},create:function(){var b=new THREE.MeshLambertMaterial({color:this.colorMaterial});
+var a=new THREE.Mesh(new THREE.CubeGeometry(this.dimension,this.dimension,this.dimension),b);
+a.rotation=new THREE.Vector3(0,0,0);
+a.scale=new THREE.Vector3(1,1,1);
+a.castShadow=true;
+a.receiveShadow=true;
+this.element=a;
+return a
+}};
+function ParticleStar(){this.geometry=new THREE.Geometry();
+this.geometry.vertices.push(new THREE.Vector3(0,0,0))
+}ParticleStar.prototype={generator:function(d,h){var c=THREE.ImageUtils.loadTexture("ball.png");
+var a=[0.2,0.5,0.9];
+var b=20;
+var e=new THREE.ParticleBasicMaterial({size:b,map:c,blending:THREE.AdditiveBlending,depthTest:false,transparent:false});
+e.color.setHSV(a[0],a[1],a[2]);
+var g=new THREE.Geometry();
+g.vertices.push(new THREE.Vector3(0,0,0));
+var f=new THREE.ParticleSystem(g,e);
+f.constructor=THREE.Particle;
+f.scale=new THREE.Vector3(1,1,1);
+return f
+}};
+function ParticleBase(){this.entParticle=null;
+this.element=null
+}ParticleBase.prototype={create:function(){if((this.element!=null)&&(this.entParticle!=null)){this.linkToModel(this.entParticle)
+}return this.element
+},linkToModel:function(a){this.entParticle=a;
+if(this.element==null){return
+}this.element.relations=a.relations||[];
+this.element.modelReference=a.id;
+this.element.accelerations=new THREE.Vector3(0,0,0);
+this.element.velocity=new THREE.Vector3(0,0,0)
+},getElement:function(){return this.element
+}};
+ParticleGeomPrimitive.prototype=new ParticleBase();
+ParticleGeomPrimitive.constructor=ParticleGeomPrimitive;
+ParticleGeomPrimitive.superclass=ParticleBase.prototype;
+function ParticleGeomPrimitive(){this.typePrimitive=null;
+this.colorMaterial=Math.random()*16777215;
+this.typeMaterial=null
+}ParticleGeomPrimitive.Primitive={CUBE:"cube",SPHERE:"sphere"};
+ParticleGeomPrimitive.Material={LAMBERT:"lambert",PHONG:"phong"};
+ParticleGeomPrimitive.prototype.create=function(){var e=null,c=null;
+switch(this.typeMaterial){case ParticleGeomPrimitive.Material.PHONG:e=new THREE.MeshPhongMaterial({color:this.colorMaterial});
+break;
+case ParticleGeomPrimitive.Material.LAMBERT:default:e=new THREE.MeshLambertMaterial({color:this.colorMaterial})
+}switch(this.typePrimitive){case ParticleGeomPrimitive.Primitive.SPHERE:var a=this.radius||0.7,b=this.segments||10,f=this.rings||6;
+c=new THREE.Mesh(new THREE.SphereGeometry(a,b,f),e);
+break;
+default:case ParticleGeomPrimitive.Primitive.CUBE:var g=this.dimension||1;
+c=new THREE.Mesh(new THREE.CubeGeometry(g,g,g),e);
+break
+}c.rotation=new THREE.Vector3(0,0,0);
+c.scale=new THREE.Vector3(1,1,1);
+c.castShadow=true;
+c.receiveShadow=true;
+this.element=c;
+return ParticleGeomPrimitive.superclass.create.call(this)
+};
+var RelationBase=function(){this.geometry=RelationBase.defaultGeometry;
+this.entRelation=null;
+this.lineColor={color:16724991};
+this.material=new THREE.LineBasicMaterial(this.lineColor);
+this.element=null
+};
+RelationBase.defaultGeometry=new THREE.Geometry();
+RelationBase.defaultGeometry.vertices.push(new THREE.Vector3(0,0,0));
+RelationBase.defaultGeometry.vertices.push(new THREE.Vector3(0,1,0));
+RelationBase.prototype={createElement:function(){this.element=new THREE.Line(this.geometry,this.material)
+},create:function(){if(this.entRelation==null){return null
+}if(this.element==null){return null
+}return this.element
+},linkToModel:function(a){this.entRelation=a;
+if(this.element==null){this.createElement()
+}this.element.modelReference=[this.entRelation.idSource,this.entRelation.idDestination];
+this.element.position=new THREE.Vector3(0,0,0)
+},changeExtremis:function(a){this.linkToModel(a)
+},getElemInSystem:function(c){var b,f,a=[null,null];
+try{b=this.entRelation.idSource;
+f=this.entRelation.idDestination;
+a[0]=c.particles[b];
+a[1]=c.particles[f]
+}catch(d){}return a
+},update:function(e,b){if(b==null){return
+}var i=e.position,g=b.position;
+this.element.position=i;
+var h=g.clone().subSelf(i);
+var a=h.length(),d=h.normalize();
+var c=new THREE.Vector3(0,1,0).crossSelf(h);
+var f=Math.acos(new THREE.Vector3(0,1,0).dot(d));
+this.element.matrix=new THREE.Matrix4().makeRotationAxis(c.normalize(),f);
+this.element.scale.set(a,a,a);
+this.element.rotation.getRotationFromMatrix(this.element.matrix)
+},getElement:function(){return this.element
+}};
+function BarnesHut(){this.root=new Region(0,0,0);
+this.root.range=100
+}BarnesHut.prototype={insert:function(a){if(!a.position){return false
+}if(!this.root.contains(a)){this.root.resize(a.position.length()+50)
+}a.barneshut={region:this.root,insertPos:a.position.clone()};
+if(!a.getMass){a.getMass=function(){return 1
+}
+}this.root.insert(a);
+return true
+},remove:function(b){if(!b.barneshut){return false
+}var d=b.barneshut.region.childs;
+for(var a in d){if(d[a]==b){d.splice(a,1);
+if(d.length==0){var c=b.barneshut.region;
+if(c.parent){c.parent.childs[c.index]=undefined
+}}return true
+}}return false
+},update:function(){var d=[this.root],a=[];
+while(d.length>0){var c=d.shift();
+if(c instanceof Region){c.computeCenterOfMass();
+d.push(c.childs)
+}else{if(c!=undefined){if(c.barneshut!=undefined){var b=c.barneshut.region;
+if(!b.contains(c)){a.push(c);
+if(b.parent){b.parent.reinsert(c,b)
+}}}}}}},getForceFor:function(e){var f=[{elem:this.root,dsq:this.root.range*2}],h=new THREE.Vector3(0,0,0);
+while(f.length>0){var k=f.shift();
+var c=k.elem,j=k.dsq,b=e.position.clone().subSelf(c.position);
+var g=b.lengthSq();
+if(g<j){if(c instanceof Region){for(var d in c.childs){f.push({elem:c.childs[d],dsq:j*0.25})
+}}else{if(c!=this){h.addSelf(this.getForce(c,b,g))
+}}}else{h.addSelf(this.getForce(c,b,g))
+}}return h
+},getForce:function(e,g,f){var d=1/Math.sqrt(f+BarnesHutConfig.epssq()),c=g.clone(),b=e.getMass();
+if(c.lengthSq()<0.01){c.set(Math.random(),Math.random(),Math.random()).normalize()
+}c.multiplyScalar(b*d*d*d/100);
+return c
+},configureFor:function(a){}};
+var BarnesHutConfig={dtime:0.025,dthf:function(){return 0.5*BarnesHutConfig.dtime
+},tol:0.5,itolsq:function(){return 1/(BarnesHutConfig.tol*BarnesHutConfig.tol)
+},eps:0.5,epssq:function(){return BarnesHutConfig.eps*BarnesHutConfig.eps
+}};
+function Force(){this.selector=function(){return true
+};
+this.force=function(){};
+this.type=Force.types.LOCAL
+}Force.types={GLOBAL:"global",LOCAL:"local",ONRELATIONS:"onRelations"};
+function attractionForce(a,c){var b=new Force();
+b.type=Force.types.ONRELATIONS;
+b.force=function(i,h){for(var f in i.relations){var g=i.relations[f],j=h.particles[g],e=0;
+if(!j){return
+}var k=j.position.clone().subSelf(i.position);
+e=k.length();
+if(e==0){k.set(Math.random(),Math.random(),Math.random())
+}if(e<c-0.5){k.negate()
+}else{if(e<c+0.5){continue
+}}k.multiplyScalar(a);
+i.accelerations.addSelf(k)
+}log(i.modelReference+" -> "+i.accelerations.length(),"LOG"+i.modelReference,true)
+};
+return b
+}function gravitation(a){var b=new Force();
+b.type=Force.types.LOCAL;
+b.force=function(c){var d=c.position.clone().normalize();
+d.multiplyScalar(-a);
+c.accelerations.addSelf(d)
+};
+return b
+}function attrito(b){var a=new Force();
+a.type=Force.types.LOCAL;
+a.force=function(d){var c=d.accelerations.clone().multiplyScalar(b);
+d.accelerations.subSelf(c)
+};
+return a
+};
+function EntElement(){this.type=EntGL.ElementType.PARTICLE;
+this.description="This is an empty object of enterprise";
+this.id=0
+}EntElement.prototype={getDescription:function(){return this.getDescription()
+},getId:function(){return this.id
+},setId:function(a){this.id=a
+},register:function(){EntObjects.register(this)
+},unregister:function(){EntObjects.unregister(this)
+}};
+function EntEvent(){EntElement.call(this);
+this.type=EntGL.ElementType.EVENT;
+this.graphicalModel=null;
+this.title="event";
+this.date=new Date();
+this.objects=[]
+}EntEvent.prototype=new EntElement();
+EntEvent.prototype.constructor=EntEvent;
+EntEvent.prototype.getDescription=function(){var c="";
+c+="<h1>"+this.date+": "+this.title+"</h1>";
+c+="<p>"+this.description+"</p>";
+if(this.relations.length>0){c+="<ul>";
+for(var a in this.objects){var b=EntObjects.instance.generateLink(this.objects[a]);
+c+="<li>"+b+"</li>"
+}c+="</ul>"
+}return c
+};
+EntEvent.prototype.posInObjects=function(a){if(a instanceof EntParticle){a=a.id
+}return $.inArray(a,this.objects)
+};
+EntEvent.prototype.setProperties=function(a){this.setId(a.id);
+this.title=a.nametime||this.title;
+this.date=a.date||this.date;
+this.description=a.description;
+this.objects=a.objects
+};
+function EntModel(){this.timeline=[];
+this.currentEventId="event0";
+this.currentEventPos=0;
+this.lastCheckSize=0;
+this._hasChange=false;
+new EntObjects()
+}EntModel.prototype={init:function(){this.getTimeLine();
+this.currentEventPos=0;
+this.currentEventId=this.timeline[0].id
+},getTimeLine:function(){this.timeline=EntObjects.instance.getEvents();
+if(this.timeline.length==0){this.timeline=[new EntEvent()]
+}return this.timeline.sort(function(d,c){return(d.date>c.date)-(d.date<c.date)
+})
+},getNextEvent:function(){if(this.timeline.length<=this.currentEventPos){return this.currentEventId
+}var a=this.currentEventPos+1;
+return this.timeline[a].id
+},getPrevEvent:function(){if(this.currentEventPos<=0){return this.currentEventId
+}var a=this.currentEventPos-11;
+return this.timeline[a].id
+},setToEvent:function(b,c){this._hasChange=true;
+if(EntObjects.get(b)){this.currentEventId=b;
+if(c){if(this.timeline[c].id==b){this.currentEventPos=c;
+return c
+}}for(var a in this.timeline){if(this.timeline[a].id==b){this.currentEventPos=a;
+return a
+}}}return null
+},update:function(){},reset:function(){EntObjects.instance.objects={};
+this.lastCheckSize=0
+},addObjects:function(b){for(var a in b){var c=null;
+switch(b[a].type){case"particle":c=new EntParticle();
+break;
+case"event":c=new EntEvent();
+break;
+default:continue
+}c.setProperties(b[a]);
+c.register()
+}},hasChange:function(){if(this._hasChange){this._hasChange=false;
+return true
+}var a=0;
+for(key in EntObjects.instance.objects){a++
+}if(this.lastCheckSize!=a){this.lastCheckSize=a;
+return true
+}return false
+}};
+function EntObjects(){this.objects={};
+this.array=[];
+this.undefLink="Undefined Object";
+this.callbackName="EntInteraction.clickOnObject";
+EntObjects.instance=this
+}EntObjects.prototype={generateLink:function(e){if(!this.objects[e]){return this.undefLink
+}var a=this.objects[e],b="",d="object "+e,c="";
+if(a.title){d=a.title
+}if(a.shortDescription){b=a.shortDescription()
+}c+="<a onclick='"+this.callbackName+'("'+e+"\");'>";
+c+=d+"</a>:"+b;
+return c
+},getParticles:function(){var a=[];
+for(var b in this.objects){var c=this.objects[b];
+if(c instanceof EntElement){a.push(c)
+}}return a
+},getEvents:function(){var a=[];
+for(var b in this.objects){var c=this.objects[b];
+if(c instanceof EntEvent){a.push(c)
+}}return a
+}};
+new EntObjects();
+EntObjects.register=function(a){EntObjects.instance.objects[a.id]=a
+};
+EntObjects.unregister=function(a){EntObjects.instance.objects[a.id]=undefined
+};
+EntObjects.get=function(a){if(EntObjects.instance.objects[a]){return EntObjects.instance.objects[a]
+}else{return null
+}};
+EntObjects.getInfo=function(a){return EntObjects.get(a).getDescription()
+};
+EntObjects.getLink=function(a){return EntObjects.instance.generateLink(a)
+};
+function EntParticle(){EntElement.call(this);
+this.graphicalModel=new ParticleCube();
+this.title="empty";
+this.body="empty";
+this.relations=[];
+this.changes={}
+}EntParticle.prototype=new EntElement();
+EntParticle.prototype.constructor=EntParticle;
+EntParticle.prototype.getDescription=function(){var c="";
+c+="<h1>"+this.title+"</h1>";
+c+="<p>"+this.definition+"</p>";
+c+="<p>"+this.description+"</p>";
+if(this.relations.length>0){c+="<ul>";
+for(var a in this.relations){var b=EntObjects.instance.generateLink(this.relations[a]);
+c+="<li>"+b+"</li>"
+}c+="</ul>"
+}return c
+};
+EntParticle.prototype.setProperties=function(a){this.setId(a.id);
+this.title=a.title||this.title;
+this.relations=this.relations.concat(a.relations);
+this.description=a.description||"there isn't description for this element!";
+this.definition=a.definition||"not defined!"
+};
+EntParticle.prototype.getChange=function(b){if(!this.changes[b]){return this
+}var a=new EntParticle();
+a.id=this.id;
+a.relations=this.changes[b].relations;
+a.properties=this.changes[b].properties;
+return a
+};
+function EntRelation(a,b){this.type=EntGL.ElementType.RELATION;
+this.idSource=a;
+this.idDestination=b
+}EntRelation.prototype=new EntElement();
+EntRelation.prototype.constructor=EntRelation;
+EntRelation.prototype.getSource=function(){return EntObjects.get(this.idSource)
+};
+EntRelation.prototype.getDestination=function(){return EntObject.get(this.idDestination)
+};
+function ContainerManager(a){this.container=document.getElementById(a.main);
+this.infoContainer=document.getElementById(a.info)
+}ContainerManager.prototype={writeInfo:function(a){this.infoContainer.innerHTML=a;
+this.infoContainer.style.dysplay=true
+},hiddenInfo:function(){this.infoContainer.style.dysplay=false
+},add:function(a){this.container.appendChild(a)
 }};
 function EntInteraction(a){var b=a.renderer.domElement;
 b.addEventListener("mousemove",EntInteraction.onMouseMove,false);
@@ -195,543 +1014,6 @@ this.containerManager.hiddenInfo()
 }},moveObject:function(a){this.selectElem.position.copy(a);
 if(this.containerManager){this.containerManager.container.style.cursor="move"
 }},update:function(){}};
-function EntModel(){this.timeline=[];
-this.currentEventId="event0";
-this.currentEventPos=0;
-this.lastCheckSize=0;
-this._hasChange=false;
-new EntObjects()
-}EntModel.prototype={init:function(){this.getTimeLine();
-this.currentEventPos=0;
-this.currentEventId=this.timeline[0].id
-},getTimeLine:function(){this.timeline=EntObjects.instance.getEvents();
-if(this.timeline.length==0){this.timeline=[new EntEvent()]
-}return this.timeline.sort(function(d,c){return(d.date>c.date)-(d.date<c.date)
-})
-},getNextEvent:function(){if(this.timeline.length<=this.currentEventPos){return this.currentEventId
-}var a=this.currentEventPos+1;
-return this.timeline[a].id
-},getPrevEvent:function(){if(this.currentEventPos<=0){return this.currentEventId
-}var a=this.currentEventPos-11;
-return this.timeline[a].id
-},setToEvent:function(b,c){this._hasChange=true;
-if(EntObjects.get(b)){this.currentEventId=b;
-if(c){if(this.timeline[c].id==b){this.currentEventPos=c;
-return c
-}}for(var a in this.timeline){if(this.timeline[a].id==b){this.currentEventPos=a;
-return a
-}}}return null
-},update:function(){},reset:function(){EntObjects.instance.objects={};
-this.lastCheckSize=0
-},addObjects:function(b){for(var a in b){var c=null;
-switch(b[a].type){case"particle":c=new EntParticle();
-break;
-case"event":c=new EntEvent();
-break;
-default:continue
-}c.setProperties(b[a]);
-c.register()
-}},hasChange:function(){if(this._hasChange){this._hasChange=false;
-return true
-}var a=0;
-for(key in EntObjects.instance.objects){a++
-}if(this.lastCheckSize!=a){this.lastCheckSize=a;
-return true
-}return false
-}};
-function GraphicalSystem(){this.particles={};
-this.objects=[];
-this.forces={barneshut:new Force(),relAttr:attractionForce(0.02,2),centreforce:gravitation(0.009)};
-this.numparticles=0;
-this.forces.barneshut.type=Force.types.GLOBAL;
-this.globalAlg=new BarnesHut()
-}GraphicalSystem.events={ADD:"add",MODIFY:"modify",REMOVE:"remove",ERROR:"error"};
-GraphicalSystem.prototype={getFreeSpace:function(){if(this.size()>0){var a=this.globalAlg.getFreeRegion();
-if(!(a instanceof THREE.Vector3)){a=new THREE.Vector3(2,2,0);
-a.addSelf(this.objects[this.size()-1].position)
-}return a
-}return new THREE.Vector3(0,0,0)
-},getSpaceNextTo:function(b){var d=this.particles[b],a=new THREE.Vector3(0,0,2);
-try{var f=this.globalAlg.getFreeRegion(d.barneshut.region);
-if(f instanceof THREE.Vector3){return f
-}return a.addSelf(d.position)
-}catch(c){}return null
-},findParticle:function(b){for(var a in this.particles){var c=this.particles[a];
-if(c.modelReference==b){return c
-}}return null
-},size:function(){return this.numparticles
-},add:function(c){var b=GraphicalSystem.events.ADD,a={primitive:c};
-if(this.particles[c.id]!=undefined){b=GraphicalSystem.events.MODIFY
-}else{this.numparticles++;
-this.objects.push(c)
-}this.particles[c.modelReference]=c;
-this.event(b,a)
-},remove:function(d){var b=GraphicalSystem.events.REMOVE,c=this.particles[d],a={primitive:c};
-if(c){this.particles[d]=undefined;
-this.numparticles--
-}else{b=GraphicalSystem.events.ERROR
-}this.event(b,a);
-return c
-},event:function(b,a){switch(b){case GraphicalSystem.events.ADD:this.globalAlg.insert(a.primitive);
-break;
-case GraphicalSystem.events.MODIFY:break;
-case GraphicalSystem.events.REMOVE:break;
-default:}},update:function(){this.updateAccelerations();
-var a=0.5;
-for(var c in this.particles){var d=this.particles[c];
-var e=d.accelerations.clone().multiplyScalar(0.5*a*a);
-e.addSelf(d.velocity.clone().multiplyScalar(a));
-var b=d.accelerations.clone().multiplyScalar(a);
-d.velocity.addSelf(b);
-d.position.addSelf(e)
-}},updateAccelerations:function(){for(var f in this.particles){this.particles[f].accelerations=new THREE.Vector3(0,0,0);
-this.particles[f].velocity=new THREE.Vector3(0,0,0)
-}this.globalAlg.update();
-for(var d in this.forces){var g=this.forces[d].force;
-switch(this.forces[d].type){case Force.types.GLOBAL:this.globalAlg.configureFor(this.forces[d]);
-for(var e in this.particles){var b=this.globalAlg.getForceFor(this.particles[e]);
-log(b.length(),"LOG",true);
-this.particles[e].accelerations.addSelf(b)
-}break;
-case Force.types.ONRELATIONS:for(var c in this.particles){g(this.particles[c],this)
-}break;
-case Force.types.LOCAL:default:for(var c in this.particles){g(this.particles[c])
-}break
-}}}};
-function ModelConfiguration(a){this.pbuilder=new ParticleBuilder(a);
-this.rbuilder=new RelationBuilder(a);
-this.system=a
-}ModelConfiguration.prototype={elaborate:function(a){var b=this.pbuilder.build(a);
-return b
-},elaborateRelation:function(c,b){var a=this.rbuilder.build(c,b);
-return a
-},relationBuilder:function(){return this.rbuilder
-},configure:function(a){var c=new ParticleCube();
-this.pbuilder.setGeometry(c.geometries.CUBE01);
-this.pbuilder.setGenerator(c.generator);
-this.pbuilder.setProperties(a);
-var b=new Relation();
-this.rbuilder.setGeometry(b.geometry);
-this.rbuilder.setGenerator(b.generator);
-this.rbuilder.setProperties(a)
-}};
-function ParticleBuilder(a){this.geometry=null;
-this.generator=null;
-this.properties=null;
-this.system=a
-}ParticleBuilder.prototype={setGeometry:function(a){this.geometry=a
-},setGenerator:function(a){this.generator=a
-},setProperties:function(a){this.properties=a
-},build:function(c){var a=this.generator(this.geometry,this.properties);
-var d=null;
-if(c.relations.length>0){for(var b in c.relations){d=this.system.getSpaceNextTo(c.relations[b]);
-if(d!=null){break
-}}}if(d==null){d=this.system.getFreeSpace()
-}a.position=d;
-a.modelReference=c.id;
-a.type="particle";
-a.relations=c.relations;
-a.accelerations=new THREE.Vector3(0,0,0);
-a.velocity=new THREE.Vector3(0,0,0);
-return a
-}};
-function RelationBuilder(a){this.geometry=null;
-this.generator=null;
-this.properties=null;
-this.system=a;
-this.object=null;
-this.originPoint=null
-}RelationBuilder.prototype={setGeometry:function(a){this.geometry=a
-},setGenerator:function(a){this.generator=a
-},setProperties:function(a){this.properties=a
-},reset:function(a){this.originPoint=a
-},build:function(a){this.object=this.generator(this.geometry,this.properties);
-this.object.type="relation";
-this.object.modelReference=[this.originPoint.modelReference];
-this.object.hasExtremis=false;
-this.object.isOnScene=false;
-this.object.position=this.originPoint.position;
-this.object.change=RelationBuilder.changeExtremis;
-this.object.update=RelationBuilder.updateRelation;
-this.object.change(a);
-return this.object
-}};
-RelationBuilder.changeExtremis=function(a){this.extremis=a;
-if(a!=null){this.modelReference[1]=a.modelReference;
-this.update();
-this.hasExtremis=true
-}};
-RelationBuilder.updateRelation=function(){var g=this.extremis;
-var f=g.position.clone().subSelf(this.position);
-var c=f.length(),a=f.normalize();
-var b=new THREE.Vector3(0,1,0).crossSelf(f);
-var d=Math.acos(new THREE.Vector3(0,1,0).dot(a));
-this.matrix=new THREE.Matrix4().makeRotationAxis(b.normalize(),d);
-this.scale.set(c,c,c);
-this.rotation.getRotationFromMatrix(this.matrix)
-};
-function ParticleCube(){}ParticleCube.prototype={geometries:{CUBE01:new THREE.CubeGeometry(1,1,1),CUBE10:new THREE.CubeGeometry(10,10,10),CUBE20:new THREE.CubeGeometry(20,20,20),CUBE40:new THREE.CubeGeometry(40,40,40)},generator:function(b,d){var c=new THREE.MeshLambertMaterial({color:Math.random()*16777215});
-var a=new THREE.Mesh(b,c);
-a.material.ambient=a.material.color;
-a.rotation=new THREE.Vector3(0,0,0);
-a.scale=new THREE.Vector3(1,1,1);
-a.castShadow=true;
-a.receiveShadow=true;
-return a
-}};
-function ParticleStar(){this.geometry=new THREE.Geometry();
-this.geometry.vertices.push(new THREE.Vector3(0,0,0))
-}ParticleStar.prototype={generator:function(d,h){var c=THREE.ImageUtils.loadTexture("ball.png");
-var a=[0.2,0.5,0.9];
-var b=20;
-var e=new THREE.ParticleBasicMaterial({size:b,map:c,blending:THREE.AdditiveBlending,depthTest:false,transparent:false});
-e.color.setHSV(a[0],a[1],a[2]);
-var g=new THREE.Geometry();
-g.vertices.push(new THREE.Vector3(0,0,0));
-var f=new THREE.ParticleSystem(g,e);
-f.constructor=THREE.Particle;
-f.scale=new THREE.Vector3(1,1,1);
-return f
-}};
-function Relation(){var a=new THREE.Geometry();
-a.vertices.push(new THREE.Vector3(0,0,0));
-a.vertices.push(new THREE.Vector3(0,1,0));
-this.geometry=a
-}Relation.prototype={generator:function(c,e){var a={color:16724991};
-if(e.color){a={color:e.color}
-}var d=new THREE.LineBasicMaterial(a);
-var b=new THREE.Line(c,d);
-return b
-},};
-function Force(){this.selector=function(){return true
-};
-this.force=function(){};
-this.type=Force.types.LOCAL
-}Force.types={GLOBAL:"global",LOCAL:"local",ONRELATIONS:"onRelations"};
-function attractionForce(a,c){var b=new Force();
-b.type=Force.types.ONRELATIONS;
-b.force=function(i,h){for(var f in i.relations){var g=i.relations[f],j=h.particles[g],e=0;
-if(!j){return
-}var k=j.position.clone().subSelf(i.position);
-e=k.length();
-if(e==0){k.set(Math.random(),Math.random(),Math.random())
-}if(e<c-0.5){k.negate()
-}else{if(e<c+0.5){continue
-}}k.multiplyScalar(a);
-i.accelerations.addSelf(k)
-}log(i.modelReference+" -> "+i.accelerations.length(),"LOG"+i.modelReference,true)
-};
-return b
-}function gravitation(a){var b=new Force();
-b.type=Force.types.LOCAL;
-b.force=function(c){var d=c.position.clone().normalize();
-d.multiplyScalar(-a);
-c.accelerations.addSelf(d)
-};
-return b
-}function attrito(b){var a=new Force();
-a.type=Force.types.LOCAL;
-a.force=function(d){var c=d.accelerations.clone().multiplyScalar(b);
-d.accelerations.subSelf(c)
-};
-return a
-};
-function BarnesHut(){this.root=new Region(0,0,0);
-this.root.range=100
-}BarnesHut.prototype={insert:function(a){if(!a.position){return false
-}if(!this.root.contains(a)){this.root.resize(a.position.length()+50)
-}a.barneshut={region:this.root,insertPos:a.position.clone()};
-if(!a.getMass){a.getMass=function(){return 1
-}
-}this.root.insert(a);
-return true
-},remove:function(b){if(!b.barneshut){return false
-}var d=b.barneshut.region.childs;
-for(var a in d){if(d[a]==b){d.splice(a,1);
-if(d.length==0){var c=b.barneshut.region;
-if(c.parent){c.parent.childs[c.index]=undefined
-}}return true
-}}return false
-},update:function(){var d=[this.root],a=[];
-while(d.length>0){var c=d.shift();
-if(c instanceof Region){c.computeCenterOfMass();
-d.push(c.childs)
-}else{if(c!=undefined){if(c.barneshut!=undefined){var b=c.barneshut.region;
-if(!b.contains(c)){a.push(c);
-if(b.parent){b.parent.reinsert(c,b)
-}}}}}}},getForceFor:function(e){var f=[{elem:this.root,dsq:this.root.range*2}],h=new THREE.Vector3(0,0,0);
-while(f.length>0){var k=f.shift();
-var c=k.elem,j=k.dsq,b=e.position.clone().subSelf(c.position);
-var g=b.lengthSq();
-if(g<j){if(c instanceof Region){for(var d in c.childs){f.push({elem:c.childs[d],dsq:j*0.25})
-}}else{if(c!=this){h.addSelf(this.getForce(c,b,g))
-}}}else{h.addSelf(this.getForce(c,b,g))
-}}return h
-},getForce:function(e,g,f){var d=1/Math.sqrt(f+BarnesHutConfig.epssq()),c=g.clone(),b=e.getMass();
-if(c.lengthSq()<0.01){c.set(Math.random(),Math.random(),Math.random()).normalize()
-}c.multiplyScalar(b*d*d*d/100);
-return c
-},getFreeRegion:function(g){var f=[g||this.root],b=[],d=0,c;
-while(f.length>0){var h=f.shift();
-if(!h.childs){return h.centre
-}if(h.childs.length==0){return h.centre
-}for(var a=0;
-a<8;
-a++){var e=h.childs[a];
-if(!e){return h.getCentreForSubRegion(a)
-}else{if(e instanceof Region){d+=0.125;
-f.push(e);
-if(b.length>0){c=b[0];
-if(c.peso-d>=1){return c.region.getPosNextTo(c.index,c.particle)
-}}}else{b.push({region:h,index:a,level:Math.round(d),particle:e})
-}}}}c=b[0];
-return c.region.getPosNextTo(c.index,c.particle)
-},configureFor:function(a){}};
-var BarnesHutConfig={dtime:0.025,dthf:function(){return 0.5*BarnesHutConfig.dtime
-},tol:0.5,itolsq:function(){return 1/(BarnesHutConfig.tol*BarnesHutConfig.tol)
-},eps:0.5,epssq:function(){return BarnesHutConfig.eps*BarnesHutConfig.eps
-}};
-function Particle(a){this.x=0;
-this.y=0;
-this.z=0;
-this.velocity={x:0,y:0,z:0};
-this.directions={x:0,y:0,z:0};
-this.accelerations={x:0,y:0,z:0};
-this.color={r:0,g:1,b:0.5};
-this.energy=1;
-this.mass=1;
-this.id=a;
-this.propertyCallBack=null
-}Particle.prototype={move:function(a,c,b){this.x+=a;
-this.y+=c;
-this.z+=b;
-return this
-},quadDistance:function(c){var b=c||{x:0,y:0,z:0};
-var a={x:(this.x-b.x),y:(this.y-b.y),z:(this.z-b.z)};
-return a.x*a.x+a.y*a.y+a.z*a.z
-},distance:function(a){return Math.sqrt(this.quadDistance(a))
-},getProperty:function(a){},dirArray:function(){return new Array(this.directions.x,this.directions.y,this.directions.z)
-},velArray:function(){return new Array(this.velocity.x,this.velocity.y,this.velocity.z)
-},accArray:function(){return new Array(this.accelerations.x,this.accelerations.y,this.accelerations.z)
-},colArray:function(){return new Array(this.color.r,this.color.g,this.color.b)
-},advance:function(){var d,b,a;
-var f,e,c;
-d=this.accelerations.x*BarnesHutConfig.dthf();
-b=this.accelerations.y*BarnesHutConfig.dthf();
-a=this.accelerations.z*BarnesHutConfig.dthf();
-f=this.velocity.x+d;
-e=this.velocity.y+b;
-c=this.velocity.z+a;
-this.x+=f*BarnesHutConfig.dtime;
-this.y+=e*BarnesHutConfig.dtime;
-this.z+=c*BarnesHutConfig.dtime;
-this.velocity.x=f+d;
-this.velocity.y=e+b;
-this.velocity.z=c+a
-},computeForce:function(a,b){var e,d,c;
-e=this.accelerations.x;
-d=this.accelerations.y;
-c=this.accelerations.z;
-this.accelerations.x=0;
-this.accelerations.y=0;
-this.accelerations.z=0;
-this.recurseForce(a,b*b*BarnesHutConfig.itolsq());
-this.velocity.x+=(this.accelerations.x-e)*BarnesHutConfig.dthf();
-this.velocity.y+=(this.accelerations.y-d)*BarnesHutConfig.dthf();
-this.velocity.z+=(this.accelerations.z-c)*BarnesHutConfig.dthf()
-},recurseForce:function(d,i){var j;
-var h,k,e,b,c=d.point.clone().subSelf(j),g=new THREE.Vector3(0,0,0);
-h=c.lengthSq();
-var f=this;
-if(h<i){if(d instanceof Region){i*=0.25;
-d.childs.forEach(function(a){if(a!=undefined){f.recurseForce(a,i)
-}})
-}else{if(d!=this){h+=BarnesHutConfig.epssq();
-b=1/Math.sqrt(h);
-e=d.mass*b*b*b;
-c.multiplyScalar(e);
-g.addSelf(c)
-}}}else{h+=BarnesHutConfig.epssq();
-b=1/Math.sqrt(h);
-e=d.mass*b*b*b;
-c.multiplyScalar(e);
-g.addSelf(c)
-}}};
-function Region(a,c,b){this.type="defcube";
-this.centre=new THREE.Vector3(a,c,b);
-this.position=new THREE.Vector3(a,c,b);
-this.mass=1;
-this.range=10;
-this.parent=null;
-this.childs=[];
-this.index=0
-}Region.centerVectors=[new THREE.Vector3(-1,-1,-1),new THREE.Vector3(1,-1,-1),new THREE.Vector3(-1,1,-1),new THREE.Vector3(1,1,-1),new THREE.Vector3(-1,-1,1),new THREE.Vector3(1,-1,1),new THREE.Vector3(-1,1,1),new THREE.Vector3(1,1,1)];
-Region.prototype={contains:function(c){var b=this.range;
-var g=c.position.clone().subSelf(this.centre);
-if(this.type=="spherical"){return(b*b>=g.lengthSq())
-}var f=Math.abs(g.x),e=Math.abs(g.y),d=Math.abs(g.z);
-var a=Math.max(f,e,d);
-if(this.type=="defcube"){return b>=a
-}else{return b>a
-}},move:function(a,c,b){this.centre.set(a,c,b)
-},resize:function(a){this.range=a
-},forEach:function(a){this.childs.forEach(function(d,c,b){a(d)
-})
-},getPosNextTo:function(a,e){var c=this.getCentreForSubRegion(a);
-var b=new Region(c.x,c.y,c.z);
-var d=b.getIndexRegionForParticle(e);
-return b.getCentreForSubRegion((d+1)%8)
-},getCentreForSubRegion:function(a){var b=Region.centerVectors[a].clone().multiplyScalar(this.range*0.5);
-return this.centre.clone().addSelf(b)
-},getIndexRegionForParticle:function(a){var b=0;
-if(this.centre.x<a.position.x){b=1
-}if(this.centre.y<a.position.y){b+=2
-}if(this.centre.z<a.position.z){b+=4
-}return b
-},createSubRegion:function(d,f){var c=new Region(),e=this.childs[d],b=this.range*0.5;
-var g=Region.centerVectors[d].clone().multiplyScalar(b);
-c.centre=this.centre.clone().addSelf(g);
-c.range=b;
-c.parent=this;
-c.index=d;
-var h=new THREE.Vector3().copy(e.position).subSelf(f.position);
-if(h.lengthSq()<1){c.insert(e);
-var a=Math.max(7,this.childs.length);
-this.childs[a++]=f;
-return
-}c.insert(e);
-c.insert(f);
-this.childs[d]=c
-},insert:function(a){var b=this.getIndexRegionForParticle(a);
-a.barneshut.region=this;
-if(this.childs[b]==undefined){this.childs[b]=a
-}else{if(this.childs[b] instanceof Region){this.childs[b].insert(a,this.range)
-}else{this.createSubRegion(b,a)
-}}},reinsert:function(a,c){if(c){for(var b in c.childs){if(c.childs[b]==a){c.childs[b]=undefined
-}}}if(!this.contains(a)){if(this.parent){this.parent.reinsert(a)
-}return
-}this.insert(a)
-},computeCenterOfMass:function(){var c=0,e=new THREE.Vector3(0,0,0);
-for(var b in this.childs){var d=this.childs[b];
-if(d instanceof Region){d.computeCenterOfMass()
-}var a=d.getMass();
-c+=a;
-e.addSelf(d.position.clone().multiplyScalar(a))
-}this.position=e.multiplyScalar(1/c);
-this.mass=c
-},getMass:function(){return this.mass
-}};
-function EntElement(){this.type="particle";
-this.description="This is an empty object of enterprise";
-this.id=0
-}EntElement.prototype={getDescription:function(){return this.getDescription()
-},getId:function(){return this.id
-},setId:function(a){this.id=a
-},register:function(){EntObjects.register(this)
-},unregister:function(){EntObjects.unregister(this)
-}};
-function EntEvent(){EntElement.call(this);
-this.type="event";
-this.graphicalModel=null;
-this.title="event";
-this.date=new Date();
-this.objects=[]
-}EntEvent.prototype=new EntElement();
-EntEvent.prototype.constructor=EntEvent;
-EntEvent.prototype.getDescription=function(){var c="";
-c+="<h1>"+this.date+": "+this.title+"</h1>";
-c+="<p>"+this.description+"</p>";
-if(this.relations.length>0){c+="<ul>";
-for(var a in this.objects){var b=EntObjects.instance.generateLink(this.objects[a]);
-c+="<li>"+b+"</li>"
-}c+="</ul>"
-}return c
-};
-EntEvent.prototype.posInObjects=function(a){if(a instanceof EntParticle){a=a.id
-}return $.inArray(a,this.objects)
-};
-EntEvent.prototype.setProperties=function(a){this.setId(a.id);
-this.title=a.nametime||this.title;
-this.date=a.date||this.date;
-this.description=a.description;
-this.objects=a.objects
-};
-function EntObjects(){this.objects={};
-this.array=[];
-this.undefLink="Undefined Object";
-this.callbackName="EntInteraction.clickOnObject";
-EntObjects.instance=this
-}EntObjects.prototype={generateLink:function(e){if(!this.objects[e]){return this.undefLink
-}var a=this.objects[e],b="",d="object "+e,c="";
-if(a.title){d=a.title
-}if(a.shortDescription){b=a.shortDescription()
-}c+="<a onclick='"+this.callbackName+'("'+e+"\");'>";
-c+=d+"</a>:"+b;
-return c
-},getParticles:function(){var a=[];
-for(var b in this.objects){var c=this.objects[b];
-if(c instanceof EntElement){a.push(c)
-}}return a
-},getEvents:function(){var a=[];
-for(var b in this.objects){var c=this.objects[b];
-if(c instanceof EntEvent){a.push(c)
-}}return a
-}};
-new EntObjects();
-EntObjects.register=function(a){EntObjects.instance.objects[a.id]=a
-};
-EntObjects.unregister=function(a){EntObjects.instance.objects[a.id]=undefined
-};
-EntObjects.get=function(a){if(EntObjects.instance.objects[a]){return EntObjects.instance.objects[a]
-}else{return null
-}};
-EntObjects.getInfo=function(a){return EntObjects.get(a).getDescription()
-};
-EntObjects.getLink=function(a){return EntObjects.instance.generateLink(a)
-};
-function EntParticle(){EntElement.call(this);
-this.graphicalModel=new ParticleCube();
-this.title="empty";
-this.body="empty";
-this.relations=[];
-this.changes={}
-}EntParticle.prototype=new EntElement();
-EntParticle.prototype.constructor=EntParticle;
-EntParticle.prototype.getDescription=function(){var c="";
-c+="<h1>"+this.title+"</h1>";
-c+="<p>"+this.definition+"</p>";
-c+="<p>"+this.description+"</p>";
-if(this.relations.length>0){c+="<ul>";
-for(var a in this.relations){var b=EntObjects.instance.generateLink(this.relations[a]);
-c+="<li>"+b+"</li>"
-}c+="</ul>"
-}return c
-};
-EntParticle.prototype.setProperties=function(a){this.setId(a.id);
-this.title=a.title||this.title;
-this.relations=this.relations.concat(a.relations);
-this.description=a.description||"there isn't description for this element!";
-this.definition=a.definition||"not defined!"
-};
-EntParticle.prototype.getChange=function(b){if(!this.changes[b]){return this
-}var a=new EntParticle();
-a.id=this.id;
-a.relations=this.changes[b].relations;
-a.properties=this.changes[b].properties;
-return a
-};
-function Loader(){this.callback=EntModel.update;
-this.updated=false
-}Loader.prototype={setup:function(){},wait:function(){},isUpdated:function(){return this.updated
-}};
-Loader.count=20;
-function ContainerManager(a){this.container=document.getElementById(a.main);
-this.infoContainer=document.getElementById(a.info)
-}ContainerManager.prototype={writeInfo:function(a){this.infoContainer.innerHTML=a;
-this.infoContainer.style.dysplay=true
-},hiddenInfo:function(){this.infoContainer.style.dysplay=false
-},add:function(a){this.container.appendChild(a)
-}};
 function MouseSelector(d,b,e,a,c){this.camera=d;
 this.plane=b;
 this.objects=e;

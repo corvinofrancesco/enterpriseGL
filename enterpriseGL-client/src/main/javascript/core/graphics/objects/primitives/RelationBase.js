@@ -6,7 +6,7 @@ var RelationBase  = function () {
     this.entRelation = null;
     this.lineColor = { color: 0xFF33FF };
     this.material = new THREE.LineBasicMaterial( this.lineColor );
-    this.element = new THREE.Line(this.geometry, this.material);
+    this.element = null;
 }
 
 RelationBase.defaultGeometry = new THREE.Geometry();
@@ -14,17 +14,24 @@ RelationBase.defaultGeometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
 RelationBase.defaultGeometry.vertices.push( new THREE.Vector3( 0, 1, 0 ) );
 
 RelationBase.prototype =  {
+    createElement: function(){
+        this.element = new THREE.Line(this.geometry, this.material);        
+    },
+    
     create: function(){
         
-        if((this.element!=null) && (this.entRelation!=null)){
-            this.linkToModel(this.entParticle);
+        if(this.entRelation==null){
+            return null;
+        }
+        if(this.element==null){
+            return null; //this.createElement();
         }
         return this.element;
     },
     
     linkToModel: function(entRelation){
         this.entRelation = entRelation;
-        if(this.element==null) return;
+        if(this.element==null) this.createElement();
         this.element.modelReference = 
             [ this.entRelation.idSource, this.entRelation.idDestination ];
         this.element.position = new THREE.Vector3(0,0,0);
@@ -45,8 +52,9 @@ RelationBase.prototype =  {
         return ret;
     },
     
-    update: function(pSource, pDest){
-        if(pDest==null) return;
+    update: function(Source, Dest){
+        if(Dest==null) return;
+        var pSource = Source.position, pDest = Dest.position;
         this.element.position = pSource;
         var diff = pDest.clone().subSelf(pSource);
         var length = diff.length(), dir = diff.normalize();
@@ -55,7 +63,11 @@ RelationBase.prototype =  {
 
         this.element.matrix = new THREE.Matrix4().makeRotationAxis( axis.normalize(), radians );
         this.element.scale.set( length, length, length);
-        this.element.rotation.getRotationFromMatrix( this.matrix );
+        this.element.rotation.getRotationFromMatrix( this.element.matrix );
+    },
+    
+    getElement: function(){
+        return this.element;
     }
 
 }

@@ -7,19 +7,7 @@ function EntGraphics(configuration) {
 
     if(!configuration) configuration =new EntGraphicsConfig();
     this.configuration = configuration;
-    
-    this.scene = new THREE.Scene();
-    // configure camera
-    this.camera = configuration.cameraConfig(this.scene,this.width,this.height);
-    // controls configurations
-    this.controls = configuration.controlsConfig(this.camera);
-    // light configurations
-    this.scene.add( new THREE.AmbientLight( 0x505050 ) );
-    this.scene.add(configuration.lightConfig(this.camera));    
-    // plane configuration
-    this.scene.add(this.plane = configuration.planeConfig());
-    /// init projector
-    this.projector = new THREE.Projector();
+
     /// init renderer
     this.renderer = new THREE.WebGLRenderer( {
         antialias: true
@@ -28,16 +16,27 @@ function EntGraphics(configuration) {
     this.renderer.setSize( this.width, this.height );
     this.renderer.shadowMapEnabled = true;
     this.renderer.shadowMapSoft = true;
+    
+    /// configure scene
+    this.scene = new THREE.Scene();
+    // configure camera
+    this.camera = configuration.cameraConfig(this.scene,this.width,this.height);
+    // controls configurations
+    this.controls = configuration.controlsConfig(this.camera, this.renderer.domElement);
+    // light configurations
+    this.scene.add( new THREE.AmbientLight( 0x505050 ) );
+    this.scene.add(configuration.lightConfig(this.camera));    
+    // plane configuration
+    this.scene.add(this.plane = configuration.planeConfig());
+    /// init projector
+    this.projector = new THREE.Projector();
     /// init objects
     this.system = new GraphicalSystem();
-    // strategy for objects creation
-    //this.context = new ModelConfiguration(this.system);
     
     this.settings = new GraphicalSettings();
     var settingDefault = new EntGL.SettingsDefault();
     this.settings.addSettings(settingDefault.popolate());//EntSetting.defaultValues());
     
-//    this.context.configure({});
     this.relations = {};
 }
 
@@ -59,13 +58,6 @@ EntGraphics.prototype = {
             this.removeParticle(id);
         }
         this.system = new GraphicalSystem();
-//        for(var i in this.scene.children){
-//            var obj = this.scene.children[i];
-//            if(obj instanceof THREE.Light) continue;
-//            if(obj instanceof THREE.Camera) continue;
-//            if(obj == this.plane) continue;
-//            this.scene.remove(obj);
-//        }
     },
     
     /**
@@ -85,7 +77,7 @@ EntGraphics.prototype = {
     update : function(){
         this.controls.update();
         this.system.update();
-        this.updateRelations();
+        //this.updateRelations();
         var events = this.settings.getEvents(), i = 0;
         while(events.length>0){
             var curr = events.shift();
@@ -132,7 +124,7 @@ EntGraphics.prototype = {
                 this.addParticle(elem);
             }
         }
-        this.updateRelations();
+        //this.updateRelations();
     },
     
     updateParticle: function(p){
@@ -164,36 +156,13 @@ EntGraphics.prototype = {
         var result = this.settings.register(
             GraphicalSettings.EventType.ADD,pEnt);
         if(result==null) return;
-        this.relations[pEnt.id] = [];
         for(var ri in pEnt.relations){
             var relation = new EntRelation(pEnt.id, pEnt.relations[ri]);
             //TODO set source and destination
             this.settings.register( GraphicalSettings.EventType.ADD,relation);
             //this.relations[pEnt.id].push(r);    
         }
-    },
-    
-    updateRelations: function(){
-        for(var entPid in this.relations){
-            for(var j in this.relations[entPid]){
-                var r = this.relations[entPid][j];
-                if(!r.isOnScene){
-                    // control if the relations has extremis   
-                    if(!r.hasExtremis){
-                        var p = this.system.findParticle(r.modelReference[1]);
-                        // control if change function can be executed
-                        if(!p) continue;
-                        r.change(p);
-                    }
-                    this.scene.add(r);
-                    r.isOnScene = true;
-                }
-                // update position
-                r.update();
-            }
-        }
     }
-    
  
 }
 
@@ -222,8 +191,8 @@ EntGraphicsConfig.prototype = {
         return light;       
     },
    
-    controlsConfig: function(camera){
-        var controls = new THREE.TrackballControls( camera );
+    controlsConfig: function(camera, domElement){
+        var controls = new THREE.TrackballControls( camera, domElement );
         controls.rotateSpeed = 1.0;
         controls.zoomSpeed = 1.2;
         controls.panSpeed = 0.8;

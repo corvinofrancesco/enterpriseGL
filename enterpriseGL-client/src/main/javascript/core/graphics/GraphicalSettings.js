@@ -25,8 +25,8 @@ GraphicalSettings.prototype = {
     },
     
     remove: function(eventId){
-        if(eventId < this.events.length)
-            this.events.splice(eventId,1);
+//        if(eventId < this.events.length)
+//            this.events.splice(eventId,1);
     },
     
     getEvents: function(){

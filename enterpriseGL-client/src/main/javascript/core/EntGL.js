@@ -49,23 +49,26 @@ EntGL.SettingsDefault.prototype = {
         relationAdding: function(){
             var retSet = new EntSetting(null,function(event,scene,element,system){
                 if(element instanceof RelationBase) {
-                    var elems = this.getElemInSystem(system);
+                    var elems = element.getElemInSystem(system);
                     element.update(elems[0], elems[1]);
                 } else if(element instanceof EntRelation){
                     // creation of element
                     var primitive = new RelationBase();
                     primitive.linkToModel(element);
-                    if(primitive.create()==null) return;
+                    if(primitive.create()==null) {
+                        return;
+                    } 
                     event._element = primitive;
-                    scene.add(primitive.getElement());
-                    system.add(primitive.getElement())            
                 }
             });
             var liveCond = function(event,scene,system){
                 var e = event.getElement();
                 if(e instanceof RelationBase) {
                     var ret = e.getElemInSystem(system);
-                    if((ret[0]==null)||(ret[1]==null)) return true;
+                    if((ret[0]==null)||(ret[1]==null)) {
+                        return true;
+                    }
+                    scene.add(e.getElement());                    
                 }
                 return false;
             };

@@ -7,7 +7,7 @@ function GraphicalSystem(){
     // objects for graphical elaboration
     this.objects = [];
     // phisics configurations 
-    this._distributionAlg = new DistributionAlg();
+    this._distributionAlg = new DistributionGraph();//Alg();
     this._distributionAlg.setSystemRepos(this);
     this.forces = {
         /// atraction between particles in relation
