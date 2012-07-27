@@ -7,8 +7,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<form id="form${table.name}" method="post" action="/fileupload" 
-      enctype="multipart/form-data" class="commandForm" style="display:none;">
+<form id="formUpload" method="post" action="/fileupload" 
+      enctype="multipart/form-data" class="commandForm">
     <input type="hidden" name="name" value="${model.name}" />            
     <input type="hidden" name="table" value="${table.name}" />            
     <fieldset>
@@ -25,9 +25,9 @@
 </form>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#form${table.name}").ajaxForm({ success: function(html) {
-                configuration.menu.changeWith(html);
-                //$("#msg${table.name}").replaceWith(html);
+        $("#formUpload").ajaxForm({ success: function(html) {
+                $("#areaForTable").empty();
+                $("#areaForTable").prepend(html);
             }
         });
     });

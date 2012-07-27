@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import unisalento.fcorvino.beans.EntModel;
@@ -16,6 +17,7 @@ import unisalento.fcorvino.model.ModelsBuilder;
 
 @Controller
 @RequestMapping("/fileupload")
+@SessionAttributes("model")
 public class FileUploadController {
 
 	@ModelAttribute
@@ -45,21 +47,22 @@ public class FileUploadController {
             model.addAttribute("message", 
                     "File '" + file.getOriginalFilename() + "' " + message);
             model.addAttribute("model", builder.getModel());
-            return "edit";
+            return "redirect:/fileupload/form?name=" + tableId;
 	}
         
-        @RequestMapping("/formUpload")
+        @RequestMapping("/form")
         public String requestForm(
                 @RequestParam(value="name") String name,
                 @ModelAttribute("model") EntModel entModel,
                 Model model){
             for(ModelTable table : entModel.getTypeModel().getTables()){
                 if(table.getName().equals(name)){
-                    model.addAttribute("table", model);                
+                    model.addAttribute("table", table);                
                     return "formupload";                    
                 }
             }
-            return "error";
+            model.addAttribute("message","Error in configuration, table not found!");
+            return "message";
         }
 	
 }

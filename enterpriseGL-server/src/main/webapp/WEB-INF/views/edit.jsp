@@ -10,11 +10,16 @@
 <script type="text/javascript">
     var EditForm_CurrentTable = null;
     function EditForm_showImportTable(name){
-        if(EditForm_CurrentTable){
-            EditForm_CurrentTable.hide();
-        } 
-        EditForm_CurrentTable = $("#form"+name);
-        EditForm_CurrentTable.show();
+        $.ajax({
+            url: '<c:url value="/fileupload/form" />?name='+name,
+            dataType: "text",
+            beforeSend: function(req){configuration.prepareAjax(req)},
+            success: function(text){
+                $("#areaForTable").empty();
+                $("#areaForTable").prepend(text);
+                },
+            error: function(xhr){configuration.cntError(xhr);}                
+        });
     }
     
     $(document).ready(function() {
