@@ -3,7 +3,6 @@
  */
 function EntParticle(){
     EntElement.call(this);
-    this.graphicalModel = new ParticleCube();
     this.title = "empty";
     this.body = "empty";
     this.relations = [];

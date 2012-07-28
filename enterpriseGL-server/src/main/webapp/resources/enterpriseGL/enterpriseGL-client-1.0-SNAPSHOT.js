@@ -70,8 +70,10 @@ if(c.create()==null){return
 }}});
 var a=function(f,h,d){var g=f.getElement();
 if(g instanceof RelationBase){var c=g.getElemInSystem(d);
-if((c[0]==null)||(c[1]==null)){return true
-}h.add(g.getElement())
+if((c[0]==null)||(c[1]==null)){if(g.hasPaintedElement){h.remove(g.getElement())
+}return true
+}h.add(g.getElement());
+g.hasPaintedElement=true
 }return false
 };
 b.configureForAdvEvent(EntGraphicalEventControlledEnd,a);
@@ -256,74 +258,6 @@ this._distributionAlg.setSystemRepos(this);
 this.forces={relAttr:attractionForce(0.02,2),centreforce:gravitation(0.009)};
 this.numparticles=0
 }};
-function ModelConfiguration(a){this.pbuilder=new ParticleBuilder(a);
-this.rbuilder=new RelationBuilder(a);
-this.system=a
-}ModelConfiguration.prototype={elaborate:function(a){var b=this.pbuilder.build(a);
-return b
-},elaborateRelation:function(c,b){var a=this.rbuilder.build(c,b);
-return a
-},relationBuilder:function(){return this.rbuilder
-},configure:function(a){var c=new ParticleCube();
-this.pbuilder.setGeometry(c.geometries.CUBE01);
-this.pbuilder.setGenerator(c.generator);
-this.pbuilder.setProperties(a);
-var b=new Relation();
-this.rbuilder.setGeometry(b.geometry);
-this.rbuilder.setGenerator(b.generator);
-this.rbuilder.setProperties(a)
-}};
-function ParticleBuilder(a){this.geometry=null;
-this.generator=null;
-this.properties=null;
-this.system=a
-}ParticleBuilder.prototype={setGeometry:function(a){this.geometry=a
-},setGenerator:function(a){this.generator=a
-},setProperties:function(a){this.properties=a
-},build:function(b){var a=this.generator(this.geometry,this.properties);
-a.modelReference=b.id;
-a.type="particle";
-a.relations=b.relations;
-a.position=this.system.getFreeSpace(a);
-a.accelerations=new THREE.Vector3(0,0,0);
-a.velocity=new THREE.Vector3(0,0,0);
-return a
-}};
-function RelationBuilder(a){this.geometry=null;
-this.generator=null;
-this.properties=null;
-this.system=a;
-this.object=null;
-this.originPoint=null
-}RelationBuilder.prototype={setGeometry:function(a){this.geometry=a
-},setGenerator:function(a){this.generator=a
-},setProperties:function(a){this.properties=a
-},reset:function(a){this.originPoint=a
-},build:function(a){this.object=this.generator(this.geometry,this.properties);
-this.object.type="relation";
-this.object.modelReference=[this.originPoint.modelReference];
-this.object.hasExtremis=false;
-this.object.isOnScene=false;
-this.object.position=this.originPoint.position;
-this.object.change=RelationBuilder.changeExtremis;
-this.object.update=RelationBuilder.updateRelation;
-this.object.change(a);
-return this.object
-}};
-RelationBuilder.changeExtremis=function(a){this.extremis=a;
-if(a!=null){this.modelReference[1]=a.modelReference;
-this.update();
-this.hasExtremis=true
-}};
-RelationBuilder.updateRelation=function(){var g=this.extremis;
-var f=g.position.clone().subSelf(this.position);
-var c=f.length(),a=f.normalize();
-var b=new THREE.Vector3(0,1,0).crossSelf(f);
-var d=Math.acos(new THREE.Vector3(0,1,0).dot(a));
-this.matrix=new THREE.Matrix4().makeRotationAxis(b.normalize(),d);
-this.scale.set(c,c,c);
-this.rotation.getRotationFromMatrix(this.matrix)
-};
 function Region(a,c,b){this.type="defcube";
 this.centre=new THREE.Vector3(a,c,b);
 this.position=new THREE.Vector3(a,c,b);
@@ -611,26 +545,6 @@ if(this._isAdvancedEvent){b=new this._advConstructor(a,this.defaultAction,this._
 }b.settingGen=this.id;
 return b
 }};
-function ParticleCube(){this.dimension=1;
-this.colorMaterial=Math.random()*16777215;
-this.element=null
-}ParticleCube.prototype={geometries:{CUBE01:new THREE.CubeGeometry(1,1,1),CUBE10:new THREE.CubeGeometry(10,10,10),CUBE20:new THREE.CubeGeometry(20,20,20),CUBE40:new THREE.CubeGeometry(40,40,40)},generator:function(b,d){var c=new THREE.MeshLambertMaterial({color:Math.random()*16777215});
-var a=new THREE.Mesh(b,c);
-a.material.ambient=a.material.color;
-a.rotation=new THREE.Vector3(0,0,0);
-a.scale=new THREE.Vector3(1,1,1);
-a.castShadow=true;
-a.receiveShadow=true;
-return a
-},create:function(){var b=new THREE.MeshLambertMaterial({color:this.colorMaterial});
-var a=new THREE.Mesh(new THREE.CubeGeometry(this.dimension,this.dimension,this.dimension),b);
-a.rotation=new THREE.Vector3(0,0,0);
-a.scale=new THREE.Vector3(1,1,1);
-a.castShadow=true;
-a.receiveShadow=true;
-this.element=a;
-return a
-}};
 function ParticleStar(){this.geometry=new THREE.Geometry();
 this.geometry.vertices.push(new THREE.Vector3(0,0,0))
 }ParticleStar.prototype={generator:function(d,h){var c=THREE.ImageUtils.loadTexture("ball.png");
@@ -904,7 +818,6 @@ EntObjects.getInfo=function(a){return EntObjects.get(a).getDescription()
 EntObjects.getLink=function(a){return EntObjects.instance.generateLink(a)
 };
 function EntParticle(){EntElement.call(this);
-this.graphicalModel=new ParticleCube();
 this.title="empty";
 this.body="empty";
 this.relations=[];

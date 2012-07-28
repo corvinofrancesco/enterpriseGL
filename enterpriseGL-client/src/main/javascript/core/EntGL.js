@@ -66,10 +66,12 @@ EntGL.SettingsDefault.prototype = {
                 if(e instanceof RelationBase) {
                     var ret = e.getElemInSystem(system);
                     if((ret[0]==null)||(ret[1]==null)) {
+                        if(e.hasPaintedElement) scene.remove(e.getElement());
                         return true;
                     }
-                    scene.add(e.getElement());                    
-                }
+                    scene.add(e.getElement());
+                    e.hasPaintedElement = true;
+                } 
                 return false;
             };
             retSet.configureForAdvEvent(EntGraphicalEventControlledEnd,liveCond);
