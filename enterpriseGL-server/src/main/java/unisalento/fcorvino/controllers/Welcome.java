@@ -37,11 +37,11 @@ public class Welcome {
     public String initPage() {
         return "home";
     }
-
-    @RequestMapping(value = "list")
-    public @ModelAttribute("models")
-    List init(Model model) {
-        return entModelsFactory.getModels();
+    
+    @RequestMapping(value = "list")    
+    public String listModels(Model model) {
+        model.addAttribute("models", entModelsFactory.getModels());
+        return "list";
     }
 
     @RequestMapping(value = "create")
@@ -50,46 +50,46 @@ public class Welcome {
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String saveModel(@ModelAttribute ModelBean newModel) {
+    public String saveModel(@ModelAttribute ModelBean newModel,Model model) {
         ModelsBuilder builder = new ModelsBuilder();
         builder.setName(newModel.getName());
         builder.setStatus(ModelStatus.Incomplete);
         builder.setType(newModel.getType());        
         if (builder.build()) {
-            return "redirect:/list";
+            return listModels(model);
         }
-        //TODO error in the creation of model
-        return "redirect:/create";
+        model.addAttribute("message", "Error: change name at model.. '" + newModel.getName() +"' is already used!");
+        return this.createModel();
     }
 
     @RequestMapping(value = "edit/{name}")
     public String editModel(@PathVariable String name, Model model) {
-        EntModel obj = entModelsFactory.getModel(name);
-        if(obj==null) {
+        EntModel entModel = entModelsFactory.getModel(name);
+        if(entModel==null) {
             model.addAttribute("message","The model "+ name + " don't exist");
-            return "redirect:/init";
+            return this.listModels(model);
         }
-        model.addAttribute("model",obj);
+        model.addAttribute("model",entModel);
         return "edit";
     }
 
     @RequestMapping(value = "delete/{name}")
-    public String deleteModel(@PathVariable String name) {
+    public String deleteModel(@PathVariable String name, Model model) {
         if(!entModelsFactory.remove(name)){
-            //TODO deletion faillure add error message 
+            model.addAttribute("message", "Error: '" + name +"' not deleted, contact the administrator.");
         }
-        return "redirect:/list";
+        return this.listModels(model);
     }
 
     @RequestMapping(value = "view/{name}")
     public String viewModel(@PathVariable String name, Model model) {
-        Object entModel = entModelsFactory.getModel(name);
-        if (entModel != null) {
+        EntModel entModel = entModelsFactory.getModel(name);
+        if(entModel != null) if(entModel.getStatus().equals(ModelStatus.Complete)){
             model.addAttribute("model", entModel);
-        } else {
-            //TODO modello non trovato
+            return "view";
         }
-        return "view";
+        model.addAttribute("message", "Error, non valid or incomplete model!");
+        return editModel(name, model);
     }
     
 }

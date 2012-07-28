@@ -8,6 +8,10 @@ import java.util.Iterator;
 import java.util.Set;
 import junit.framework.TestCase;
 import unisalento.fcorvino.beans.EntModel;
+import unisalento.fcorvino.beans.ModelTableInstance;
+import unisalento.fcorvino.beans.Particle;
+import unisalento.fcorvino.beans.models.ModelTable;
+import unisalento.fcorvino.etl.EtlContext.FileType;
 
 /**
  *
@@ -46,16 +50,31 @@ public class ModelsBuilderTest extends TestCase {
     /**
      * Test of isValid method, of class ModelsBuilder.
      */
-//    public void testIsValid() {
-//        System.out.println("isValid");
-//        ModelsBuilder instance = new ModelsBuilder();
-//        assertFalse(instance.isValid());
-//        EntModel m = new EntModel();
-//        m.setName("provaUnivoco");
-//        instance.setModel(m);
-//        instance.setType("personal");
-//        assertTrue(instance.isValid());
-//    }
+    public void testIsValid() {
+        System.out.println("isValid");
+        ModelsBuilder instance = new ModelsBuilder();
+        assertFalse(instance.isValid());
+        EntModel m = new EntModel();
+        m.setName("provaUnivoco");
+        instance.setModel(m);
+        instance.setType("personal");
+        assertTrue(instance.isValid());
+        /// control check status Incomplete
+        instance.setStatus(EntModel.ModelStatus.Complete);
+        assertFalse(instance.isValid());
+        // control check status Complete
+        instance.setStatus(EntModel.ModelStatus.Complete);
+        // load monk tables
+        for(ModelTable typeTable : instance.getModel().getTypeModel().getTables()){
+            ModelTableInstance table = new ModelTableInstance();
+            table.setIsLoad(true);
+            table.setSource(FileType.TEXTUAL);
+            table.setSourceConfig("monkFile");
+            instance.getModel().putTable(typeTable.getName(),table);            
+        }
+        instance.getModel().getParticles().add(new Particle(34));
+        assertTrue(instance.isValid());
+    }
 
     /**
      * Test of build method, of class ModelsBuilder.

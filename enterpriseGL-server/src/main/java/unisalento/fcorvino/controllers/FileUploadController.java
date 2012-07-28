@@ -33,26 +33,22 @@ public class FileUploadController {
 	@RequestMapping(method=RequestMethod.POST)
 	public String processUpload(
                 @RequestParam MultipartFile file, 
-                @RequestParam(value="name") String name,
-                @RequestParam(value="table") String tableId,
+                @ModelAttribute("model") EntModel entModel,
+                @RequestParam(value="name") String tableId,
                 @RequestParam(value="source") String source,
                 Model model) throws IOException {
+            System.out.println("upload: "+ entModel.getName() + " the table: " + tableId + " with source: " + source);
             String message = "uploaded successfully";
             ModelsBuilder builder = new ModelsBuilder();            
             try {
-                builder.loadModel(name);
+                builder.setModel(entModel);
                 builder.loadTable(source, tableId, file);
             } catch(Exception e){
                 message = e.getMessage();
             }
             model.addAttribute("message", 
                     "File '" + file.getOriginalFilename() + "' " + message);
-            model.addAttribute("model", builder.getModel());
-            ModelTableInstance inst = builder.getModel().getTable(tableId);
-            model.addAttribute("tableInst",inst );
-            model.addAttribute("table", inst.getTableType());
-            //return "redirect:/fileupload/form?name=" + tableId;
-            return "formupload";
+            return requestForm(tableId, entModel, model);
 	}
         
         @RequestMapping("/form")

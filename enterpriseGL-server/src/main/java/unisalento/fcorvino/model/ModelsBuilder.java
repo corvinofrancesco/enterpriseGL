@@ -177,6 +177,7 @@ public class ModelsBuilder {
         instance.setSource(EtlContext.FileType.valueOf(source));
         instance.setSourceConfig(file.getName());
         current.putTable(table, instance);
+        this.checkStatus();
     }
     
     public ModelParser createParser(){
@@ -188,6 +189,13 @@ public class ModelsBuilder {
     public Boolean save(){
         /** TODO make serialization of model */
         return false;
+    }
+
+    private void checkStatus() {
+        this.current.setStatus(ModelStatus.Complete);
+        boolean ret = this.isValid();
+        System.out.println("checkStatus -> isValid: " + ret);
+        if(!ret) this.current.setStatus(ModelStatus.Incomplete);
     }
 
 }
