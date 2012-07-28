@@ -116,19 +116,14 @@ public class ModelsBuilder {
      * @return true if the configured model is valid
      */
     public Boolean isValid(){
-        System.out.println("checkValidModel -> name: " + current.getName());
         if(current.getName()==null) return false;
         EntModel existTest = factory.getModel(current.getName());
         if(existTest!=null) 
             if(!this.isOnEdit) return false;        
-        System.out.println("checkValidModel -> type: " + current.getTypeModel());
         if(current.getTypeModel()==null) return false;
-        System.out.println("checkValidModel -> status: " + current.getStatus());
         if(current.getStatus()!=ModelStatus.Incomplete){
             for(ModelTable t : current.getTypeModel().getTables()){
                 ModelTableInstance instancet = current.getTable(t.getName());
-                String res = "null"; if(instancet!=null) res = instancet.getIsLoad().toString();
-                System.out.println("checkValidModel -> table " + t.getName() +": " + res);
                 if(instancet!=null){
                     if(instancet.getIsLoad()) continue;
                 }

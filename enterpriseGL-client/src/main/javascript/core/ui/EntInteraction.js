@@ -24,7 +24,9 @@ EntInteraction.changeModel = function(idModel){
 }
 
 EntInteraction.onResize = function(event){
-    EntInteraction.instance.graphicsManager.resize(window.innerWidth,window.innerHeight );
+    var graphics= EntInteraction.instance.graphicsManager;
+    graphics.resize(window.innerWidth,window.innerHeight );
+    this.mouse = graphics.createMouseSelector();
 }
 
 EntInteraction.onMouseMove = function(event){

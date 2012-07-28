@@ -132,7 +132,7 @@ GraphicalSystem.prototype = {
                 case Force.types.GLOBAL:
                     // configura l'algoritmo globale 
                     // con i parametri della forza
-                    this.globalAlg.configureFor(
+                    this._distributionAlg.configureFor(
                         this.forces[findex]);
                     // aggiunge il calcolo delle forze
                     for(var j in this.particles){

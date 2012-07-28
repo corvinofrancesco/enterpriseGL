@@ -1,11 +1,18 @@
 function GraphicalSettings(){
     this.settings = {};
     this.events = [];
+    this.configuration = {};
     //TODO set default
 }
 
 GraphicalSettings.EventType = {
     ADD: "add", REMOVE: "remove", UPDATE: "update"
+}
+
+GraphicalSettings.DefaultConfig = {
+    particles: {
+        
+    }
 }
 
 GraphicalSettings.prototype = {
@@ -63,6 +70,34 @@ GraphicalSettings.prototype = {
         for(var i in settings){
             this.changeSetting(settings[i]);
         }        
+    },
+    
+    updateSetting: function(config){
+        this.configuration = config || {};
+        config = this.configuration;
+        var action = function(event,scene,element,system){
+            for(var p in system.particles){
+                var primitive = new ParticleBase(),
+                    conf = config.particles || {};
+                if(system.particles[p].generator) primitive = new system.particles[p].generator();
+                primitive.element = system.particles[p];
+                primitive.changeSettings(conf);
+                // creation of element
+                if(primitive.isChangedPrimitive){
+                    var oldElem = primitive.getElement(), newElem;
+                    scene.remove(oldElem);
+                    system.remove(oldElem);
+                    primitive.linkToModel(EntObjects.get(oldElem.modelReference))
+                    newElem = primitive.create();
+                    newElem.position = oldElem.position;
+                    scene.add(newElem);
+                    system.add(newElem);
+                }
+            }            
+        };
+        var sett =  new EntSetting(null,action);        
+        var event = sett.create(null);
+        this.events.push(event);
     }
-        
+            
 }

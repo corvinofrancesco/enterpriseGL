@@ -11,23 +11,36 @@
       enctype="multipart/form-data" class="commandForm">
     <input type="hidden" name="name" value="${model.name}" />            
     <input type="hidden" name="tableId" value="${table.name}" />            
-    <fieldset>
-        <legend>${table.name} Table</legend>
-        <p>${table.description}</p>
-        <span>${message}</span>        
+    <h3>${table.name} Table</h3>
+    <p>
+        ${table.description}
+        <br/>
         <c:choose>
             <c:when test="${model.getTable(table.name).isLoad}">
-                <b>Complete</b>: source '${model.getTable(table.name).sourceConfig}', change table? 
+                <b>Complete</b>: '${model.getTable(table.name).sourceConfig}'
             </c:when>
             <c:otherwise>
-                <b>Incomplete</b>: Load table
+                <b>Incomplete</b> 
             </c:otherwise>
-        </c:choose>
-        <select name="source">
-            <option value="hssf">Excel 2003</option>
-            <option value="xssf">Excel 2007</option>
-        </select>
-        <input id="file${table.name}" type="file" name="file"/>
+        </c:choose>   
+        <c:if test="${not empty message}">
+            <br/>
+            <span>${message}</span>                        
+        </c:if>
+    </p>
+    <b>Load table</b>            
+    <fieldset id="body">
+        <fieldset>
+            <label>Source type</label>
+            <select name="source">
+                <option value="hssf">Excel 2003</option>
+                <option value="xssf">Excel 2007</option>
+            </select>
+        </fieldset>
+        <fieldset>
+            <label>File</label>
+            <input id="file${table.name}" type="file" name="file"/>            
+        </fieldset>
         <input type="submit" id="login" value="Load"/>
     </fieldset>
 </form>

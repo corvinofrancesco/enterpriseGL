@@ -47,6 +47,7 @@ ParticleGeomPrimitive.prototype.create = function(){
     object.scale = new THREE.Vector3(1, 1, 1);
     object.castShadow = true;
     object.receiveShadow = true;
+    object.generator = ParticleGeomPrimitive;
     this.element = object;
     return ParticleGeomPrimitive.superclass.create.call(this);        
 }

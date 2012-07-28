@@ -133,6 +133,11 @@ while(b.length>0){var c=b.shift();
 if(c.isDied()){}else{c.applyOn(this.scene,this.system)
 }a++
 }this.renderer.render(this.scene,this.camera)
+},resize:function(b,a){this.width=b||this.width;
+this.height=a||this.height;
+this.camera.aspect=this.width/this.height;
+this.camera.updateProjectionMatrix();
+this.renderer.setSize(this.width,this.height)
 },updateModel:function(g){var d=EntObjects.get(g);
 if(!d){return
 }var e=(new Array()).concat(d.objects);
@@ -185,8 +190,10 @@ a.visible=false;
 return a
 }};
 function GraphicalSettings(){this.settings={};
-this.events=[]
+this.events=[];
+this.configuration={}
 }GraphicalSettings.EventType={ADD:"add",REMOVE:"remove",UPDATE:"update"};
+GraphicalSettings.DefaultConfig={particles:{}};
 GraphicalSettings.prototype={register:function(b,a){var e=this.getSettings(),c;
 while(e.length>0){c=e.shift();
 if(b==c.eventType){if(a.type==c.elementType){if(c.verifyCondition(a)){var d=c.create(a);
@@ -205,7 +212,25 @@ return a
 for(var b in this.settings){if(this.settings[b] instanceof EntSetting){a.push(this.settings[b])
 }}return a
 },addSettings:function(b){for(var a in b){this.changeSetting(b[a])
+}},updateSetting:function(a){this.configuration=a||{};
+a=this.configuration;
+var d=function(e,j,i,f){for(var g in f.particles){var k=new ParticleBase(),l=a.particles||{};
+if(f.particles[g].generator){k=new f.particles[g].generator()
+}k.element=f.particles[g];
+k.changeSettings(l);
+if(k.isChangedPrimitive){var h=k.getElement(),m;
+j.remove(h);
+f.remove(h);
+k.linkToModel(EntObjects.get(h.modelReference));
+m=k.create();
+m.position=h.position;
+j.add(m);
+f.add(m)
 }}};
+var b=new EntSetting(null,d);
+var c=b.create(null);
+this.events.push(c)
+}};
 function GraphicalSystem(){this.particles={};
 this.objects=[];
 this._distributionAlg=new DistributionGraph();
@@ -570,7 +595,21 @@ this.element.modelReference=a.id;
 this.element.accelerations=new THREE.Vector3(0,0,0);
 this.element.velocity=new THREE.Vector3(0,0,0)
 },getElement:function(){return this.element
-}};
+},changeSettings:function(a){for(var c in a){if(this["change"+c] instanceof Function){try{this["change"+c](a[c])
+}catch(b){}}}},changeColors:function(a){if(a instanceof Array){this.element.material.color.setRGB(a[0],a[1],a[2])
+}else{this.element.material.color.setHex(Math.random()*16777215)
+}this.colorMaterial=this.element.material.color.getHex()
+},changeMaterial:function(a){switch(a){case"phong":this.element.material=new THREE.MeshPhongMaterial({color:this.colorMaterial});
+break;
+case"lambert":default:this.element.material=new THREE.MeshLambertMaterial({color:this.colorMaterial})
+}},changeTypePrimitive:function(a){if(a=="random"){var b=[],d={},c;
+try{d=this.element.generator.Primitive;
+for(var g in d){b.push(g)
+}}catch(f){}if(b.length!=0){c=Math.floor(Math.random()*b.length);
+a=d[b[c]]
+}}if(a!=this.typePrimitive){this.isChangedPrimitive=true;
+this.typePrimitive=a
+}}};
 ParticleGeomPrimitive.prototype=new ParticleBase();
 ParticleGeomPrimitive.constructor=ParticleGeomPrimitive;
 ParticleGeomPrimitive.superclass=ParticleBase.prototype;
@@ -593,6 +632,7 @@ break
 c.scale=new THREE.Vector3(1,1,1);
 c.castShadow=true;
 c.receiveShadow=true;
+c.generator=ParticleGeomPrimitive;
 this.element=c;
 return ParticleGeomPrimitive.superclass.create.call(this)
 };
@@ -867,6 +907,7 @@ function EntInteraction(a){var b=a.renderer.domElement;
 b.addEventListener("mousemove",EntInteraction.onMouseMove,false);
 b.addEventListener("mousedown",EntInteraction.onMouseDown,false);
 b.addEventListener("mouseup",EntInteraction.onMouseUp,false);
+window.addEventListener("resize",EntInteraction.onResize,false);
 this.mouse=a.createMouseSelector();
 this.offset=new THREE.Vector3();
 this.intersectedElem=null;
@@ -875,6 +916,10 @@ this.graphicsManager=a;
 this.containerManager=null;
 EntInteraction.instance=this
 }EntInteraction.changeModel=function(a){EntController.changeModel(a)
+};
+EntInteraction.onResize=function(b){var a=EntInteraction.instance.graphicsManager;
+a.resize(window.innerWidth,window.innerHeight);
+this.mouse=a.createMouseSelector()
 };
 EntInteraction.onMouseMove=function(f){f.preventDefault();
 var d=EntInteraction.instance.mouse;
