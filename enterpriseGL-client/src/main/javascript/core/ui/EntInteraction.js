@@ -7,6 +7,7 @@ function EntInteraction(graphics){
     dom.addEventListener( 'mousemove', EntInteraction.onMouseMove, false );
     dom.addEventListener( 'mousedown', EntInteraction.onMouseDown, false );
     dom.addEventListener( 'mouseup', EntInteraction.onMouseUp, false );
+    window.addEventListener( 'resize', EntInteraction.onResize, false );
 
     this.mouse = graphics.createMouseSelector();
     this.offset = new THREE.Vector3();
@@ -20,6 +21,10 @@ function EntInteraction(graphics){
 
 EntInteraction.changeModel = function(idModel){
     EntController.changeModel(idModel);
+}
+
+EntInteraction.onResize = function(event){
+    EntInteraction.instance.graphicsManager.resize(window.innerWidth,window.innerHeight );
 }
 
 EntInteraction.onMouseMove = function(event){

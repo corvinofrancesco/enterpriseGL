@@ -90,6 +90,15 @@ EntGraphics.prototype = {
         }
         this.renderer.render(this.scene,this.camera);
     },
+    
+    resize : function(width, height){
+        this.width = width || this.width;
+        this.height = height || this.height;    
+        this.camera.aspect = this.width / this.height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize( this.width, this.height);    
+        
+    },
    
     /**
      * Update the model from enterprise object
