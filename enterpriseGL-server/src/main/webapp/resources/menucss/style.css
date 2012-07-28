@@ -179,6 +179,10 @@ fieldset#body {
     *padding:7px 2px 8px 2px; /* IE7 Fix */
 }
 
+#linkSimple {
+    text-decoration: underline
+}
+
 /* Forgot your password */
 .commandForm span {
     text-align:center;

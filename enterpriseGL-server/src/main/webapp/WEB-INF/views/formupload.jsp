@@ -13,15 +13,23 @@
     <input type="hidden" name="table" value="${table.name}" />            
     <fieldset>
         <legend>${table.name} Table</legend>
+        <p>${table.description}</p>
+        <span>${message}</span>        
+        <c:choose>
+            <c:when test="${model.getTable(table.name).isLoad}">
+                Complete -> Change table 
+            </c:when>
+            <c:otherwise>
+                Incomplete -> Load table
+            </c:otherwise>
+        </c:choose>
         <select name="source">
             <option value="hssf">Excel 2003</option>
             <option value="xssf">Excel 2007</option>
         </select>
         <input id="file${table.name}" type="file" name="file"/>
-        <p>${table.description}</p>
         <input type="submit" id="login" value="Load"/>
     </fieldset>
-    <span id="msg${table.name}"></span>
 </form>
 <script type="text/javascript">
     $(document).ready(function() {

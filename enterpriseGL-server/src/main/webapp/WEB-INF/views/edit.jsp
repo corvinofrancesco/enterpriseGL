@@ -37,11 +37,7 @@
         <ul>
         <c:forEach var="table" items="${model.typeModel.tables}">
             <li onclick="EditForm_showImportTable('${table.name}');">
-                ${table.name} - 
-                <c:choose>
-                    <c:when test="${model.getTable(table.name).isLoad}">Complete</c:when>
-                    <c:otherwise>Incomplete</c:otherwise>
-                </c:choose>
+                <a id="linkSimple">${table.name}</a>
             </li>
         </c:forEach>    
         </ul>   

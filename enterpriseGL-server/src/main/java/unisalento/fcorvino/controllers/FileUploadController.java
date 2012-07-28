@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import unisalento.fcorvino.beans.EntModel;
+import unisalento.fcorvino.beans.ModelTableInstance;
 import unisalento.fcorvino.beans.models.ModelTable;
 import unisalento.fcorvino.model.ModelsBuilder;
 
@@ -47,7 +48,11 @@ public class FileUploadController {
             model.addAttribute("message", 
                     "File '" + file.getOriginalFilename() + "' " + message);
             model.addAttribute("model", builder.getModel());
-            return "redirect:/fileupload/form?name=" + tableId;
+            ModelTableInstance inst = builder.getModel().getTable(tableId);
+            model.addAttribute("tableInst",inst );
+            model.addAttribute("table", inst.getTableType());
+            //return "redirect:/fileupload/form?name=" + tableId;
+            return "formupload";
 	}
         
         @RequestMapping("/form")
@@ -57,7 +62,10 @@ public class FileUploadController {
                 Model model){
             for(ModelTable table : entModel.getTypeModel().getTables()){
                 if(table.getName().equals(name)){
-                    model.addAttribute("table", table);                
+                    model.addAttribute("table", table);
+                    ModelTableInstance inst = entModel.getTable(table.getName());
+                    if(inst!=null)
+                        model.addAttribute("tableInst", inst);
                     return "formupload";                    
                 }
             }
