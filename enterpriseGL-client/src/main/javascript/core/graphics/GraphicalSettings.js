@@ -25,8 +25,15 @@ GraphicalSettings.prototype = {
     },
     
     remove: function(eventId){
-//        if(eventId < this.events.length)
-//            this.events.splice(eventId,1);
+        if(eventId < this.events.length)
+            this.events.splice(eventId,1);
+    },
+    
+    clearDiedEvents: function(){
+       var resArr = [];
+       for(var i in this.events) 
+           if(!this.events[i].isDied()) resArr.push(this.events[i]);
+       this.events = resArr;
     },
     
     getEvents: function(){

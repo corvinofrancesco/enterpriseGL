@@ -58,6 +58,7 @@ EntGraphics.prototype = {
             this.removeParticle(id);
         }
         this.system = new GraphicalSystem();
+        this.settings.clearDiedEvents();
     },
     
     /**
@@ -81,7 +82,9 @@ EntGraphics.prototype = {
         var events = this.settings.getEvents(), i = 0;
         while(events.length>0){
             var curr = events.shift();
-            if(curr.isDied()) this.settings.remove(i);
+            if(curr.isDied()) {
+                //this.settings.remove(i);
+            }
             else curr.applyOn(this.scene,this.system);
             i++;
         }

@@ -121,14 +121,14 @@ this.relations={}
 }EntGraphics.prototype={get objectsfunction(){return this.system.objects
 },reset:function(){for(var a in this.system.particles){var b=this.system.particles[a];
 this.removeParticle(b)
-}this.system=new GraphicalSystem()
+}this.system=new GraphicalSystem();
+this.settings.clearDiedEvents()
 },createMouseSelector:function(){return new MouseSelector(this.camera,this.plane,this.system.objects,this.width,this.height)
 },update:function(){this.controls.update();
 this.system.update();
 var b=this.settings.getEvents(),a=0;
 while(b.length>0){var c=b.shift();
-if(c.isDied()){this.settings.remove(a)
-}else{c.applyOn(this.scene,this.system)
+if(c.isDied()){}else{c.applyOn(this.scene,this.system)
 }a++
 }this.renderer.render(this.scene,this.camera)
 },updateModel:function(g){var d=EntObjects.get(g);
@@ -191,7 +191,11 @@ if(b==c.eventType){if(a.type==c.elementType){if(c.verifyCondition(a)){var d=c.cr
 this.events.push(d);
 return d
 }}}}return null
-},remove:function(a){},getEvents:function(){var a=(new Array()).concat(this.events);
+},remove:function(a){if(a<this.events.length){this.events.splice(a,1)
+}},clearDiedEvents:function(){var a=[];
+for(var b in this.events){if(!this.events[b].isDied()){a.push(this.events[b])
+}}this.events=a
+},getEvents:function(){var a=(new Array()).concat(this.events);
 return a
 },changeSetting:function(a){if(a instanceof EntSetting){this.settings[a.id]=a
 }},removeSetting:function(a){this.settings[a.id]=undefined
