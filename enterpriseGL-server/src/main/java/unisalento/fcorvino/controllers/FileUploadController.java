@@ -34,7 +34,7 @@ public class FileUploadController {
 	public String processUpload(
                 @RequestParam MultipartFile file, 
                 @ModelAttribute("model") EntModel entModel,
-                @RequestParam(value="name") String tableId,
+                @RequestParam(value="tableId") String tableId,
                 @RequestParam(value="source") String source,
                 Model model) throws IOException {
             System.out.println("upload: "+ entModel.getName() + " the table: " + tableId + " with source: " + source);
@@ -53,11 +53,11 @@ public class FileUploadController {
         
         @RequestMapping("/form")
         public String requestForm(
-                @RequestParam(value="name") String name,
+                @RequestParam(value="tableId") String tableId,
                 @ModelAttribute("model") EntModel entModel,
                 Model model){
             for(ModelTable table : entModel.getTypeModel().getTables()){
-                if(table.getName().equals(name)){
+                if(table.getName().equals(tableId)){
                     model.addAttribute("table", table);
                     ModelTableInstance inst = entModel.getTable(table.getName());
                     if(inst!=null)
@@ -65,7 +65,7 @@ public class FileUploadController {
                     return "formupload";                    
                 }
             }
-            model.addAttribute("message","Error in configuration, table not found!");
+            model.addAttribute("message","Error in configuration, table '" + tableId + "' not found!");
             return "message";
         }
 	

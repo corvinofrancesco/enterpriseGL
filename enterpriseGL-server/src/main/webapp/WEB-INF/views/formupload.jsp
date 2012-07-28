@@ -10,17 +10,17 @@
 <form id="formUpload" method="post" action="/fileupload" 
       enctype="multipart/form-data" class="commandForm">
     <input type="hidden" name="name" value="${model.name}" />            
-    <input type="hidden" name="table" value="${table.name}" />            
+    <input type="hidden" name="tableId" value="${table.name}" />            
     <fieldset>
         <legend>${table.name} Table</legend>
         <p>${table.description}</p>
         <span>${message}</span>        
         <c:choose>
             <c:when test="${model.getTable(table.name).isLoad}">
-                Complete -> Change table 
+                <b>Complete</b>: source '${model.getTable(table.name).sourceConfig}', change table? 
             </c:when>
             <c:otherwise>
-                Incomplete -> Load table
+                <b>Incomplete</b>: Load table
             </c:otherwise>
         </c:choose>
         <select name="source">

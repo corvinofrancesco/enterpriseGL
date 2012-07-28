@@ -25,6 +25,7 @@ import unisalento.fcorvino.etl.loader.RelationLoader;
 public class ModelsBuilder {
     private EntModel current = new EntModel();
     private ModelsFactory factory = new ModelsFactory();
+    private boolean isOnEdit = false;
     
     private static Map<String,ModelType> modelTypes = new HashMap<String, ModelType>();
             
@@ -115,12 +116,19 @@ public class ModelsBuilder {
      * @return true if the configured model is valid
      */
     public Boolean isValid(){
+        System.out.println("checkValidModel -> name: " + current.getName());
         if(current.getName()==null) return false;
-        if(factory.getModel(current.getName())!=null) return false;        
+        EntModel existTest = factory.getModel(current.getName());
+        if(existTest!=null) 
+            if(!this.isOnEdit) return false;        
+        System.out.println("checkValidModel -> type: " + current.getTypeModel());
         if(current.getTypeModel()==null) return false;
+        System.out.println("checkValidModel -> status: " + current.getStatus());
         if(current.getStatus()!=ModelStatus.Incomplete){
             for(ModelTable t : current.getTypeModel().getTables()){
                 ModelTableInstance instancet = current.getTable(t.getName());
+                String res = "null"; if(instancet!=null) res = instancet.getIsLoad().toString();
+                System.out.println("checkValidModel -> table " + t.getName() +": " + res);
                 if(instancet!=null){
                     if(instancet.getIsLoad()) continue;
                 }
@@ -175,7 +183,7 @@ public class ModelsBuilder {
         context.parseFile(file.getBytes());
         instance.setIsLoad(true);
         instance.setSource(EtlContext.FileType.valueOf(source));
-        instance.setSourceConfig(file.getName());
+        instance.setSourceConfig(file.getOriginalFilename());
         current.putTable(table, instance);
         this.checkStatus();
     }
@@ -192,6 +200,7 @@ public class ModelsBuilder {
     }
 
     private void checkStatus() {
+        this.isOnEdit = true;
         this.current.setStatus(ModelStatus.Complete);
         boolean ret = this.isValid();
         System.out.println("checkStatus -> isValid: " + ret);

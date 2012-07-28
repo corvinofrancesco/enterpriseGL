@@ -11,7 +11,7 @@
     var EditForm_CurrentTable = null;
     function EditForm_showImportTable(name){
         $.ajax({
-            url: '<c:url value="/fileupload/form" />?name='+name,
+            url: '<c:url value="/fileupload/form" />?tableId='+name,
             dataType: "text",
             beforeSend: function(req){configuration.prepareAjax(req)},
             success: function(text){
