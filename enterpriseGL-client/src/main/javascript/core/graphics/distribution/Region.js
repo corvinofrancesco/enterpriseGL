@@ -97,6 +97,13 @@ Region.prototype = {
         for(var i in this.childs) 
             if(this.childs[i]) return false;
         return true;
+    },
+    
+    toString: function(){
+        var str = "{";
+        for(var i in this.childs) str += "child" + i + ": " + this.childs.toString() + " ,";
+        str += "}";
+        return str;
     }
     
 }

@@ -103,6 +103,13 @@ RegionLeaf.prototype = {
             pointNum ++;
         }
         if(pointNum>1) this.position.multiplyScalar(1/points.length);
+    },
+    
+    toString: function(){
+        var str = "{";
+        str += "p: " + [this.position.x,this.position.y,this.position.z] + ",";
+        str += "elem: " + this.getOrigin() + "}";
+        return str;
     }
     
 }
