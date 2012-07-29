@@ -106,9 +106,9 @@ RegionLeaf.prototype = {
     },
     
     toString: function(){
-        var str = "{";
-        str += "p: " + [this.position.x,this.position.y,this.position.z] + ",";
-        str += "elem: " + this.getOrigin() + "}";
+        var str = "{type:leaf, ";
+        str += "p: [" + [this.position.x,this.position.y,this.position.z] + "],";
+        str += "elem: [" + this.getOrigin() + "]}";
         return str;
     }
     

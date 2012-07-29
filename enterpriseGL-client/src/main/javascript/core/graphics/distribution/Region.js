@@ -100,9 +100,9 @@ Region.prototype = {
     },
     
     toString: function(){
-        var str = "{";
-        for(var i in this.childs) str += "child" + i + ": " + this.childs.toString() + " ,";
-        str += "}";
+        var str = "{ type: region, childs: [ \n";
+        for(var i in this.childs) str += "child" + i + ": " + this.childs[i] + " ,";
+        str += "\n ]}";
         return str;
     }
     

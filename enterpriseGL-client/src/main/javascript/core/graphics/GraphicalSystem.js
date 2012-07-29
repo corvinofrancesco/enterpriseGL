@@ -77,6 +77,8 @@ GraphicalSystem.prototype = {
             this.objects.push(p);
         }
         this.particles[p.modelReference] = p;
+        this._distributionAlg.insert(p);            
+
     },
     
     /**
@@ -90,6 +92,7 @@ GraphicalSystem.prototype = {
             this.particles[id] = undefined;
             this.numparticles--;
         }
+        this._distributionAlg.remove(p);            
         return p;
     },
     
@@ -99,6 +102,7 @@ GraphicalSystem.prototype = {
 
     update: function(){
         this.updateAccelerations();
+        this.collisions();
         //TODO calculate the differenzial time (dtime) and update particles positions
         var dtime = 0.5;
         for(var i in this.particles){
@@ -153,7 +157,21 @@ GraphicalSystem.prototype = {
                 break;                    
             }
         }
-    },    
+    },   
+    
+    collisions: function(){
+        var collisions = this._distributionAlg.getCollisions(), collision;
+        while(collisions.length>0){
+            collision = collisions.shift();
+            for(var j in collision){
+                var partId = collision[j],
+                    p = this.particles[partId];
+                p.accelerations.addSelf(new THREE.Vector3(
+                    Math.random(), Math.random(), Math.random()
+                ))
+            }
+        }
+    },
     
     /***************************************************************************
      *  Configuration functions
