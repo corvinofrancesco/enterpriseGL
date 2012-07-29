@@ -21,6 +21,11 @@
 <form id="commandForm" method="post" action="/load" class="commandForm">
     <fieldset id="body">
         <h3>View of ${model.name}</h3>
+        <p> Model with: </p>
+        <ul>
+            <li>Items: ${model.particles.size()}</li>
+            <li>Relations: ${model.relations.size()}</li>
+        </ul>
         <fieldset>
             <label>Select type of visualization for the model</label>
             <select name="diagram">
