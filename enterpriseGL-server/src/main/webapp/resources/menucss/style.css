@@ -33,6 +33,7 @@ a { text-decoration:none }
     position: absolute;
     right: 10px;
     background-color: transparent;
+    width: 40%;
 }
 
 /*-------LOGIN STARTS HERE -------*/

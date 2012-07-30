@@ -87,6 +87,7 @@ public class ModelParser {
         for(Particle p : model.getParticles()){
             EntParticle e = new EntParticle();
             e.setId(p.getId().toString());
+            e.setTitle("Item " + p.getId());
             e.setDefinition(p.getDefinition());
             e.setDescription(p.getDescription());
             pack.getItems().add(e);

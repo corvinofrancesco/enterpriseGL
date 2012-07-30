@@ -6,7 +6,7 @@ import java.util.ArrayList;
  *
  * @author Francesco Corvino
  */
-public class EntParticle extends EntItem {
+public class EntParticle extends EntItem {    
     private ArrayList<String> relations = new ArrayList<String>();
 
     public ArrayList<String> getRelations() {

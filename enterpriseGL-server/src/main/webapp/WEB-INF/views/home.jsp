@@ -25,7 +25,7 @@
                 menu: new MenuController("#content",{
                     Models:'<c:url value="/list"/>',
                     Graphics:'<c:url value="/graphic"/>',
-                    Search:'<c:url value="/search" />'
+                <%--   Search:'<c:url value="/search" />' --%>
                 }),
                 link: new LinkController(),
                 cntError: function(xhr){alert("Error! Fail connection at the server.")},
@@ -64,7 +64,7 @@
                     <a onclick="configuration.menu.hiddenPanels();">Hidden</a> 
                     <a onclick="configuration.menu.goTo('Graphics')">Graphics</a>
                     <a onclick="configuration.menu.goTo('Models')">Models</a>
-                    <a onclick="configuration.menu.goTo('Search')">Search</a>
+                    <%--<a onclick="configuration.menu.goTo('Search')">Search</a> --%>
                 </div>
                 <div id="content"></div>
             </div>
