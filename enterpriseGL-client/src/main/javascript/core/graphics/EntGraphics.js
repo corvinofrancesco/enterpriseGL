@@ -2,8 +2,8 @@
  * Class used to load graphics elements of enterprise rapresentation
  */
 function EntGraphics(configuration) {
-    this.width = window.innerWidth || 800;
-    this.height = window.innerHeight || 600;    
+    this.width = 800;
+    this.height = 600;    
 
     if(!configuration) configuration =new EntGraphicsConfig();
     this.configuration = configuration;

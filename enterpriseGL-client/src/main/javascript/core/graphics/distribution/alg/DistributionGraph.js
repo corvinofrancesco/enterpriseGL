@@ -3,8 +3,19 @@ DistributionGraph.constructor = DistributionGraph;
 DistributionGraph.superclass = DistributionAlg.prototype;
 
 function DistributionGraph(){
-    this._root = new RegionBH(0,0,0);
+    
 }
+
+DistributionGraph.centerVectors = [
+  new THREE.Vector3(-1,-1,-1),  
+  new THREE.Vector3( 1,-1,-1),  
+  new THREE.Vector3(-1, 1,-1),  
+  new THREE.Vector3( 1, 1,-1),  
+  new THREE.Vector3(-1,-1, 1),  
+  new THREE.Vector3( 1,-1, 1),  
+  new THREE.Vector3(-1, 1, 1),  
+  new THREE.Vector3( 1, 1, 1) 
+];
 
 /**
  * Se p non ha relazioni: 
@@ -22,12 +33,12 @@ function DistributionGraph(){
 DistributionGraph.prototype.getPositionFor = function(p){
     switch(p.relations.length){
         case 0: case undefined: case null:
-            return RegionBH.euristicFreePosition(this._root);
+            return this.euristicFreePosition();
         case 1:
             var pNext = this._getInfoFor(p.relations[0]), leaf = null;
             leaf = this._search(pNext);
-            if(leaf==null) return RegionBH.euristicFreePosition(this._root);
-            return RegionBH.euristicNextPosition(pNext,leaf.parent);
+            if(leaf==null) return this.euristicFreePosition();
+            return this.euristicNextPosition(pNext,leaf.parent);
         default:
             var retPos = new THREE.Vector3(0,0,0),div=0;
             for(var i in p.relations){
@@ -38,41 +49,109 @@ DistributionGraph.prototype.getPositionFor = function(p){
                 }
             }
             // if mean elaboration have a faillure
-            if(div<2) return  RegionBH.euristicFreePosition(this._root);
+            if(div<2) return  this.euristicFreePosition();
             retPos.multiplyScalar(1/div);
             return retPos;
     }
 };
 
 /**
+ * Euristica di collocazione delle particelle in posizioni libere.
+ * @param startRegion regione da cui iniziare la ricerca
+ * @return THREE.Vector3
+ */
+DistributionGraph.prototype.euristicFreePosition = function(startRegion){
+    var q = [startRegion || this.root()], pointRegions = [], head;
+    while(q.length>0){
+        var rcurr = q.shift();
+        if(rcurr.isEmpty()) return rcurr.centre;
+        for(var rInd=0; rInd<8; rInd++){
+            var elem = rcurr.childs[rInd];
+            if(elem instanceof Region){                    
+                q.push(elem);
+            } else if(elem instanceof RegionLeaf) {
+                // aggiunge regione del punto
+                pointRegions.push({
+                    region: rcurr, index: rInd, 
+                    particle: elem});
+            } else return this.getCentreFor(rInd, rcurr);
+        }            
+        if(pointRegions.length>0){ // ci sono punti in coda
+            head = pointRegions[0];
+            // crea un punto affianco al punto in coda 
+            return this.euristicNextPosition(head.particle, head.region, head.index);
+        }        
+    }
+    return new THREE.Vector3(0,0,0);
+}
+
+/**
+ * Restituisce una posizione libera prossima a un punto dalla regione fornita
+ * @param point punto di prossimità dove cercare la posizione
+ * @param space regione dove cercare il punto
+ * @param spaceindex (opzionale) indice della sottoregione dove collocare il punto
+ * @return THREE.Vector3
+ */
+DistributionGraph.prototype.euristicNextPosition = function(point, space, spaceindex){
+    space = space || this.root();
+    if(arguments.length>=2) spaceindex = this.getIndexFor(point,space);
+    // ricava il centro della sotto regione dove saranno collocati i due punti
+    var subSpace = {
+        centre: this.getCentreFor(spaceindex,space),
+        range: space.range * 0.5
+    };
+    // ricava l'indice del punto esistente nella sua regione
+    var occIndex = this.getIndexFor(point,subSpace);
+    // ritorna la posizione nella regione affianco al punto
+    return this.getCentreFor((occIndex+1)%8,subSpace);        
+}
+
+/**
+ * 
+ * @param point punto per il quale si vuole individuare l'indice
+ * @param space spazio da suddividere
+ * @return int 0<= x < 8
+ */
+DistributionGraph.prototype.getIndexFor = function(point,space){
+    var i =0;
+    if(space.centre.x < point.position.x) i = 1;
+    if(space.centre.y < point.position.y) i += 2;
+    if(space.centre.z < point.position.z) i += 4;
+    return i;
+}
+
+/**
+ * @param index indice della sottoregione
+ * @param space regione parent 
+ * @return THREE.Vector3
+ */
+DistributionGraph.prototype.getCentreFor = function(index,space){
+    var offset = DistributionGraph.centerVectors[index].clone()
+        .multiplyScalar(space.range * 0.5);
+    return space.centre.clone().addSelf(offset);            
+}
+
+/**
  * Inserisce la relazione foglia nella parte più bassa dell'albero 
  * @param leaf RelationLeaf to insert in the tree region
- * @param parent RelationLeaf considered to be proximus
+ * @param suggestLeaf RelationLeaf considered to be proximus
  */ 
-DistributionGraph.prototype._insert = function(leaf, parent){
-    var q = [parent || this._root], curr, candidate;
+DistributionGraph.prototype._insert = function(leaf, suggestLeaf){
+    var q = [this._root], curr, candidate;
     while(q.length>0){
         curr = q.shift();
-        var i = RegionBH.getIndexFor(leaf,curr);
+        var i=this.getIndexFor(leaf,curr);
         candidate = curr.childs[i];
         if(candidate instanceof Region){
-            candidate.insert(leaf);            
-            if(candidate.needSubdivision()){
-                candidate.remove(leaf);
-                q.push(candidate);
-            }
+            q.push(candidate);
         } else if(candidate instanceof RegionLeaf){
-            if(candidate.samePosition(leaf)){
-                candidate.unionWith(leaf);                
-            } else {
-                var newR = curr.createSub(i);
-                curr.childs[i] = newR;
-                this._insert(candidate,curr);
-                newR.insert(leaf);    
-                this._regions.push(newR);
-            }
+            var newReg = this.createRegion(candidate,false,false,leaf);
+            this._regions.push(newReg);
+            return;
         } else {
             curr.childs[i] = leaf;
+            leaf.parent = curr;
+            return;
         }
     }
 }
@@ -100,17 +179,17 @@ DistributionGraph.prototype._search = function(p){
  */
 DistributionGraph.prototype.createRegion = function(leaf,index,centre,otherLeaf){
     var parent = leaf.parent || this._root;
-    var i = index || RegionBH.getIndexFor(leaf, parent);
-    var c = centre || RegionBH.getCentreFor(i, parent);
+    var i = index || this.getIndexFor(leaf, parent);
+    var c = centre || this.getCentreFor(i, parent);
     var pRegion = new Region(c.x,c.y,c.z);
     pRegion.parent = parent;
     pRegion.range = parent.range * 0.5;
-    var firstP = RegionBH.getIndexFor(leaf,pRegion);
+    var firstP = this.getIndexFor(leaf,pRegion);
     pRegion.childs[firstP] = leaf;
     leaf.parent = pRegion;
     parent.childs[i] = pRegion;
     if(otherLeaf){
-        var otherP = RegionBH.getIndexFor(otherLeaf,pRegion);
+        var otherP = this.getIndexFor(otherLeaf,pRegion);
         if(otherP!=firstP){
             parent.childs[otherP] = otherLeaf;
             otherLeaf.parent = pRegion;
@@ -120,33 +199,4 @@ DistributionGraph.prototype.createRegion = function(leaf,index,centre,otherLeaf)
         }
     }
     return pRegion;
-}
-
-DistributionGraph.prototype.update = function(system){
-    if(arguments.length>0) this.setSystemRepos(system);
-    var q = [this.root()], exitQ = [], elemCurr;
-    while(q.length>0){
-        elemCurr = q.shift();
-        if(elemCurr instanceof Region){
-            elemCurr.computeCenterOfMass();
-            if(!elemCurr.isEmpty()) q = q.concat(elemCurr.childs);
-            else if(elemCurr!=this._root) this._remove(elemCurr);
-        } else if(elemCurr instanceof RegionLeaf){
-            var origin = elemCurr.getOrigin();
-            if(elemCurr.isEmpty()) this._remove(elemCurr);
-            else if(origin.length>1){
-                for(var o in origin){
-                    var p = this._getInfoFor(origin[o]);
-                    if(elemCurr.samePosition(p)) continue;
-                    exitQ.push(p)
-                }
-            }
-        }
-    }
-    while(exitQ.length>0){
-        elemCurr = exitQ.shift();
-        this.remove(elemCurr);
-        this.insert(elemCurr);
-    }
-    alert(this._root);
 }
