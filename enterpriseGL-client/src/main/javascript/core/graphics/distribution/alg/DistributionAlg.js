@@ -209,5 +209,9 @@ DistributionAlg.prototype = {
         pRegion.parent = r.parent || this._root;
         pRegion.insert(r);
         return pRegion;
+    },
+    
+    getCollisions: function(){
+        return [];
     }
 }
