@@ -25,6 +25,14 @@ DistributionAlg.prototype = {
         return p;
     },
     
+    _getParticles: function(){
+        var particles = {};
+        try {
+            particles = this._infoRepository.particles;
+        } catch(e){ return {};}
+        return particles;
+    },
+    
     /**
      * Remove internal region-regionleaf
      * @param region region to be removed

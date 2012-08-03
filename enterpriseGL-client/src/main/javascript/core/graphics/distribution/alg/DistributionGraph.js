@@ -200,3 +200,12 @@ DistributionGraph.prototype.createRegion = function(leaf,index,centre,otherLeaf)
     }
     return pRegion;
 }
+
+DistributionGraph.prototype.update = function(system){
+    if(arguments.length>0) this.setSystemRepos(system);
+    var particles = this._getParticles();
+    this.reset();
+    for(var p in particles){
+        this.insert(particles[p]);
+    }
+}
