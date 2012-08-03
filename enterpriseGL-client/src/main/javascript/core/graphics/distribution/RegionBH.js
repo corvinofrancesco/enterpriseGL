@@ -2,14 +2,37 @@ RegionBH.prototype = new Region(0,0,0);
 RegionBH.constructor = RegionBH;
 RegionBH.superclass = Region.prototype;
 
-function RegionBH(){
+RegionBH.types = {
+    LeafContainer: "leafContainer",
+    RegionContainer: "regionContainer"
+}
     
+
+function RegionBH(){
+    this.type = RegionBH.types.LeafContainer;
 }
 
 RegionBH.prototype.insert = function(leaf){
-    leaf.parent = this;
-    this.childs.push(leaf);
-    leaf.parent = this;
+    if(this.type == RegionBH.types.LeafContainer) {
+        leaf.parent = this;
+        this.childs.push(leaf);
+        return {insert: true,region: this};
+    }
+    var i = RegionBH.getIndexFor(leaf,this);
+    // delegate order to child
+    if(this.childs[i] instanceof RegionBH)
+        return this.childs[i].insert(leaf);
+    // we can insert leaf and old leaf into new
+    if(leaf instanceof RegionBH){
+        var oldLeaf = this.childs[i];
+        if(oldLeaf instanceof RegionLeaf){
+            this.childs[i] = leaf;
+            leaf.parent = this;
+            return leaf.insert(oldLeaf);
+        }
+    }        
+        //TODO delegate or orderer insertion 
+    return {insert: false, region: this, index: i};
 }
 
 RegionBH.prototype.needSubdivision = function(){
