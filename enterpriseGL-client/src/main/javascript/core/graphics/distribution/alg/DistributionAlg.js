@@ -69,10 +69,17 @@ DistributionAlg.prototype = {
     },
     
     /**
+     * This method insert a new region leaf in the distribution
+     * The method must:
+     * - adding leaf if created in the list of leaf
+     * - adding, if created, additional regions in the relative list
+     * - setting correctly parent of new leaf
+     * - setting correctly at the parent the new child
      * @param leaf RegionLeaf to insert in the destRegion
      * @param destRegion Region parent, if undefined is this._root
      */
     _insert: function(leaf, destRegion){
+        this._leaves.push(leaf);
         destRegion = destRegion || this._root;
         leaf.parent = destRegion;
         destRegion.insert(leaf);
@@ -166,7 +173,6 @@ DistributionAlg.prototype = {
             p.position = this.getPositionFor(p);
         }
         var r = new RegionLeaf(p); //this.createLeafRegion(p);
-        this._leaves.push(r);
         this._insert(r);
         return r;
     },
@@ -200,14 +206,6 @@ DistributionAlg.prototype = {
 
     root: function(){
         return this._root;
-    },
-    
-    /**
-     *
-     */
-    createLeafRegion: function(p){
-        var r = new RegionLeaf(p);
-        return r;
     },
     
     /**
