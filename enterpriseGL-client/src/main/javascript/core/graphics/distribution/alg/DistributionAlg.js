@@ -1,3 +1,6 @@
+/**
+ * This class provides an interface for Distribution Algorithms 
+ */
 function DistributionAlg(){
     this._root = new Region(0,0,0);
     this._root.range = 100;
@@ -98,7 +101,10 @@ DistributionAlg.prototype = {
     },
     
     /**
-     *  search leaf next to position
+     *  Search leaf next to position
+     *  This methods have complexity x -> the number of leaf registered
+     *  @param pos THREE.Vector3 position to search in the Regions 
+     *  @return RegionLeaf, the leaf next to pos parameter
      */
     _searchLeafNextPosition: function(pos){
         if(!(pos instanceof THREE.Vector3)) return null;
@@ -114,11 +120,17 @@ DistributionAlg.prototype = {
     /**
      * This function must return a position for a particle
      * @param p is a graphical particle 
+     * @return a free position for a graphical particle
      */
     getPositionFor: function(p){
         return this._nextPointFunct(this._lastInsert);
     },
     
+    /**
+     * Update the distribution algorithm passing new graphical system
+     * It controls particles in the system and changes the configurations of regions
+     * @param system an object @see GraphicalSystem (optional)
+     */
     update: function(system){
         if(arguments.length>0) this.setSystemRepos(system);
         var q = [this.root()];
@@ -144,16 +156,25 @@ DistributionAlg.prototype = {
         }        
     },
     
+    /**
+     * Insert a graphical particle in the distribution
+     * @param p Graphical Particle
+     * @return RegionLeaf where the particle is going to be insert
+     */
     insert: function(p){
         if(!(p.position instanceof THREE.Vector3)) {
             p.position = this.getPositionFor(p);
         }
-        var r = this.createLeafRegion(p);
+        var r = new RegionLeaf(p); //this.createLeafRegion(p);
         this._leaves.push(r);
         this._insert(r);
         return r;
     },
     
+    /**
+     * Remove a particle from the distribution
+     * @param p graphical particle to be removed
+     */
     remove: function(p){
         for(var r in this._leaves){
             if(this._leaves[r].have(p)) {
@@ -167,10 +188,13 @@ DistributionAlg.prototype = {
         }
     },
     
+    /**
+     * Method to reset initial status of algorithm
+     */
     reset: function(){
         this._root = new Region(0,0,0);
         this._root.range = 100;
-        this._regions = [];
+        this._regions = [this._root];
         this._leaves = [];
     },
 
