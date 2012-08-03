@@ -1,6 +1,6 @@
-//EntGL.SectorRegion.prototype = new supp()
-//EntGL.SectorRegion.constructor = EntGl.SectorRegion;
-//EntGL.SectorRegion.superclass = supp.prototype
+EntGL.SectorRegion.prototype = new Region(0,0,0)
+EntGL.SectorRegion.constructor = EntGl.SectorRegion;
+EntGL.SectorRegion.superclass = Region.prototype
 
 EntGL.SectorRegion = function(){
     
