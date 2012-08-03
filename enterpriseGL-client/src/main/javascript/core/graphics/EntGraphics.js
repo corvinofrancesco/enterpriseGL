@@ -3,7 +3,7 @@
  */
 function EntGraphics(configuration) {
     this.width = window.innerWidth || 800;
-    this.height = window.innerHeight || 600;       
+    this.height = window.innerHeight || 600;    
 
     if(!configuration) configuration =new EntGraphicsConfig();
     this.configuration = configuration;
