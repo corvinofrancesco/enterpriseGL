@@ -63,16 +63,7 @@ describe('DistributionGraph Test', function(){
            },
            particles = {"0":origin,"N":nextOrigin,"P":otherPoint,"M":middle};
            graph._getInfoFor = function(p){return particles[p];};
-                     
-       describe("testing euristicNextPosition", function(){
-           var region = new Region(5,5,5),
-               leaf = new RegionLeaf(origin);
-           var result = graph.euristicNextPosition(leaf,region);
-           expect(result instanceof THREE.Vector3).toBe(true);
-           var dist = result.lengthSq();
-           expect(dist).not.toBe(0);
-       });
-       
+                            
        describe("testing main function getPositionFor",function(){
            graph.reset();
            it("Control if the position free is 0,0,0", function(){
