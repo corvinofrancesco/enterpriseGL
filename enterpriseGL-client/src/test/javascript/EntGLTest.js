@@ -24,5 +24,14 @@ EntGLTest.prototype = {
                 }                
             }            
         })
+    },
+    
+    configure: function(configs){
+        for(var i in this){
+            if(this[i] instanceof Function)
+                if(i.search("set")==0){
+                    this[i](configs[i.substring(3)]);
+                };
+        }
     }
 }
