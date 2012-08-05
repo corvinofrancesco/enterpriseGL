@@ -1,34 +1,34 @@
-describe('DistributionGraph Test', function(){
-    var p = [
-        {position: new THREE.Vector3(15,15,15), relations: [], modelReference:"part1"},
-        {position: new THREE.Vector3( 8, 8, 8), relations: ["part1"], modelReference:"part2"},
-        {position: new THREE.Vector3(12, 8, 8), relations: ["part1"], modelReference:"part3"},
-        {position: new THREE.Vector3( 8,12, 8), relations: ["part2"], modelReference:"part4"},
-        {position: new THREE.Vector3(12,12, 8), relations: ["part2"], modelReference:"part5"},
-        {position: new THREE.Vector3( 8, 8,12), relations: ["part2"], modelReference:"part6"},
-        {position: new THREE.Vector3(12,12,16), relations: ["part3"], modelReference:"part7"},
-        {position: new THREE.Vector3(12,12,16), relations: ["part3"], modelReference:"part9"},
-        {position: new THREE.Vector3(12,12,17), relations: ["part3","part2"], modelReference:"part8"}
-    ];
-    
-    describe('insert() Test', function(){
-        var graph = new DistributionGraph();
-        graph.reset();
+EntGLTest.DistributionGraphTest = function(){
+    this.className = "DistributionGraph";
+    this.points = [];
+}
+
+EntGLTest.DistributionGraphTest.prototype = new EntGLTest();
+EntGLTest.DistributionGraphTest.constructor = EntGLTest.DistributionGraphTest;
+EntGLTest.DistributionGraphTest.superclass = EntGLTest;
+
+EntGLTest.DistributionGraphTest.prototype.setPoints = function(points){
+    this.points = points || [];
+}
+
+EntGLTest.DistributionGraphTest.prototype.testInsert = function(){
+    var p = this.points,
+        graph = new DistributionGraph();
+
+    graph.reset();
+    graph.insert(p[0]);
+
+    expect(graph._leaves.length).toBe(1);
+
+    var error = false;
+    try {
         graph.insert(p[0]);
-        
-        it('Control number of childs', function(){
-           expect(graph._leaves.length).toBe(1);
-        });
-        
-        it('Control stop of recursion with have same position', function(){
-            var graph = new DistributionGraph();
-            var error = false;
-            try {
-                graph.insert(p[0]);
-            } catch(e){error=e;};
-            expect(error).toBe(false);
-        });
-    });
+    } catch(e){error=e;};
+    expect(error).toBe(false);
+    
+}
+
+describe('DistributionGraph Test', function(){
     
     describe("createRegion() Testing",function(){
         var graph = new DistributionGraph();
