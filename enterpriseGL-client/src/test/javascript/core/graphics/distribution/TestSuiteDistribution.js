@@ -17,6 +17,10 @@ describe("Distribution Suite",function(){
         ],
         
         Origin: { position: new THREE.Vector3(0,0,0),relations: [], modelReference:"0"},
+        NextOrigin: { relations:["0"],modelReference:"N" },
+        OtherPoint: { relations:[],modelReference:"P" },
+        Middle: { relations:["0","P"],modelReference:"M" },
+        
     };
 
     for(var i in DistributionSuite){
