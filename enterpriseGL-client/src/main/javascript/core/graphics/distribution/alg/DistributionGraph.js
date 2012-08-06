@@ -82,14 +82,14 @@ DistributionGraph.prototype.getPositionFor = function(p){
  * @param p graphical particle
  * @return RegionLeaf or null if the particle is not found
  */
-DistributionGraph.prototype._search = function(p){
-    if(p == undefined || p==null) return null;
-    for(var l in this._leaves){
-        var curr = this._leaves[l];
-        if(curr.have(p)) return curr;
-    }
-    return null;
-}
+//DistributionGraph.prototype._search = function(p){
+//    if(p == undefined || p==null) return null;
+//    for(var l in this._leaves){
+//        var curr = this._leaves[l];
+//        if(curr.have(p)) return curr;
+//    }
+//    return null;
+//}
     
 /**
  * Create a region from a leaf
@@ -122,11 +122,11 @@ DistributionGraph.prototype.createRegion = function(leaf,index,centre,otherLeaf)
     return pRegion;
 }
 
-DistributionGraph.prototype.update = function(system){
-    if(arguments.length>0) this.setSystemRepos(system);
-    var particles = this._getParticles();
-    this.reset();
-    for(var p in particles){
-        this.insert(particles[p]);
-    }
-}
+//DistributionGraph.prototype.update = function(system){
+//    if(arguments.length>0) this.setSystemRepos(system);
+//    var particles = this._getParticles();
+//    this.reset();
+//    for(var p in particles){
+//        this.insert(particles[p]);
+//    }
+//}

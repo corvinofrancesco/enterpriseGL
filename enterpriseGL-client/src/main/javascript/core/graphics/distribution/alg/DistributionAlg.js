@@ -92,19 +92,25 @@ DistributionAlg.prototype = {
      */
     _search: function(p){
         if(p == undefined || p==null) return null;
-        var q = [this._root], curr = null;
-        while(q.length>0){
-            curr = q.shift();
-            if(curr instanceof Region){
-                if(curr.contains(p)){
-                    for(var c in curr.childs)
-                        q.push(curr.childs[c]);
-                }
-            }
-            if(curr instanceof RegionLeaf)
-                if(curr.have(p)) return curr;
+        for(var l in this._leaves){
+            var curr = this._leaves[l];
+            if(curr.have(p)) return curr;
         }
         return null;
+//        if(p == undefined || p==null) return null;
+//        var q = [this._root], curr = null;
+//        while(q.length>0){
+//            curr = q.shift();
+//            if(curr instanceof Region){
+//                if(curr.contains(p)){
+//                    for(var c in curr.childs)
+//                        q.push(curr.childs[c]);
+//                }
+//            }
+//            if(curr instanceof RegionLeaf)
+//                if(curr.have(p)) return curr;
+//        }
+//        return null;
     },
     
     /**
@@ -130,7 +136,8 @@ DistributionAlg.prototype = {
      * @return a free position for a graphical particle
      */
     getPositionFor: function(p){
-        return this._nextPointFunct(this._lastInsert);
+        this._lastInsert = this._nextPointFunct(this._lastInsert);
+        return this._lastInsert;
     },
     
     /**
