@@ -140,27 +140,33 @@ DistributionAlg.prototype = {
      */
     update: function(system){
         if(arguments.length>0) this.setSystemRepos(system);
-        var q = [this.root()];
-        while(q.length>0){
-            var elemCurr = q.shift();
-            if(elemCurr instanceof Region){
-                elemCurr.computeCenterOfMass();
-                if(!elemCurr.isEmpty()) q = q.concat(elemCurr.childs);
-                else if(elemCurr!=this._root) this._remove(elemCurr);
-            } else if(elemCurr instanceof RegionLeaf){
-                var points = [], alg = this;
-                if(elemCurr.isEmpty()) {
-                    this._remove(elemCurr);
-                } else {
-                    elemCurr.getOrigin().forEach(function(e){
-                        var p = alg._getInfoFor(e);
-                        if(!p) elemCurr.remove({modelReference:e});
-                        else points.push(p);
-                    });
-                    elemCurr.update(points);                    
-                }
-            }
-        }        
+        var q = [this.root()],
+            particles = this._getParticles();
+        this.reset();
+        for(var p in particles){
+            this.insert(particles[p]);
+        }
+        this._root.computeCenterOfMass();
+//        while(q.length>0){
+//            var elemCurr = q.shift();
+//            if(elemCurr instanceof Region){
+//                elemCurr.computeCenterOfMass();
+//                if(!elemCurr.isEmpty()) q = q.concat(elemCurr.childs);
+//                else if(elemCurr!=this._root) this._remove(elemCurr);
+//            } else if(elemCurr instanceof RegionLeaf){
+//                var points = [], alg = this;
+//                if(elemCurr.isEmpty()) {
+//                    this._remove(elemCurr);
+//                } else {
+//                    elemCurr.getOrigin().forEach(function(e){
+//                        var p = alg._getInfoFor(e);
+//                        if(!p) elemCurr.remove({modelReference:e});
+//                        else points.push(p);
+//                    });
+//                    elemCurr.update(points);                    
+//                }
+//            }
+//        }        
     },
     
     /**

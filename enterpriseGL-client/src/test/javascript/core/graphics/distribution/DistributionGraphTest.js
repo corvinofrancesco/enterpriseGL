@@ -4,33 +4,9 @@ EntGLTest.DistributionGraphTest = function(){
     this.particles = {};
 }
 
-EntGLTest.DistributionGraphTest.prototype = new EntGLTest();
+EntGLTest.DistributionGraphTest.prototype = new EntGLTest.DistributionAlgTest();//new EntGLTest();
 EntGLTest.DistributionGraphTest.constructor = EntGLTest.DistributionGraphTest;
-EntGLTest.DistributionGraphTest.superclass = EntGLTest;
-
-EntGLTest.DistributionGraphTest.prototype.setPoints = function(points){
-    this.points = points || [];
-}
-
-EntGLTest.DistributionGraphTest.prototype.setOrigin = function(origin){
-    this.origin = origin;
-    this.particles["0"] = origin;
-}
-
-EntGLTest.DistributionGraphTest.prototype.setNextOrigin = function(nextO){
-    this.nextOrigin = nextO;
-    this.particles["N"] = nextO;
-}
-
-EntGLTest.DistributionGraphTest.prototype.setOtherPoint = function(point){
-    this.otherPoint = point;
-    this.particles["P"] = point;
-}
-
-EntGLTest.DistributionGraphTest.prototype.setMiddle = function(middle){
-    this.middle= middle;
-    this.particles["M"] = middle;
-}
+EntGLTest.DistributionGraphTest.superclass = EntGLTest.DistributionAlgTest;
 
 EntGLTest.DistributionGraphTest.prototype.testInsert = function(){
     var p = this.points,
@@ -44,7 +20,7 @@ EntGLTest.DistributionGraphTest.prototype.testInsert = function(){
     var error = false;
     try {
         graph.insert(p[0]);
-    } catch(e){error=e;};
+    } catch(e){error=e;}
     expect(error).toBe(false);    
 }
 

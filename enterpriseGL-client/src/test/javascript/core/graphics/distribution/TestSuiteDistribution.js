@@ -1,6 +1,7 @@
 describe("Distribution Suite",function(){
     var DistributionSuite = {
         regionbh: new EntGLTest.RegionBHTest(),
+        alg: new EntGLTest.DistributionAlgTest(),
         graph: new EntGLTest.DistributionGraphTest()
         
     }, Configurations = {

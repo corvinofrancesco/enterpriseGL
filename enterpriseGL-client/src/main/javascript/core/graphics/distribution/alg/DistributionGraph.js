@@ -49,33 +49,33 @@ DistributionGraph.prototype.getPositionFor = function(p){
  * @param leaf RelationLeaf to insert in the tree region
  * @param parent RelationLeaf considered to be proximus
  */ 
-DistributionGraph.prototype._insert = function(leaf, parent){
-    var q = [parent || this._root], curr, candidate;
-    while(q.length>0){
-        curr = q.shift();
-        var i = RegionBH.getIndexFor(leaf,curr);
-        candidate = curr.childs[i];
-        if(candidate instanceof Region){
-            candidate.insert(leaf);            
-            if(candidate.needSubdivision()){
-                candidate.remove(leaf);
-                q.push(candidate);
-            }
-        } else if(candidate instanceof RegionLeaf){
-            if(candidate.samePosition(leaf)){
-                candidate.unionWith(leaf);                
-            } else {
-                var newR = curr.createSub(i);
-                curr.childs[i] = newR;
-                this._insert(candidate,curr);
-                newR.insert(leaf);    
-                this._regions.push(newR);
-            }
-        } else {
-            curr.childs[i] = leaf;
-        }
-    }
-}
+//DistributionGraph.prototype._insert = function(leaf, parent){
+//    var q = [parent || this._root], curr, candidate;
+//    while(q.length>0){
+//        curr = q.shift();
+//        var i = RegionBH.getIndexFor(leaf,curr);
+//        candidate = curr.childs[i];
+//        if(candidate instanceof Region){
+//            candidate.insert(leaf);            
+//            if(candidate.needSubdivision()){
+//                candidate.remove(leaf);
+//                q.push(candidate);
+//            }
+//        } else if(candidate instanceof RegionLeaf){
+//            if(candidate.samePosition(leaf)){
+//                candidate.unionWith(leaf);                
+//            } else {
+//                var newR = curr.createSub(i);
+//                curr.childs[i] = newR;
+//                this._insert(candidate,curr);
+//                newR.insert(leaf);    
+//                this._regions.push(newR);
+//            }
+//        } else {
+//            curr.childs[i] = leaf;
+//        }
+//    }
+//}
 
 /**
  * Search a particle in the tree

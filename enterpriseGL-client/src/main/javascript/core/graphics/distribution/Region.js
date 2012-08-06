@@ -21,6 +21,7 @@ Region.prototype = {
      * @return boolean equal to true is the element is in region.
      */
     contains : function (element) {
+        if(!(element.position instanceof THREE.Vector3)) return false;
         var limit = this.range;
         var dist = element.position.clone().subSelf(this.centre);
         if (this.type == "spherical") {
