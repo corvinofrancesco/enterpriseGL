@@ -42,7 +42,9 @@ Region.prototype = {
     },
     
     resize : function (range) {
-        this.range = range;
+        if(range instanceof RegionLeaf){
+            this.range = this.centre.clone().subSelf(range.position).length();
+        } else this.range = range;
     },
     
     remove: function(child){

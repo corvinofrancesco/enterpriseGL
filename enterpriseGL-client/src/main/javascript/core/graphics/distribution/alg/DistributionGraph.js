@@ -52,14 +52,18 @@ DistributionGraph.prototype.getPositionFor = function(p){
 DistributionGraph.prototype._insert = function(leaf, parent){
     var curr = parent || this._root, 
         result = {insert: false};
-    if(curr.contains(leaf)) {
-        result = curr.insert(leaf);
-        if(!result.insert) {
-            
+    while(!result.insert){
+        if(curr.contains(leaf)) {
+            result = curr.insert(leaf);
+            if(!result.insert) {
+                //TODO create a regionBH, register, and insert leaf in the tree
+                curr = result.region;
+                
+            }        
+        } else {
+            curr = curr.parent || this._root;
+            curr.resize(leaf);        
         }        
-    } else {
-        curr = curr.parent || this._root;
-        
     }
     this._leaves.push(leaf);
     leaf.parent = curr;
