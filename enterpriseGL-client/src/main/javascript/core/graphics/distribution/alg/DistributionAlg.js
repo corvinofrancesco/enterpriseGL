@@ -229,7 +229,8 @@ DistributionAlg.prototype = {
      */
     createRegion: function(r){
         var p = r.position,
-            pRegion = new Region(p.x,p.y,p.z);
+            pRegion = new Region();
+        pRegion.init(p.x,p.y,p.z);    
         pRegion.parent = r.parent || this._root;
         pRegion.insert(r);
         return pRegion;

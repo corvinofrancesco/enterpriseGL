@@ -1,49 +1,60 @@
-RegionBH.prototype = new Region(0,0,0);
-RegionBH.constructor = RegionBH;
-RegionBH.superclass = Region.prototype;
-
-RegionBH.types = {
+EntGL.RegionBHTypes = {
     LeafContainer: "leafContainer",
     RegionContainer: "regionContainer"
 }
     
+EntGL.RegionBH = function(){
+}
 
-function RegionBH(){
-    this.type = RegionBH.types.LeafContainer;
+EntGL.RegionBH.prototype = new Region();
+EntGL.RegionBH.constructor = EntGL.RegionBH;
+EntGL.RegionBH.superclass = Region.prototype;
+
+EntGL.RegionBH.prototype.init = function(x,y,z){
+    EntGL.RegionBH.superclass.init.call(this,x,y,z);
+    this.type = EntGL.RegionBHTypes.LeafContainer;
 }
 
 /**
- *
+ * If the region is a LeafContainer all leaf are pushed in childs array
+ * otherwise select the subregion where the leaf must be inserted
+ * 
  * @param leaf RegionLeaf to insert in the region
  * @return an Object with association:
  * - insert: boolean, true the operation is completed
  * - region: last region to make operation on the leaf passed
  * - index: region index where the leaf has to be inserted
  */
-RegionBH.prototype.insert = function(leaf){
-    if(this.type == RegionBH.types.LeafContainer) {
+EntGL.RegionBH.prototype.insert = function(leaf){
+    if(this.type == EntGL.RegionBHTypes.LeafContainer) {
         leaf.parent = this;
         this.childs.push(leaf);
-        return {insert: true,region: this};
+        return {insert: true,region: this, register: false};
     }
-    var i = RegionBH.getIndexFor(leaf,this);
-    // delegate order to child
-    if(this.childs[i] instanceof RegionBH)
-        return this.childs[i].insert(leaf);
-    // we can insert leaf and old leaf into new
-    if(leaf instanceof RegionBH){
-        var oldLeaf = this.childs[i];
-        if(oldLeaf instanceof RegionLeaf){
-            this.childs[i] = leaf;
-            leaf.parent = this;
-            return leaf.insert(oldLeaf);
-        }
-    }        
-        //TODO delegate or orderer insertion 
-    return {insert: false, region: this, index: i};
+    var i = EntGL.RegionBH.getIndexFor(leaf,this);
+    if(this.childs[i] instanceof EntGL.RegionBH)
+        return {insert: false, region: this.childs[i], register: false};    
+    var newR = this.createSub(i);
+    newR.insert(leaf);
+    this.childs[i] = newR;
+    return {insert:true, region: newR, register: true};
+//    // delegate order to child
+//    if(this.childs[i] instanceof EntGL.RegionBH)
+//        return this.childs[i].insert(leaf);
+//    // we can insert leaf and old leaf into new
+//    if(leaf instanceof EntGL.RegionBH){
+//        var oldLeaf = this.childs[i];
+//        if(oldLeaf instanceof RegionLeaf){
+//            this.childs[i] = leaf;
+//            leaf.parent = this;
+//            return leaf.insert(oldLeaf);
+//        }
+//    }        
+//        //TODO delegate or orderer insertion 
+//    return {insert: false, region: this, index: i};
 }
 
-RegionBH.prototype.needSubdivision = function(){
+EntGL.RegionBH.prototype.needSubdivision = function(){
     if(this.childs.length>10){
         var sig = 0, mean;
         //mean = this.centre.clone().subSelf(this.position).lengthSq();
@@ -59,16 +70,34 @@ RegionBH.prototype.needSubdivision = function(){
     return false;
 }
 
-RegionBH.prototype.createSub = function(index){
-    var c = RegionBH.getCentreFor(index, this),
-        newR = new RegionBH(c.x,c.y,c.z);
+EntGL.RegionBH.prototype.promote = function(){
+    if(this.type == EntGL.RegionBHTypes.RegionContainer) return [];
+    this.type = EntGL.RegionBHTypes.RegionContainer;
+    var Childs = [], leaf, newR,i;
+    for(var l in this.childs){        
+        leaf = this.childs[l];
+        i = EntGL.RegionBH.getIndexFor(leaf,this);
+        if(!(Childs[i] instanceof EntGL.RegionBH)){
+            newR = this.createSub(i);            
+            Childs[i] = newR;
+        }
+        Childs[i].insert(leaf);
+    }
+    this.childs = Childs;
+    return Childs;
+}
+
+EntGL.RegionBH.prototype.createSub = function(index){
+    var c = EntGL.RegionBH.getCentreFor(index, this),
+        newR = new EntGL.RegionBH();
+        newR.init(c.x,c.y,c.z);
         newR.parent = newR;
         newR.range = newR.range * 0.5;
     return newR;
 }
 
 
-RegionBH.centerVectors = [
+EntGL.RegionBH.centerVectors = [
   new THREE.Vector3(-1,-1,-1),  
   new THREE.Vector3( 1,-1,-1),  
   new THREE.Vector3(-1, 1,-1),  
@@ -86,7 +115,7 @@ RegionBH.centerVectors = [
  * @param space spazio da suddividere
  * @return int 0<= x < 8
  */
-RegionBH.getIndexFor = function(point,space){
+EntGL.RegionBH.getIndexFor = function(point,space){
     var i =0;
     if(space.centre.x < point.position.x) i = 1;
     if(space.centre.y < point.position.y) i += 2;
@@ -100,8 +129,8 @@ RegionBH.getIndexFor = function(point,space){
  * @param space regione parent 
  * @return THREE.Vector3
  */
-RegionBH.getCentreFor = function(index,space){
-    var offset = RegionBH.centerVectors[index].clone()
+EntGL.RegionBH.getCentreFor = function(index,space){
+    var offset = EntGL.RegionBH.centerVectors[index].clone()
         .multiplyScalar(space.range * 0.5);
     return space.centre.clone().addSelf(offset);            
 }
@@ -112,7 +141,7 @@ RegionBH.getCentreFor = function(index,space){
  * @param startRegion regione da cui iniziare la ricerca
  * @return THREE.Vector3
  */
-RegionBH.euristicFreePosition = function(startRegion){
+EntGL.RegionBH.euristicFreePosition = function(startRegion){
     var q = [startRegion], pointRegions = [], head;
     while(q.length>0){
         var rcurr = q.shift();
@@ -126,12 +155,12 @@ RegionBH.euristicFreePosition = function(startRegion){
                 pointRegions.push({
                     region: rcurr, index: rInd, 
                     particle: elem});
-            } else return RegionBH.getCentreFor(rInd, rcurr);
+            } else return EntGL.RegionBH.getCentreFor(rInd, rcurr);
         }            
         if(pointRegions.length>0){ // ci sono punti in coda
             head = pointRegions[0];
             // crea un punto affianco al punto in coda 
-            return RegionBH.euristicNextPosition(head.particle, head.region, head.index);
+            return EntGL.RegionBH.euristicNextPosition(head.particle, head.region, head.index);
         }        
     }
     return new THREE.Vector3(0,0,0);
@@ -144,16 +173,16 @@ RegionBH.euristicFreePosition = function(startRegion){
  * @param spaceindex (opzionale) indice della sottoregione dove collocare il punto
  * @return THREE.Vector3
  */
-RegionBH.euristicNextPosition = function(point, space, spaceindex){
-    if(arguments.length>=2) spaceindex = RegionBH.getIndexFor(point,space);
+EntGL.RegionBH.euristicNextPosition = function(point, space, spaceindex){
+    if(arguments.length>=2) spaceindex = EntGL.RegionBH.getIndexFor(point,space);
     // ricava il centro della sotto regione dove saranno collocati i due punti
     var subSpace = {
-        centre: RegionBH.getCentreFor(spaceindex,space),
+        centre: EntGL.RegionBH.getCentreFor(spaceindex,space),
         range: space.range * 0.5
     };
     // ricava l'indice del punto esistente nella sua regione
-    var occIndex = RegionBH.getIndexFor(point,subSpace);
+    var occIndex = EntGL.RegionBH.getIndexFor(point,subSpace);
     // ritorna la posizione nella regione affianco al punto
-    return RegionBH.getCentreFor((occIndex+1)%8,subSpace);        
+    return EntGL.RegionBH.getCentreFor((occIndex+1)%8,subSpace);        
 }
 

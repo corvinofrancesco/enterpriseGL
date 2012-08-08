@@ -1,17 +1,27 @@
-function Region(x, y, z){
-    this.type = "defcube";
-    // define the centre of region
-    this.centre = new THREE.Vector3(x,y,z);
-    // define the centre of mass of region
-    this.position = new THREE.Vector3(x,y,z);
-    this.mass = 1;
-    this.range = 10;
-    this.parent = null;
+function Region(){
     this.childs = [];
-    this.index = 0;
+    this.type = "defcube";
+    this.centre = new THREE.Vector3(0,0,0);
+    this.position = new THREE.Vector3(0,0,0);
+    this.mass = 1;
+    this.range = 10;    
+    this.index = 0;        
 }
 
 Region.prototype = {
+    
+    init: function(x,y,z){
+        this.type = "defcube";
+        // define the centre of region
+        this.centre = new THREE.Vector3(x,y,z);
+        // define the centre of mass of region
+        this.position = new THREE.Vector3(x,y,z);
+        this.mass = 1;
+        this.range = 10;
+        this.parent = null;
+        this.childs = [];
+        this.index = 0;        
+    },
     
     /**
      * This methods require and element Particle and verify if 

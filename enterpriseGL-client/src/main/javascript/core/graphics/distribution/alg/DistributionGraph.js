@@ -3,7 +3,8 @@ DistributionGraph.constructor = DistributionGraph;
 DistributionGraph.superclass = DistributionAlg.prototype;
 
 function DistributionGraph(){
-    this._root = new RegionBH(0,0,0);
+    this._root = new EntGL.RegionBH();
+    this._root.init(0,0,0);
 }
 
 /**
@@ -22,12 +23,12 @@ function DistributionGraph(){
 DistributionGraph.prototype.getPositionFor = function(p){
     switch(p.relations.length){
         case 0: case undefined: case null:
-            return RegionBH.euristicFreePosition(this._root);
+            return EntGL.RegionBH.euristicFreePosition(this._root);
         case 1:
             var pNext = this._getInfoFor(p.relations[0]), leaf = null;
             leaf = this._search(pNext);
-            if(leaf==null) return RegionBH.euristicFreePosition(this._root);
-            return RegionBH.euristicNextPosition(pNext,leaf.parent);
+            if(leaf==null) return EntGL.RegionBH.euristicFreePosition(this._root);
+            return EntGL.RegionBH.euristicNextPosition(pNext,leaf.parent);
         default:
             var retPos = new THREE.Vector3(0,0,0),div=0;
             for(var i in p.relations){
@@ -38,7 +39,7 @@ DistributionGraph.prototype.getPositionFor = function(p){
                 }
             }
             // if mean elaboration have a faillure
-            if(div<2) return  RegionBH.euristicFreePosition(this._root);
+            if(div<2) return  EntGL.RegionBH.euristicFreePosition(this._root);
             retPos.multiplyScalar(1/div);
             return retPos;
     }
@@ -55,11 +56,9 @@ DistributionGraph.prototype._insert = function(leaf, parent){
     while(!result.insert){
         if(curr.contains(leaf)) {
             result = curr.insert(leaf);
-            if(!result.insert) {
-                //TODO create a regionBH, register, and insert leaf in the tree
-                curr = result.region;
-                
-            }        
+            curr = result.region;
+            // if it creates a EntGL.RegionBH then register
+            if(result.register) this._regions.push(result.region);
         } else {
             curr = curr.parent || this._root;
             curr.resize(leaf);        
@@ -67,6 +66,10 @@ DistributionGraph.prototype._insert = function(leaf, parent){
     }
     this._leaves.push(leaf);
     leaf.parent = curr;
+    if(curr.needSubdivision()){
+        result = curr.promote();
+        for(var i in result) this._regions.push(result[i]);
+    }
 }
     
 /**
@@ -78,17 +81,18 @@ DistributionGraph.prototype._insert = function(leaf, parent){
  */
 DistributionGraph.prototype.createRegion = function(leaf,index,centre,otherLeaf){
     var parent = leaf.parent || this._root;
-    var i = index || RegionBH.getIndexFor(leaf, parent);
-    var c = centre || RegionBH.getCentreFor(i, parent);
-    var pRegion = new Region(c.x,c.y,c.z);
+    var i = index || EntGL.RegionBH.getIndexFor(leaf, parent);
+    var c = centre || EntGL.RegionBH.getCentreFor(i, parent);
+    var pRegion = new Region();
+    pRegion.init(c.x,c.y,c.z);
     pRegion.parent = parent;
     pRegion.range = parent.range * 0.5;
-    var firstP = RegionBH.getIndexFor(leaf,pRegion);
+    var firstP = EntGL.RegionBH.getIndexFor(leaf,pRegion);
     pRegion.childs[firstP] = leaf;
     leaf.parent = pRegion;
     parent.childs[i] = pRegion;
     if(otherLeaf){
-        var otherP = RegionBH.getIndexFor(otherLeaf,pRegion);
+        var otherP = EntGL.RegionBH.getIndexFor(otherLeaf,pRegion);
         if(otherP!=firstP){
             parent.childs[otherP] = otherLeaf;
             otherLeaf.parent = pRegion;
@@ -109,18 +113,18 @@ DistributionGraph.prototype.createRegion = function(leaf,index,centre,otherLeaf)
 DistributionGraph.prototype.update = function(system){
     if(arguments.length>0) this.setSystemRepos(system);
     var particles = this._getParticles(),
-        maxLeng = 100;
+        maxLeng = 100, p, index = 0;
     this.reset();
-    for(var p in particles){
+    for(p in particles){
         var dist = 0;
         try {
             dist = particles[p].position.length();
         } catch(e){dist = 0;}
         if(maxLeng<dist) maxLeng = dist;
     }
-    this._root = new RegionBH();
     this._root.range = maxLeng + 10;
-    for(var p in particles){
+    for(p in particles){
+        index ++;
         this.insert(particles[p]);
     }
     this._root.computeCenterOfMass();
@@ -130,9 +134,11 @@ DistributionGraph.prototype.update = function(system){
  * Method to reset initial status of algorithm
  */
 DistributionGraph.prototype.reset = function(){
-    this._root = new RegionBH();
+    this._root = new EntGL.RegionBH();
+    this._root.init(0,0,0);
     this._root.range = 100;
-    this._regions = [this._root];
-    this._leaves = [];
+    this._regions = new Array();
+    this._regions.push(this._root);    
+    this._leaves = new Array();
 }
 

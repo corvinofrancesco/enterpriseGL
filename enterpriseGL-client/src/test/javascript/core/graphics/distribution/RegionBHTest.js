@@ -15,11 +15,12 @@ EntGLTest.RegionBHTest.prototype.setOrigin = function(origin){
 }
 
 EntGLTest.RegionBHTest.prototype.testEuristicNextPosition = function(){
-    var region = new RegionBH(5,5,5),
+    var region = new EntGL.RegionBH(),
        leaf = new RegionLeaf(this.origin), 
        result;
        region.range = 20;
-    result = RegionBH.euristicNextPosition(leaf,region);
+    region.init(5,5,5);
+    result = EntGL.RegionBH.euristicNextPosition(leaf,region);
     expect(result instanceof THREE.Vector3).toBe(true);
     expect(result.lengthSq()).not.toBe(0);    
 }

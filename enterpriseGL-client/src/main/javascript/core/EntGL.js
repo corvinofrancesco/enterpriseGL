@@ -1,4 +1,4 @@
-var EntGL = function(){};
+var EntGL = EntGL || {};
 
 EntGL.ElementType = {
     PARTICLE: "particle", EVENT: "event", RELATION: "relation", AGGREGATION: "aggregation"
