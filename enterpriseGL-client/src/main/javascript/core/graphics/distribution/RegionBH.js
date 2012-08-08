@@ -12,6 +12,14 @@ function RegionBH(){
     this.type = RegionBH.types.LeafContainer;
 }
 
+/**
+ *
+ * @param leaf RegionLeaf to insert in the region
+ * @return an Object with association:
+ * - insert: boolean, true the operation is completed
+ * - region: last region to make operation on the leaf passed
+ * - index: region index where the leaf has to be inserted
+ */
 RegionBH.prototype.insert = function(leaf){
     if(this.type == RegionBH.types.LeafContainer) {
         leaf.parent = this;

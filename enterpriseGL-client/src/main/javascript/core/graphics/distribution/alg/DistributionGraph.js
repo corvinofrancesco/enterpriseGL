@@ -49,47 +49,21 @@ DistributionGraph.prototype.getPositionFor = function(p){
  * @param leaf RelationLeaf to insert in the tree region
  * @param parent RelationLeaf considered to be proximus
  */ 
-//DistributionGraph.prototype._insert = function(leaf, parent){
-//    var q = [parent || this._root], curr, candidate;
-//    while(q.length>0){
-//        curr = q.shift();
-//        var i = RegionBH.getIndexFor(leaf,curr);
-//        candidate = curr.childs[i];
-//        if(candidate instanceof Region){
-//            candidate.insert(leaf);            
-//            if(candidate.needSubdivision()){
-//                candidate.remove(leaf);
-//                q.push(candidate);
-//            }
-//        } else if(candidate instanceof RegionLeaf){
-//            if(candidate.samePosition(leaf)){
-//                candidate.unionWith(leaf);                
-//            } else {
-//                var newR = curr.createSub(i);
-//                curr.childs[i] = newR;
-//                this._insert(candidate,curr);
-//                newR.insert(leaf);    
-//                this._regions.push(newR);
-//            }
-//        } else {
-//            curr.childs[i] = leaf;
-//        }
-//    }
-//}
-
-/**
- * Search a particle in the tree
- * @param p graphical particle
- * @return RegionLeaf or null if the particle is not found
- */
-//DistributionGraph.prototype._search = function(p){
-//    if(p == undefined || p==null) return null;
-//    for(var l in this._leaves){
-//        var curr = this._leaves[l];
-//        if(curr.have(p)) return curr;
-//    }
-//    return null;
-//}
+DistributionGraph.prototype._insert = function(leaf, parent){
+    var curr = parent || this._root, 
+        result = {insert: false};
+    if(curr.contains(leaf)) {
+        result = curr.insert(leaf);
+        if(!result.insert) {
+            
+        }        
+    } else {
+        curr = curr.parent || this._root;
+        
+    }
+    this._leaves.push(leaf);
+    leaf.parent = curr;
+}
     
 /**
  * Create a region from a leaf
@@ -122,11 +96,39 @@ DistributionGraph.prototype.createRegion = function(leaf,index,centre,otherLeaf)
     return pRegion;
 }
 
-//DistributionGraph.prototype.update = function(system){
-//    if(arguments.length>0) this.setSystemRepos(system);
-//    var particles = this._getParticles();
-//    this.reset();
-//    for(var p in particles){
-//        this.insert(particles[p]);
-//    }
-//}
+/**
+ * Update the distribution algorithm passing new graphical system
+ * It controls particles in the system and changes the configurations of regions
+ * Complexity with n number of particles -> O(n * O(insert) )
+ * @param system an object @see GraphicalSystem (optional)
+ */
+DistributionGraph.prototype.update = function(system){
+    if(arguments.length>0) this.setSystemRepos(system);
+    var particles = this._getParticles(),
+        maxLeng = 100;
+    this.reset();
+    for(var p in particles){
+        var dist = 0;
+        try {
+            dist = particles[p].position.length();
+        } catch(e){dist = 0;}
+        if(maxLeng<dist) maxLeng = dist;
+    }
+    this._root = new RegionBH();
+    this._root.range = maxLeng + 10;
+    for(var p in particles){
+        this.insert(particles[p]);
+    }
+    this._root.computeCenterOfMass();
+}
+
+/**
+ * Method to reset initial status of algorithm
+ */
+DistributionGraph.prototype.reset = function(){
+    this._root = new RegionBH();
+    this._root.range = 100;
+    this._regions = [this._root];
+    this._leaves = [];
+}
+
