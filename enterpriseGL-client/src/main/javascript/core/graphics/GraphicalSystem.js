@@ -195,8 +195,9 @@ GraphicalSystem.prototype = {
         // objects for graphical elaboration
         this.objects = [];
         // phisics configurations 
-        this._distributionAlg = new DistributionAlg();
-        this._distributionAlg.setSystemRepos(this);
+        this.changeDistribution(new DistributionAlg());
+//        this._distributionAlg = new DistributionAlg();
+//        this._distributionAlg.setSystemRepos(this);
         this.forces = {
             /// atraction between particles in relation
             relAttr: attractionForce(0.02,2),

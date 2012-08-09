@@ -57,7 +57,7 @@ EntGraphics.prototype = {
             var id = this.system.particles[i];
             this.removeParticle(id);
         }
-        this.system = new GraphicalSystem();
+        this.system.reset();
         this.settings.clearDiedEvents();
     },
     
