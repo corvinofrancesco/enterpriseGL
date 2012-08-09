@@ -87,7 +87,7 @@ DistributionAlg.prototype = {
     
     /**
      * Search a particle in the tree
-     * @param p graphical particle
+     * @param p graphical particle, instance of @see EntParticle or a identificator
      * @return RegionLeaf or null if the particle is not found
      */
     _search: function(p){
@@ -178,14 +178,18 @@ DistributionAlg.prototype = {
     
     /**
      * Insert a graphical particle in the distribution
-     * @param p Graphical Particle
+     * @param p Graphical Particle or @see EntParticle
      * @return RegionLeaf where the particle is going to be insert
      */
     insert: function(p){
+        if(p instanceof EntParticle) p.modelReference = p.id;
         if(!(p.position instanceof THREE.Vector3)) {
             p.position = this.getPositionFor(p);
         }
-        var r = new RegionLeaf(p); //this.createLeafRegion(p);
+        var r = new RegionLeaf({
+            position:p.position, 
+            modelReference: p.modelReference
+        });
         this._insert(r);
         return r;
     },
