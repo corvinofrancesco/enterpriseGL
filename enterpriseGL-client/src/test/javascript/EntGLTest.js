@@ -35,3 +35,14 @@ EntGLTest.prototype = {
         }
     }
 }
+
+EntGLTest.compareVector = function(v1, v2){
+    if(v2 instanceof Array){
+        v2 = new THREE.Vector3(v2[0],v2[1],v2[2]);
+    }
+    var ret = 0;
+    try {
+        ret = v1.clone().subSelf(v2).length();
+    } catch(e){ return -1;}
+    return ret;
+}

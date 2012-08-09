@@ -33,22 +33,16 @@ EntGLTest.DistributionGraphTest.prototype.testGetPositionFor = function(){
    graph.reset();
    
    var point = graph.getPositionFor({relations:[]});
-//   expect(point.x).toBe(0);
-//   expect(point.y).toBe(0);
-//   expect(point.z).toBe(0);
+   expect(EntGLTest.compareVector(point,[0,0,0])).toBe(0);
 
    graph.insert(origin);
    var t =  graph.getPositionFor({relations:[]});
-   expect(t.x).not.toBe(0);
-   expect(t.y).not.toBe(0);
-   expect(t.z).not.toBe(0);               
+   expect(EntGLTest.compareVector(t,[0,0,0])).not.toBe(0);
 
    graph.reset();
    graph.insert(origin);
    var v = graph.getPositionFor(nextOrigin);
-   expect(v.x).not.toBe(origin.position.x);
-   expect(v.y).not.toBe(origin.position.y);
-   expect(v.z).not.toBe(origin.position.z);                                             
+   expect(EntGLTest.compareVector(v,origin.position)).not.toBe(0);
 }
 
 describe('DistributionGraph Test', function(){
