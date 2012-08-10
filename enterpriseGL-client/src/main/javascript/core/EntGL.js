@@ -26,6 +26,7 @@ EntGL.SettingsDefault.prototype = {
                     event._element = primitive;
                     event.settingGen = "createParticleGeom";
                     scene.add(primitive.getElement());
+                    primitive.getElement().position = null;
                     system.add(primitive.getElement())
                     return;
                 }
