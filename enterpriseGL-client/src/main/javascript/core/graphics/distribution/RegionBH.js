@@ -38,24 +38,10 @@ EntGL.RegionBH.prototype.insert = function(leaf){
     newR.insert(leaf);
     this.childs[i] = newR;
     return {insert:true, region: newR, register: true};
-//    // delegate order to child
-//    if(this.childs[i] instanceof EntGL.RegionBH)
-//        return this.childs[i].insert(leaf);
-//    // we can insert leaf and old leaf into new
-//    if(leaf instanceof EntGL.RegionBH){
-//        var oldLeaf = this.childs[i];
-//        if(oldLeaf instanceof RegionLeaf){
-//            this.childs[i] = leaf;
-//            leaf.parent = this;
-//            return leaf.insert(oldLeaf);
-//        }
-//    }        
-//        //TODO delegate or orderer insertion 
-//    return {insert: false, region: this, index: i};
 }
 
 EntGL.RegionBH.prototype.needSubdivision = function(){
-    if(this.childs.length>10){
+    if(this.childs.length>8){
         var sig = 0, mean;
         //mean = this.centre.clone().subSelf(this.position).lengthSq();
         //if(mean == 0 ) mean = this.range * this.range * 0.25;

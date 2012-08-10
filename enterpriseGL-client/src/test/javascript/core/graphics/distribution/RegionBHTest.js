@@ -29,3 +29,22 @@ EntGLTest.RegionBHTest.prototype.testInsert = function(){
     expect(true).toBe(true);
 }
 
+EntGLTest.RegionBHTest.prototype.testNeedSubdivision = function(){
+    var region = new EntGL.RegionBH(),
+        point = new RegionLeaf(), i;
+    region.init(0,0,0);
+    region.range = 50;
+        
+    for(i =0;i<20;i++) region.insert(point);    
+    expect(region.needSubdivision()).toBe(false);
+    for(i=0;i<20;i++) {
+        point = new RegionLeaf({position: new THREE.Vector3(
+            Math.random() * 100 - 50,
+            Math.random() * 100 - 50,
+            Math.random() * 100 - 50            
+        )});
+        region.insert(point);
+    }
+    expect(region.needSubdivision()).toBe(true);
+}
+
