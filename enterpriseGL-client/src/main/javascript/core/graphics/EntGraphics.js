@@ -154,13 +154,7 @@ EntGraphics.prototype = {
     removeParticle: function(p){
         var gPart = this.system.particles[p.modelReference];
         this.system.remove(p.modelReference);
-        this.scene.remove(gPart);
-        // remove relations from scene
-        for(var ri in this.relations[p.modelReference]){
-            var r = this.relations[p.modelReference][ri];
-            if(r.isOnScene) this.scene.remove(r);
-        }
-        this.relations[p.modelReference] = undefined;
+        this.settings.register( GraphicalSettings.EventType.REMOVE,gPart)
     },
     
     addParticle: function(pEnt){
