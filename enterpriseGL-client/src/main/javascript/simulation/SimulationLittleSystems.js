@@ -8,7 +8,13 @@ function SimulationLittleSystem(){
     part3 = new EntParticle(),
     part4 = new EntParticle(),
     part5 = new EntParticle(),
-    part6 = new EntParticle();
+    part6 = new EntParticle(),
+    part7 = new EntParticle(),
+    part8 = new EntParticle(),
+    part9 = new EntParticle(),
+    part10 = new EntParticle(),
+    part11 = new EntParticle(),
+    part12 = new EntParticle();
 
     part1.setProperties({
         id: 'part1',
@@ -58,11 +64,64 @@ function SimulationLittleSystem(){
     });
     part6.register();
 
+    part7.setProperties({
+        id: 'part7',
+        title: "Particella 07",
+        definition: "Particella d'esempio numero 07",
+        relations: ['part6']    
+    });
+    part7.register();
+
+    part8.setProperties({
+        id: 'part8',
+        title: "Particella 08",
+        definition: "Particella d'esempio numero 08",
+        relations: ['part6']    
+    });
+    part8.register();
+
+    part9.setProperties({
+        id: 'part9',
+        title: "Particella 09",
+        definition: "Particella d'esempio numero 09",
+        relations: ['part6']    
+    });
+    part9.register();
+
+    part10.setProperties({
+        id: 'part10',
+        title: "Particella 10",
+        definition: "Particella d'esempio numero 10",
+        relations: ['part6']    
+    });
+    part10.register();
+
+    part11.setProperties({
+        id: 'part11',
+        title: "Particella 11",
+        definition: "Particella d'esempio numero 11",
+        relations: ['part6']    
+    });
+    part11.register();
+
+    part12.setProperties({
+        id: 'part12',
+        title: "Particella 12",
+        definition: "Particella d'esempio numero 12",
+        relations: ['part6']    
+    });
+    part12.register();
+
     event0.setProperties({
         id: 'event0',
         nametime: new Date(),
         description: "A fist event for testing graphical system",
-        objects: ["part1", "part2", "part3","part4","part5","part6"]
+        objects: [
+            "part1", "part2", "part3",
+            "part4","part5","part6",
+            "part7","part8","part9",
+            "part10","part11","part12"
+        ]
     });
     event0.register();
 }

@@ -7,7 +7,7 @@ function GraphicalSystem(){
     // objects for graphical elaboration
     this.objects = [];
     // phisics configurations 
-    this._distributionAlg = new DistributionGraph();//Alg();
+    this._distributionAlg = new DistributionAlg();//Graph();
     this._distributionAlg.setSystemRepos(this);
     this.forces = {
         /// atraction between particles in relation
@@ -106,13 +106,12 @@ GraphicalSystem.prototype = {
         //TODO calculate the differenzial time (dtime) and update particles positions
         var dtime = 0.5;
         for(var i in this.particles){
-            var p = this.particles[i];            
-            // delta = a*t^2/2 + v*t 
-            var delta = 
-                p.accelerations.clone().multiplyScalar(0.5* dtime*dtime);
+            var p = this.particles[i],            
+                // delta = a*t^2/2 + v*t 
+                delta = p.accelerations.clone().multiplyScalar(0.5* dtime*dtime),
+                // deltav = t*a
+                deltav = p.accelerations.clone().multiplyScalar(dtime);
             delta.addSelf(p.velocity.clone().multiplyScalar(dtime));
-            // deltav = t*a
-            var deltav = p.accelerations.clone().multiplyScalar(dtime);
             p.velocity.addSelf(deltav);
             // position += delta;
             p.position.addSelf(delta);
@@ -195,8 +194,9 @@ GraphicalSystem.prototype = {
         // objects for graphical elaboration
         this.objects = [];
         // phisics configurations 
-        this._distributionAlg = new DistributionAlg();
-        this._distributionAlg.setSystemRepos(this);
+        this.changeDistribution(new DistributionAlg());
+//        this._distributionAlg = new DistributionAlg();
+//        this._distributionAlg.setSystemRepos(this);
         this.forces = {
             /// atraction between particles in relation
             relAttr: attractionForce(0.02,2),

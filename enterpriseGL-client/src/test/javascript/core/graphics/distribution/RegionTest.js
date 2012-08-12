@@ -11,7 +11,8 @@ describe('Region Testing', function(){
     ];
     
     describe('Testing construtor', function(){
-        var r = new Region(9,4,4);
+        var r = new Region(); 
+        r.init(0,0,0);       
         it('Control number of childs', function(){
             expect(r.childs.length).toBe(0);
         });
@@ -19,9 +20,9 @@ describe('Region Testing', function(){
     });
     
     describe('insert() Test', function(){
-        var r1 = new Region(20,20,20);
+        var r1 = new Region(); r1.init(20,20,20);
         r1.insert(p[0]);
-        var r = new Region(10,10,10);
+        var r = new Region(); r.init(10,10,10);
         r.range = 100;
         r.insert(p[0]); // point in the region 7
         r.insert(p[1]); // point in the region 0
@@ -33,8 +34,8 @@ describe('Region Testing', function(){
     });
     
     describe("contains() Testing", function(){
-       var r = new Region(20,20,20), result;
-       r.range = 20;
+       var r = new Region(), result;
+       r.init(20,20,20); r.range = 20; 
        
        it("Control if (-1,-1,-1) is not in the region", function(){
           result = r.contains({position: new THREE.Vector3(-1,-1,-1)}); 
@@ -53,7 +54,7 @@ describe('Region Testing', function(){
     });
     
     describe("computeCentreOfMass() Testing", function(){
-       var r = new Region(20,20,20);
+       var r = new Region(); r.init(20,20,20);
        r.range = 20;
        //r.insert(p[0]);
        for(var i in p) r.insert(p[i]);
