@@ -3,19 +3,9 @@ DistributionGraph.constructor = DistributionGraph;
 DistributionGraph.superclass = DistributionAlg.prototype;
 
 function DistributionGraph(){
-    
+    this._root = new EntGL.RegionBH();
+    this._root.init(0,0,0);
 }
-
-DistributionGraph.centerVectors = [
-  new THREE.Vector3(-1,-1,-1),  
-  new THREE.Vector3( 1,-1,-1),  
-  new THREE.Vector3(-1, 1,-1),  
-  new THREE.Vector3( 1, 1,-1),  
-  new THREE.Vector3(-1,-1, 1),  
-  new THREE.Vector3( 1,-1, 1),  
-  new THREE.Vector3(-1, 1, 1),  
-  new THREE.Vector3( 1, 1, 1) 
-];
 
 /**
  * Se p non ha relazioni: 
@@ -33,12 +23,12 @@ DistributionGraph.centerVectors = [
 DistributionGraph.prototype.getPositionFor = function(p){
     switch(p.relations.length){
         case 0: case undefined: case null:
-            return this.euristicFreePosition();
+            return EntGL.RegionBH.euristicFreePosition(this._root);
         case 1:
             var pNext = this._getInfoFor(p.relations[0]), leaf = null;
             leaf = this._search(pNext);
-            if(leaf==null) return this.euristicFreePosition();
-            return this.euristicNextPosition(pNext,leaf.parent);
+            if(leaf==null) return EntGL.RegionBH.euristicFreePosition(this._root);
+            return EntGL.RegionBH.euristicNextPosition(pNext,leaf.parent);
         default:
             var retPos = new THREE.Vector3(0,0,0),div=0;
             for(var i in p.relations){
@@ -49,125 +39,37 @@ DistributionGraph.prototype.getPositionFor = function(p){
                 }
             }
             // if mean elaboration have a faillure
-            if(div<2) return  this.euristicFreePosition();
+            if(div<2) return  EntGL.RegionBH.euristicFreePosition(this._root);
             retPos.multiplyScalar(1/div);
             return retPos;
     }
 };
 
 /**
- * Euristica di collocazione delle particelle in posizioni libere.
- * @param startRegion regione da cui iniziare la ricerca
- * @return THREE.Vector3
- */
-DistributionGraph.prototype.euristicFreePosition = function(startRegion){
-    var q = [startRegion || this.root()], pointRegions = [], head;
-    while(q.length>0){
-        var rcurr = q.shift();
-        if(rcurr.isEmpty()) return rcurr.centre;
-        for(var rInd=0; rInd<8; rInd++){
-            var elem = rcurr.childs[rInd];
-            if(elem instanceof Region){                    
-                q.push(elem);
-            } else if(elem instanceof RegionLeaf) {
-                // aggiunge regione del punto
-                pointRegions.push({
-                    region: rcurr, index: rInd, 
-                    particle: elem});
-            } else return this.getCentreFor(rInd, rcurr);
-        }            
-        if(pointRegions.length>0){ // ci sono punti in coda
-            head = pointRegions[0];
-            // crea un punto affianco al punto in coda 
-            return this.euristicNextPosition(head.particle, head.region, head.index);
-        }        
-    }
-    return new THREE.Vector3(0,0,0);
-}
-
-/**
- * Restituisce una posizione libera prossima a un punto dalla regione fornita
- * @param point punto di prossimità dove cercare la posizione
- * @param space regione dove cercare il punto
- * @param spaceindex (opzionale) indice della sottoregione dove collocare il punto
- * @return THREE.Vector3
- */
-DistributionGraph.prototype.euristicNextPosition = function(point, space, spaceindex){
-    space = space || this.root();
-    if(arguments.length>=2) spaceindex = this.getIndexFor(point,space);
-    // ricava il centro della sotto regione dove saranno collocati i due punti
-    var subSpace = {
-        centre: this.getCentreFor(spaceindex,space),
-        range: space.range * 0.5
-    };
-    // ricava l'indice del punto esistente nella sua regione
-    var occIndex = this.getIndexFor(point,subSpace);
-    // ritorna la posizione nella regione affianco al punto
-    return this.getCentreFor((occIndex+1)%8,subSpace);        
-}
-
-/**
- * 
- * @param point punto per il quale si vuole individuare l'indice
- * @param space spazio da suddividere
- * @return int 0<= x < 8
- */
-DistributionGraph.prototype.getIndexFor = function(point,space){
-    var i =0;
-    if(space.centre.x < point.position.x) i = 1;
-    if(space.centre.y < point.position.y) i += 2;
-    if(space.centre.z < point.position.z) i += 4;
-    return i;
-}
-
-/**
- * @param index indice della sottoregione
- * @param space regione parent 
- * @return THREE.Vector3
- */
-DistributionGraph.prototype.getCentreFor = function(index,space){
-    var offset = DistributionGraph.centerVectors[index].clone()
-        .multiplyScalar(space.range * 0.5);
-    return space.centre.clone().addSelf(offset);            
-}
-
-/**
  * Inserisce la relazione foglia nella parte più bassa dell'albero 
  * @param leaf RelationLeaf to insert in the tree region
- * @param suggestLeaf RelationLeaf considered to be proximus
+ * @param parent RelationLeaf considered to be proximus
  */ 
-DistributionGraph.prototype._insert = function(leaf, suggestLeaf){
-    var q = [this._root], curr, candidate;
-    while(q.length>0){
-        curr = q.shift();
-        var i=this.getIndexFor(leaf,curr);
-        candidate = curr.childs[i];
-        if(candidate instanceof Region){
-            q.push(candidate);
-        } else if(candidate instanceof RegionLeaf){
-            var newReg = this.createRegion(candidate,false,false,leaf);
-            this._regions.push(newReg);
-            return;
+DistributionGraph.prototype._insert = function(leaf, parent){
+    var curr = parent || this._root, 
+        result = {insert: false};
+    while(!result.insert){
+        if(curr.contains(leaf)) {
+            result = curr.insert(leaf);
+            curr = result.region;
+            // if it creates a EntGL.RegionBH then register
+            if(result.register) this._regions.push(result.region);
         } else {
-            curr.childs[i] = leaf;
-            leaf.parent = curr;
-            return;
-        }
+            curr = curr.parent || this._root;
+            curr.resize(leaf);        
+        }        
     }
-}
-
-/**
- * Search a particle in the tree
- * @param p graphical particle
- * @return RegionLeaf or null if the particle is not found
- */
-DistributionGraph.prototype._search = function(p){
-    if(p == undefined || p==null) return null;
-    for(var l in this._leaves){
-        var curr = this._leaves[l];
-        if(curr.have(p)) return curr;
+    this._leaves.push(leaf);
+    leaf.parent = curr;
+    if(curr.needSubdivision()){
+        result = curr.promote();
+        for(var i in result) this._regions.push(result[i]);
     }
-    return null;
 }
     
 /**
@@ -179,17 +81,18 @@ DistributionGraph.prototype._search = function(p){
  */
 DistributionGraph.prototype.createRegion = function(leaf,index,centre,otherLeaf){
     var parent = leaf.parent || this._root;
-    var i = index || this.getIndexFor(leaf, parent);
-    var c = centre || this.getCentreFor(i, parent);
-    var pRegion = new Region(c.x,c.y,c.z);
+    var i = index || EntGL.RegionBH.getIndexFor(leaf, parent);
+    var c = centre || EntGL.RegionBH.getCentreFor(i, parent);
+    var pRegion = new Region();
+    pRegion.init(c.x,c.y,c.z);
     pRegion.parent = parent;
     pRegion.range = parent.range * 0.5;
-    var firstP = this.getIndexFor(leaf,pRegion);
+    var firstP = EntGL.RegionBH.getIndexFor(leaf,pRegion);
     pRegion.childs[firstP] = leaf;
     leaf.parent = pRegion;
     parent.childs[i] = pRegion;
     if(otherLeaf){
-        var otherP = this.getIndexFor(otherLeaf,pRegion);
+        var otherP = EntGL.RegionBH.getIndexFor(otherLeaf,pRegion);
         if(otherP!=firstP){
             parent.childs[otherP] = otherLeaf;
             otherLeaf.parent = pRegion;
@@ -201,11 +104,41 @@ DistributionGraph.prototype.createRegion = function(leaf,index,centre,otherLeaf)
     return pRegion;
 }
 
+/**
+ * Update the distribution algorithm passing new graphical system
+ * It controls particles in the system and changes the configurations of regions
+ * Complexity with n number of particles -> O(n * O(insert) )
+ * @param system an object @see GraphicalSystem (optional)
+ */
 DistributionGraph.prototype.update = function(system){
     if(arguments.length>0) this.setSystemRepos(system);
-    var particles = this._getParticles();
+    var particles = this._getParticles(),
+        maxLeng = 100, p, index = 0;
     this.reset();
-    for(var p in particles){
+    for(p in particles){
+        var dist = 0;
+        try {
+            dist = particles[p].position.length();
+        } catch(e){dist = 0;}
+        if(maxLeng<dist) maxLeng = dist;
+    }
+    this._root.range = maxLeng + 10;
+    for(p in particles){
+        index ++;
         this.insert(particles[p]);
     }
+    this._root.computeCenterOfMass();
 }
+
+/**
+ * Method to reset initial status of algorithm
+ */
+DistributionGraph.prototype.reset = function(){
+    this._root = new EntGL.RegionBH();
+    this._root.init(0,0,0);
+    this._root.range = 100;
+    this._regions = new Array();
+    this._regions.push(this._root);    
+    this._leaves = new Array();
+}
+

@@ -1,4 +1,4 @@
-var EntGL = function(){};
+var EntGL = EntGL || {};
 
 EntGL.ElementType = {
     PARTICLE: "particle", EVENT: "event", RELATION: "relation", AGGREGATION: "aggregation"
@@ -26,6 +26,7 @@ EntGL.SettingsDefault.prototype = {
                     event._element = primitive;
                     event.settingGen = "createParticleGeom";
                     scene.add(primitive.getElement());
+                    primitive.getElement().position = null;
                     system.add(primitive.getElement())
                     return;
                 }

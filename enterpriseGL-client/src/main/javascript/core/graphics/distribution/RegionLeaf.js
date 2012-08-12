@@ -2,7 +2,7 @@ function RegionLeaf(p){
     var point = p || {position:null,modelReference:null};
     this.parent = null;
     this.position = point.position || new THREE.Vector3(0,0,0);
-    this._container = point.modelReference?[p.modelReference]:[];
+    this._container = point.modelReference?[point.modelReference]:[];
     this.error = 0.009;
     this.mass = 0;
 }
@@ -62,12 +62,14 @@ RegionLeaf.prototype = {
     
     /**
      *
-     * @param p graphical particle to control
+     * @param p graphical particle, EntParticle or identificator of the particle to control
      * @return true if the region contains the passed particle
      */
     have: function(p){
+        var id = p.modelReference || p;
+        if(p instanceof EntParticle) id = p.id;
         for(var e in this._container){
-            if(this._container[e]== p.modelReference) 
+            if(this._container[e]== id) 
                 return true;
         }
         return false;

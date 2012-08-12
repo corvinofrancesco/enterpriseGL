@@ -1,17 +1,27 @@
-function Region(x, y, z){
-    this.type = "defcube";
-    // define the centre of region
-    this.centre = new THREE.Vector3(x,y,z);
-    // define the centre of mass of region
-    this.position = new THREE.Vector3(x,y,z);
-    this.mass = 1;
-    this.range = 10;
-    this.parent = null;
+function Region(){
     this.childs = [];
-    this.index = 0;
+    this.type = "defcube";
+    this.centre = new THREE.Vector3(0,0,0);
+    this.position = new THREE.Vector3(0,0,0);
+    this.mass = 1;
+    this.range = 10;    
+    this.index = 0;        
 }
 
 Region.prototype = {
+    
+    init: function(x,y,z){
+        this.type = "defcube";
+        // define the centre of region
+        this.centre = new THREE.Vector3(x,y,z);
+        // define the centre of mass of region
+        this.position = new THREE.Vector3(x,y,z);
+        this.mass = 1;
+        this.range = 10;
+        this.parent = null;
+        this.childs = [];
+        this.index = 0;        
+    },
     
     /**
      * This methods require and element Particle and verify if 
@@ -21,6 +31,7 @@ Region.prototype = {
      * @return boolean equal to true is the element is in region.
      */
     contains : function (element) {
+        if(!(element.position instanceof THREE.Vector3)) return false;
         var limit = this.range;
         var dist = element.position.clone().subSelf(this.centre);
         if (this.type == "spherical") {
@@ -41,7 +52,9 @@ Region.prototype = {
     },
     
     resize : function (range) {
-        this.range = range;
+        if(range instanceof RegionLeaf){
+            this.range = this.centre.clone().subSelf(range.position).length();
+        } else this.range = range;
     },
     
     remove: function(child){

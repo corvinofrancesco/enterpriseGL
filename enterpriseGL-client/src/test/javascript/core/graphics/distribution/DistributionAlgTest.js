@@ -1,77 +1,72 @@
-describe("DistributionAlg Test", function(){
-   var origin = {
-           position: new THREE.Vector3(0,0,0),
-           relations: [], modelReference:"0"
-       },
-       nextOrigin = {
-           relations:["0"],modelReference:"N"
-       },
-       otherPoint = {
-           relations:[],modelReference:"P"
-       },
-       middle = {
-           relations:["0","P"],modelReference:"M"
-       },
-       particles = {"0":origin,"N":nextOrigin,"P":otherPoint,"M":middle},
-       getInfoFor = function(p){return particles[p];};
-       
-    describe('Testing spacial management methods', function(){
-        var alg = new DistributionAlg();
-        
-        describe('Testing getPositionFor method', function(){
+EntGLTest.DistributionAlgTest = function(){
+    this.className = "DistributionAlgTest";
+    this.points = [];
+    this.particles = {};
+}
 
-            it('Control if with nothing return 0,0,0 position', function() {
-                var v = alg.getPositionFor();
-                expect(v.x).toBe(0);
-                expect(v.y).toBe(0);
-                expect(v.z).toBe(0);
-            });
-                        
-            it('Control if with a particle the result is a valid position', function(){
-                var part1 = {
-                    position : new THREE.Vector3(0,0,0),
-                    modelReference: 'part1'
-                };
-                alg.insert(part1);
-                var v = alg.getPositionFor('part1'); 
-                expect(v).not.toBe(null);
-            });
-                        
-        });
+EntGLTest.DistributionAlgTest.prototype = new EntGLTest();
+EntGLTest.DistributionAlgTest.constructor = EntGLTest.DistributionAlgTest;
+EntGLTest.DistributionAlgTest.superclass = EntGLTest;
+
+EntGLTest.DistributionAlgTest.prototype.setPoints = function(points){
+    this.points = points || [];
+}
+
+EntGLTest.DistributionAlgTest.prototype.setOrigin = function(origin){
+    this.origin = origin;
+    this.particles["0"] = origin;
+}
+
+EntGLTest.DistributionAlgTest.prototype.setNextOrigin = function(nextO){
+    this.nextOrigin = nextO;
+    this.particles["N"] = nextO;
+}
+
+EntGLTest.DistributionAlgTest.prototype.setOtherPoint = function(point){
+    this.otherPoint = point;
+    this.particles["P"] = point;
+}
+
+EntGLTest.DistributionAlgTest.prototype.setMiddle = function(middle){
+    this.middle= middle;
+    this.particles["M"] = middle;
+}
+
+EntGLTest.DistributionAlgTest.prototype.testGetPositionFor = function(){
+    var alg = new DistributionAlg(),
+        v = alg.getPositionFor(),
+        part1 = {
+            position : new THREE.Vector3(0,0,0),
+            modelReference: 'part1'
+        };
+    expect(v.x).toBe(0);
+    expect(v.y).toBe(0);
+    expect(v.z).toBe(0);
+    alg.insert(part1);
+    v = alg.getPositionFor('part1'); 
+    expect(v).not.toBe(null);    
+}
+
+EntGLTest.DistributionAlgTest.prototype.testInsert = function(){
+    var alg = new DistributionAlg(),
+        origin = this.origin, 
+        particles = this.particles;
+    alg._getInfoFor = function(p){return particles[p];};
+    alg.insert(origin);
+
+    expect(alg._leaves.length>0).toBe(true);
+
+    var result = alg._search(origin);
+    expect(result instanceof RegionLeaf).toBe(true);
+    expect(result.have(origin)).toBe(true);
+    expect(result.parent).toBe(alg._root);
+}    
     
-    });
-    
-    describe("Management regions methods", function(){
-        var alg = new DistributionAlg();
-        alg._getInfoFor = getInfoFor;
-        alg.insert(origin);
-        
-        it("Insert have create almost one leaf",function(){
-            expect(alg._leaves.length>0).toBe(true);
-        });
-        
-        it("We can search the leaf created", function(){
-            var result = alg._search(origin);
-            expect(result instanceof RegionLeaf).toBe(true);
-            expect(result.have(origin)).toBe(true);
-            expect(result.parent).toBe(alg._root);
-        });
-        
-    });
-    
-    describe("Update testing",function(){
-       var alg = new DistributionAlg(), precLeaf;
-       //     munkSys = {particles:particles}; 
-       alg.reset(); alg._getInfoFor = getInfoFor;
-       alg.insert(origin); alg.insert(nextOrigin); 
-       precLeaf = alg.insert(otherPoint); alg.insert(middle);
-       otherPoint.position= new THREE.Vector3(-70,-60,-65);
-       alg.update();//alg.update(munkSys)
-       
-       it("control if otherPoint leaf change", function(){
-           var result = alg._search(otherPoint);
-           expect(result).not.toBe(precLeaf);
-       })
-    });
-    
-});
+EntGLTest.DistributionAlgTest.prototype.testUpdate = function(){
+    var alg = new DistributionAlg();
+    alg.reset();
+    alg.update(this);
+
+    var result = alg._search(this.otherPoint);
+    expect(result).not.toBe(null);
+}    
