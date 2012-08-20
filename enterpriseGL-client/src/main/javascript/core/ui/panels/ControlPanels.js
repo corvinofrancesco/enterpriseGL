@@ -19,13 +19,24 @@ EntGL.ControlPanels = {
             .askServerAction.call(this,attr("href")));
     },    
     
-    askServerAction: function(url){
+    errorAction: function(xhr){
+        alert("Error! Fail connection at the server.");
+    },
+    
+    prepareAjaxAction: function(req){
+        req.setRequestHeader("Accept", "text/plain;charset=UTF-8");
+        req.setRequestHeader("ajaxRequest", "true");        
+    },
+    
+    askServerAction: function(urlRequest){
         $.ajax({
-            url: configuration.startReq.link,
+            url: urlRequest,
             dataType: "text",
-            beforeSend: function(req){configuration.prepareAjax(req)},
-            success: function(text){configuration.menu.changeWith(text);},
-            error: function(xhr){configuration.cntError(xhr);}    
+            beforeSend: EntGL.ControlPanels.prepareAjaxAction,
+            success: function(text){
+                EntGL.ControlPanels.changeAction(EntGL.ControlPanels.panelControlsId,text);
+            },
+            error: EntGL.ControlPanels.errorAction    
         });        
     },
     
