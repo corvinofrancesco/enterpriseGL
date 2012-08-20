@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>A simple use of EnterpriseGL-client javascript library</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body onload="create()">
+        <script type="text/javascript" src="lib/jquery-1.4.4.min.js"></script>
+        <script type="text/javascript" src="lib/Three.js"></script>
+        <script type="text/javascript" src="${project.build.finalName}.js"></script>
+        <script type="text/javascript">
+            /** 
+             * Javascript code for enviroment configurations
+             **/
+            function create(){
+                var enviroment = new EntController();
+            }
+            
+            function log(msg,elem,override){
+                var idLog = "LOG";
+                if(elem) idLog = elem;
+                var object = document.getElementById(idLog);
+                if(!object) return;
+                if(override) {
+                    object.innerHTML = (msg + "\n");                    
+                } else {
+                    object.innerHTML += (msg + "\n");                    
+                }
+            }
+
+        </script>
+        
+            Session for visualitation of WebGL scene. <br/>
+            <div id="container">
+                <div class="descriptionBox" id="descriptionBox" style="background-color: transparent; position: absolute;">
+                </div>                               
+            </div>
+            <div>
+                <span>Log Messages:</span><br/>
+                <dir id="LOG">
+                </dir>
+            </div>
+            
+    </body>
+</html>
