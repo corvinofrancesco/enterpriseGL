@@ -143,14 +143,14 @@ EntInteraction.prototype = {
         this.selectElem = object;
         EntInteraction.clickOnObject(object.modelReference);
         if(this.containerManager) {
-            this.containerManager.container.style.cursor = 'move';
+            this.containerManager.changeMainCursor('move');
         }
     },
     
     deselectObject: function(){
         this.selectElem = null;
         if(this.containerManager) {
-            this.containerManager.container.style.cursor = 'auto';
+            this.containerManager.changeMainCursor('auto');
             this.containerManager.hiddenInfo();            
         }
     },
@@ -158,7 +158,7 @@ EntInteraction.prototype = {
     moveObject: function(position){
         this.selectElem.position.copy(position);        
         if(this.containerManager) {
-            this.containerManager.container.style.cursor = 'move';
+            this.containerManager.changeMainCursor('move');
         }
     },
     

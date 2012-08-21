@@ -6,8 +6,9 @@
  */
 EntGL.Controller = {
     configuration: {
-        defaultModel: function(){}, //SimulationLittleSystems
-        infoModelLoad: function(id){}
+        defaultModel: function(){}, //SimulationLittleSystem
+        infoModelLoad: function(id){return "load/download/" + id;},
+        infoModelUrl: function(model){return "load/config/" + model;},
     },
     completeDownload :function(){
         // set the timeline to the first event

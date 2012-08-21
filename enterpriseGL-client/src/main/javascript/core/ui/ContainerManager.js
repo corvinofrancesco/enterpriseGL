@@ -2,21 +2,26 @@
  * This class manage interaction with container.
  */
 function ContainerManager(config){
-    this.container = document.getElementById( config.main );    
-    this.infoContainer = document.getElementById( config.info );    
+    this.container = $("#" + config.main );    
+    this.infoContainer = $("#" + config.info );    
 }
 
 ContainerManager.prototype = {
     writeInfo: function(message){
-        this.infoContainer.innerHTML = message;
-        this.infoContainer.style.dysplay = true;
+        this.infoContainer.empty();
+        this.infoContainer.show();
+        this.infoContainer.prepend(message);
     },
     
     hiddenInfo: function(){
-        this.infoContainer.style.dysplay = false;        
+        this.infoContainer.hide();
     },
     
     add: function(subCont){
-        this.container.appendChild(subCont);
+        this.container.prepend(subCont);
+    },
+    
+    changeMainCursor: function(cursor){
+        this.container.get(0).style.cursor = cursor;
     }
 }
