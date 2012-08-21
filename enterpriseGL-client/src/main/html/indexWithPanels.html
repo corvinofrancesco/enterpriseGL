@@ -5,6 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body onload="create()">
+        <link rel="stylesheet" href="resources/style/entGL.css" />
         <script type="text/javascript" src="lib/jquery-1.4.4.min.js"></script>
         <script type="text/javascript" src="lib/Three.js"></script>
         <script type="text/javascript" src="${project.build.finalName}.js"></script>
@@ -32,7 +33,16 @@
         
             Session for visualitation of WebGL scene. <br/>
             <div id="container">
-                <div class="descriptionBox" id="descriptionBox" style="background-color: transparent; position: absolute;">
+                <div id="panelControls">
+                    <div id="panelControls-showButtons">
+                       <a href="#">+</a>
+                    </div>
+                    <div id="panelControls-hideButtons">
+                       <a href="#">-</a>                        
+                    </div>
+                    <div id="panelControls-content"></div>
+                </div>
+                <div id="descriptionBox">
                 </div>                               
             </div>
             <div>

@@ -1,0 +1,54 @@
+/* 
+    Document   : entGL
+    Created on : 21-ago-2012, 18.03.40
+    Author     : Francesco
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+    display: block;
+}
+
+#container {
+    
+}
+
+#descriptionBox {
+    right: 10px;
+    background-color: transparent;
+    width: 40%;
+    position: absolute;
+}
+
+#panelControls {
+    position: absolute;
+    left: 0px;
+    float: right;
+}
+
+#panelControls a {
+    background:#d2e0ea url(../images/buttonbg.png) repeat-x; 
+    border:1px solid #899caa; 
+    cursor:pointer;        
+}
+
+#panelControls-showButtons {
+    display: none;
+}
+
+#panelControls-hideButtons {
+}
+
+#panelControls-content {
+    height: 400px;
+    width: 200px; 
+    font-size: 8px;
+    border:1px solid #899caa;
+    border-radius:3px 0 3px 3px;
+    -moz-border-radius:3px 0 3px 3px;
+    margin-top:-1px;
+    background:#d2e0ea;
+    padding:6px;
+}
+
