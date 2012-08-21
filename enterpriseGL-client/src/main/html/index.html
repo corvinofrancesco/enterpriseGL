@@ -13,7 +13,8 @@
              * Javascript code for enviroment configurations
              **/
             function create(){
-                var enviroment = new EntController();
+                EntGL.Controller.configuration.defaultModel = SimulationLittleSystem;
+                EntGL.Controller.start();
             }
             
             function log(msg,elem,override){

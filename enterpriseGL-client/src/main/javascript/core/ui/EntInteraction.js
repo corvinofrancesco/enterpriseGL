@@ -20,7 +20,7 @@ function EntInteraction(graphics){
 }
 
 EntInteraction.changeModel = function(idModel){
-    EntController.changeModel(idModel);
+    EntGL.Controller.changeModel(idModel);
 }
 
 EntInteraction.onResize = function(event){
