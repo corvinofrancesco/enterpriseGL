@@ -43,11 +43,11 @@
                 <directory>src/main/html</directory>
                 <filtering>true</filtering>
             </resource>
-            <!-- Folder for fragment and vertex shaders -->
+            <!-- Folder for fragment and vertex shaders, images, css.. -->
             <resource>
-                <directory>src/main/glsl</directory>
+                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <targetPath>shaders</targetPath>
+                <targetPath>resources</targetPath>
             </resource>
             <resource>
                 <directory>${client.libraries}</directory>
