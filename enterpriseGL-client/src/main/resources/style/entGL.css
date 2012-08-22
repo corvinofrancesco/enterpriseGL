@@ -23,7 +23,8 @@ root {
 
 #panelControls {
     position: absolute;
-    left: 0px;
+    left: 10px;
+    top: 10px;
     float: right;
 }
 

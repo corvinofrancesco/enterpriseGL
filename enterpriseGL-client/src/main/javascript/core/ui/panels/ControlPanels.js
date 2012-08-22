@@ -57,4 +57,12 @@ EntGL.ControlPanels = {
             EntGL.ControlPanels.panelTimelineId);
     },
     
+    execute: function(command){
+        if(command.isRemotePage){
+            this.askServerAction(command.param)
+        } else {
+            //TODO create a page from comman.param string
+            //change panel with page
+        }
+    }
 };

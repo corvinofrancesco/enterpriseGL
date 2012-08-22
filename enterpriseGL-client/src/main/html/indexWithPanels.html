@@ -15,6 +15,21 @@
              **/
             function create(){
                 EntGL.Controller.configuration.defaultModel = SimulationLittleSystem;
+                EntGL.Controller.configuration.panels = {
+                    enable:true,
+                    list: {
+                        prova : {
+                            title: "prova",
+                            isRemotePage: false,
+                            param: "prova" 
+                        },
+                        prova1 :{
+                            title: "prova 1",
+                            isRemotePage: true,
+                            param: "prova1"
+                        }
+                    }
+                }
                 EntGL.Controller.start();
             }
             
@@ -34,15 +49,6 @@
         
             Session for visualitation of WebGL scene. <br/>
             <div id="container">
-                <div id="panelControls">
-                    <div id="panelControls-showButtons">
-                       <a href="#">+</a>
-                    </div>
-                    <div id="panelControls-hideButtons">
-                       <a href="#">-</a>                        
-                    </div>
-                    <div id="panelControls-content"></div>
-                </div>
                 <div id="descriptionBox">
                 </div>                               
             </div>

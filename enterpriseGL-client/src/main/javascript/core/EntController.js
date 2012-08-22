@@ -9,7 +9,22 @@ EntGL.Controller = {
         defaultModel: function(){}, //SimulationLittleSystem
         infoModelLoad: function(id){return "load/download/" + id;},
         infoModelUrl: function(model){return "load/config/" + model;},
+        panels: {
+            enable: false,
+            list: [],
+            mainPanel: null
+        }        
     },
+    
+    registerCommand: function(command){
+        this.commands[command.id] = command;  
+    },
+    
+    invoke: function(command){
+        if(this.commands[command])
+            this.command[command].execute();
+    },
+    
     completeDownload :function(){
         // set the timeline to the first event
         EntGL.Controller.model.init();                
@@ -64,9 +79,13 @@ EntGL.Controller = {
         instance.graphics.update();    
     },
     start: function(){
-        var containerMng = new ContainerManager({
+        var containerMng = new EntGL.ContainerMng({
             info:"descriptionBox",
-            main:"container"});
+            main:"container"}),
+            panels = this.configuration.panels;
+        $(document).ready(function(){
+            containerMng.enablePanels(panels);
+        });
 
         this.model = new EntModel();
         this.graphics = new EntGraphics();
