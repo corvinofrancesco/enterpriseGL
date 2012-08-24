@@ -24,7 +24,8 @@ EntGL.Controller = {
     
     invoke: function(command){
         if(this.commands[command])
-            this.commands[command].execute();
+            this.commands[command].execute
+                .call(this.commands[command].receiver);
     },
     
     completeDownload :function(){

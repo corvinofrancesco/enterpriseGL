@@ -52,12 +52,12 @@ EntGL.ContainerMng = {
         EntGL.Controller.register({id:"hidePanels",execute: this.hideControls});            
         for(p in panels.list){
             var command = panels.list[p];
-            EntGL.Controller.register({id: p, execute: function(){
-                    if(command.isRemotePage){
-                        this.askServerAction(command.param)
+            EntGL.Controller.register({id: p, receiver:command, execute: function(){
+                    if(this.isRemotePage){
+                        EntGL.ContainerMng.askServerAction(this.param)
                     } else {
-                        //TODO create a page from comman.param string
-                        //change panel with page
+                        // create a panel from this.param string
+                        EntGL.ContainerMng.createPanel(this.param);
                     }
                 }
             });            
@@ -82,7 +82,7 @@ EntGL.ContainerMng = {
         $("#" + elemId + "-content").prepend(text);
         // TODO control insert text
         $("a.textLink").click(EntGL.ContainerMng
-            .askServerAction.call(this,attr("href")));
+            .askServerAction(this.attr("href")));
     },    
     
     errorAction: function(xhr){
@@ -104,6 +104,18 @@ EntGL.ContainerMng = {
             },
             error: EntGL.ContainerMng.errorAction    
         });        
+    },
+    
+    createPanel: function(uriPanel){
+        var panel = new EntGL.Panel();
+      // search uniPanel in registered panels 
+      // create Panel is registered
+      // 
+        panel.panelId = uriPanel;
+        this.changeAction(
+            this.panelControlsId,
+            panel.toString()
+        );
     },
     
     hideControls: function(){
