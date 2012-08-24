@@ -34,11 +34,13 @@ root {
     cursor:pointer;        
 }
 
-#panelControls-showButtons {
-    display: none;
+.panelButtons {
+    background: #6699ff;
+    border:1px solid #123caa;
 }
 
-#panelControls-hideButtons {
+#panelControls-showButtons {
+    display: none;
 }
 
 #panelControls-content {

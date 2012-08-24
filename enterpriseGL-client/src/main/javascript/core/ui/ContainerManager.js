@@ -1,14 +1,15 @@
 /**
  * This class manage interaction with container.
  */
-EntGL.ContainerMng = function(config){
-    this.panelTimelineId = "timelinePanel";
-    this.panelControlsId = "eglcontrolsPanel";
-    this.container = $("#" + config.main );    
-    this.infoContainer = $("#" + config.info );  
-}
-
-EntGL.ContainerMng.prototype = {
+EntGL.ContainerMng = {
+    panelTimelineId: "timelinePanel",
+    panelControlsId: "panelControls",
+    
+    init: function(config){
+        this.container = $("#" + config.main );    
+        this.infoContainer = $("#" + config.info );  
+    },
+    
     writeInfo: function(message){
         this.infoContainer.empty();
         this.infoContainer.show();
@@ -29,50 +30,58 @@ EntGL.ContainerMng.prototype = {
     
     enablePanels: function(panels){
         if(!panels.enable) return null;
-        var p,command,html = 
-            "<div id='panelControls'>" +
-                "<div id='panelControls-showButtons'>" + 
-                    "<a onclick=''>" + "+ </a>" +
+        var p, html = 
+            "<div id='" + this.panelControlsId + "'>" +
+                "<div id='" + this.panelControlsId + "-showButtons' class='panelButtons'>" + 
+                    "<a onclick='EntGL.Controller.invoke(\"showPanels\")'>" + "+ </a>" +
                 "</div>" +
-                "<div id='panelControls-hideButtons'>" + 
-                    "<a onclick=''>" + "- </a>";
+                "<div id='" + this.panelControlsId + "-hideButtons' class='panelButtons'>" + 
+                    "<a onclick='EntGL.Controller.invoke(\"hidePanels\")'>" + "- </a>";
         for(p in panels.list){
-            html+="<a onclick=''>"+ panels.list[p].title + "</a>"; 
-            command = {
-                id: p,
-                execute: function(){
-                    
-                }
-                //TODO create command
-            };
-            EntGL.Controller.register(command);
+            html+="<a onclick='EntGL.Controller.invoke(\"" + p + "\")'>" 
+                + panels.list[p].title + "</a>"; 
         }
         html +=            
                 "</div>" +                
-                "<div id='panelControls-content'>" + 
+                "<div id='" + this.panelControlsId + "-content'>" + 
                 "</div>" +                
             "</div>";
         this.add(html);
+        // register all commands
+        EntGL.Controller.register({id:"showPanels",execute: this.showControls});            
+        EntGL.Controller.register({id:"hidePanels",execute: this.hideControls});            
+        for(p in panels.list){
+            var command = panels.list[p];
+            EntGL.Controller.register({id: p, execute: function(){
+                    if(command.isRemotePage){
+                        this.askServerAction(command.param)
+                    } else {
+                        //TODO create a page from comman.param string
+                        //change panel with page
+                    }
+                }
+            });            
+        }
         return html;
     },
     
     
     
     hideAction: function(elemId){
-        $("#" + elemId ).hide();
-        $("#" + elemId + "-showButton").show();    
-        $("#" + elemId + "-hideButton").hide();    
+        $("#" + elemId + "-content").hide();
+        $("#" + elemId + "-showButtons").show();    
+        $("#" + elemId + "-hideButtons").hide();    
     },
     showAction: function(elemId){
-        $("#" + elemId ).show();
-        $("#" + elemId + "-showButton").hide();    
-        $("#" + elemId + "-hideButton").show();            
+        $("#" + elemId + "-content").show();
+        $("#" + elemId + "-showButtons").hide();    
+        $("#" + elemId + "-hideButtons").show();            
     },
     changeAction: function(elemId, text){
-        $("#" + elemId).empty();
-        $("#" + elemId).prepend(text);
+        $("#" + elemId + "-content").empty();
+        $("#" + elemId + "-content").prepend(text);
         // TODO control insert text
-        $("a.textLink").click(EntGL.ControlPanels
+        $("a.textLink").click(EntGL.ContainerMng
             .askServerAction.call(this,attr("href")));
     },    
     
@@ -89,38 +98,29 @@ EntGL.ContainerMng.prototype = {
         $.ajax({
             url: urlRequest,
             dataType: "text",
-            beforeSend: EntGL.ControlPanels.prepareAjaxAction,
+            beforeSend: EntGL.ContainerMng.prepareAjaxAction,
             success: function(text){
-                EntGL.ControlPanels.changeAction(EntGL.ControlPanels.panelControlsId,text);
+                EntGL.ContainerMng.changeAction(EntGL.ContainerMng.panelControlsId,text);
             },
-            error: EntGL.ControlPanels.errorAction    
+            error: EntGL.ContainerMng.errorAction    
         });        
     },
     
     hideControls: function(){
-        EntGL.ControlPanels.hideAction(
-            EntGL.ControlPanels.panelControlsId);
+        EntGL.ContainerMng.hideAction(
+            EntGL.ContainerMng.panelControlsId);
     },
     showControls: function(){
-        EntGL.ControlPanels.showAction(
-            EntGL.ControlPanels.panelControlsId);
+        EntGL.ContainerMng.showAction(
+            EntGL.ContainerMng.panelControlsId);
     },
     hideTimeline: function(){
-        EntGL.ControlPanels.hideAction(
-            EntGL.ControlPanels.panelTimelineId);
+        EntGL.ContainerMng.hideAction(
+            EntGL.ContainerMng.panelTimelineId);
     },
     showTimeline: function(){
-        EntGL.ControlPanels.showAction(
-            EntGL.ControlPanels.panelTimelineId);
+        EntGL.ContainerMng.showAction(
+            EntGL.ContainerMng.panelTimelineId);
     },
-    
-    execute: function(command){
-        if(command.isRemotePage){
-            this.askServerAction(command.param)
-        } else {
-            //TODO create a page from comman.param string
-            //change panel with page
-        }
-    }
     
 }

@@ -15,14 +15,16 @@ EntGL.Controller = {
             mainPanel: null
         }        
     },
-    
-    registerCommand: function(command){
+    commands: {
+        
+    },
+    register: function(command){
         this.commands[command.id] = command;  
     },
     
     invoke: function(command){
         if(this.commands[command])
-            this.command[command].execute();
+            this.commands[command].execute();
     },
     
     completeDownload :function(){
@@ -79,19 +81,19 @@ EntGL.Controller = {
         instance.graphics.update();    
     },
     start: function(){
-        var containerMng = new EntGL.ContainerMng({
+        EntGL.ContainerMng.init({
             info:"descriptionBox",
             main:"container"}),
             panels = this.configuration.panels;
         $(document).ready(function(){
-            containerMng.enablePanels(panels);
+            EntGL.ContainerMng.enablePanels(panels);
         });
 
         this.model = new EntModel();
         this.graphics = new EntGraphics();
-        containerMng.add(this.graphics.renderer.domElement);    
+        EntGL.ContainerMng.add(this.graphics.renderer.domElement);    
         this.ui = new EntInteraction(this.graphics); 
-        this.ui.containerManager = containerMng;        
+        this.ui.containerManager = EntGL.ContainerMng;        
         this.configuration.defaultModel();
         // start updates
         EntGL.Controller.update();
