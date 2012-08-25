@@ -5,7 +5,7 @@ function EntObjects(){
     this.objects = {};
     this.array = [];
     this.undefLink = "Undefined Object";
-    this.callbackName = "EntInteraction.clickOnObject";
+    this.callbackName = "EntGL.Interaction.clickOnObject";
     EntObjects.instance = this;    
 };
 

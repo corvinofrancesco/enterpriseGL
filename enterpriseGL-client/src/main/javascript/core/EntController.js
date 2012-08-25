@@ -34,7 +34,7 @@ EntGL.Controller = {
         var graphic = EntGL.Controller.graphics,
             event = EntGL.Controller.model.currentEventId;
         graphic.updateModel(event);
-        EntGL.Controller.ui.mouse 
+        EntGL.Interaction.mouse 
             = graphic.createMouseSelector();
     },
     downloadModel: function(){
@@ -74,7 +74,7 @@ EntGL.Controller = {
     update: function(){
         requestAnimationFrame( EntGL.Controller.update );
         var instance = EntGL.Controller;
-        instance.ui.update();
+        EntGL.Interaction.update();
         if(instance.model.hasChange()){
             instance.graphics.updateModel(
                 instance.model.currentEventId);
@@ -93,8 +93,8 @@ EntGL.Controller = {
         this.model = new EntModel();
         this.graphics = new EntGraphics();
         EntGL.ContainerMng.add(this.graphics.renderer.domElement);    
-        this.ui = new EntInteraction(this.graphics); 
-        this.ui.containerManager = EntGL.ContainerMng;        
+        EntGL.Interaction.init(this.graphics); 
+        EntGL.Interaction.containerManager = EntGL.ContainerMng;        
         this.configuration.defaultModel();
         // start updates
         EntGL.Controller.update();

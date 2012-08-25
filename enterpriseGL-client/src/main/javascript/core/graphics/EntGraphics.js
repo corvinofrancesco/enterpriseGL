@@ -62,7 +62,7 @@ EntGraphics.prototype = {
     },
     
     /**
-     * Object used by @see EntInteraction class to manage the selections
+     * Object used by @see EntGL.Interaction class to manage the selections
      * of objects
      */
     createMouseSelector : function(){
