@@ -83,11 +83,7 @@ EntGL.Controller = {
     start: function(){
         EntGL.ContainerMng.init({
             info:"descriptionBox",
-            main:"container"}),
-            panels = this.configuration.panels;
-        $(document).ready(function(){
-            EntGL.ContainerMng.enablePanels(panels);
-        });
+            main:"container"});
 
         EntGL.Model.init();
         this.graphics = new EntGraphics();
@@ -95,7 +91,12 @@ EntGL.Controller = {
         EntGL.Interaction.init(this.graphics); 
         EntGL.Interaction.containerManager = EntGL.ContainerMng;        
         this.configuration.defaultModel();
-        // start updates
-        EntGL.Controller.update();
+        // call only after all documents are loaded
+        $(document).ready(function(){
+            EntGL.ContainerMng.enablePanels(
+                EntGL.Controller.configuration.panels);
+            // start updates
+            EntGL.Controller.update();
+        });
     }
 }

@@ -13,11 +13,20 @@ EntGL.Panel.prototype = {
      * Take object properties init for <code>change</code>
      */
     linkTo: function(object){
-        for(var p in object){
-            if(object[p] instanceof Function)
-                if(p.search("change") != -1){
-                    
-                }
+        if(object.getPanelFields){
+            this.fields = object.getPanelFields();
+        } else {
+            for(var p in object){
+                if(object[p] instanceof Function)
+                    if(p.search("change") != -1){
+                        this.fields[p] = {
+                            type: "text",
+                            onChange: function(val){
+                                object[p].call(object,val)
+                            }
+                        }
+                    }
+            }
         }
     },
     
