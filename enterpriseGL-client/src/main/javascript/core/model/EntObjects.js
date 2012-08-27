@@ -1,15 +1,11 @@
 /**
  * Register and unregister enterprise objects retrive from server.
  */
-function EntObjects(){
-    this.objects = {};
-    this.array = [];
-    this.undefLink = "Undefined Object";
-    this.callbackName = "EntGL.Interaction.clickOnObject";
-    EntObjects.instance = this;    
-};
+EntGL.Objects = {
+    objects: {},
+    undefLink: "Undefined Object",
+    callbackName: "EntGL.Interaction.clickOnObject",
 
-EntObjects.prototype = {
     generateLink : function(id){
         if(!this.objects[id]) return this.undefLink;
         var ob = this.objects[id], 
@@ -37,7 +33,7 @@ EntObjects.prototype = {
     
     /**
      * This function returns all events registered
-     * @see EntModel class that invokes this method for timeline
+     * @see EntGL.Model class that invokes this method for timeline
      */
     getEvents: function(){
         var retArray = [];
@@ -46,33 +42,31 @@ EntObjects.prototype = {
             if(e instanceof EntEvent) retArray.push(e);
         }
         return retArray;        
-    }
-};
-
-new EntObjects();
+    },
 
 /**
  * Register function of objects
  * @param object object to be register
  */
-EntObjects.register = function(object){
-    EntObjects.instance.objects[object.id] = object;
-}
+    register: function(object){
+        this.objects[object.id] = object;
+    },
 
-EntObjects.unregister = function(object){
-    EntObjects.instance.objects[object.id] = undefined;
-}
+    unregister: function(object){
+        this.objects[object.id] = undefined;
+    },
 
-EntObjects.get = function(id) {
-    if(EntObjects.instance.objects[id]) 
-        return EntObjects.instance.objects[id];
-    else return null;
-}
+    get: function(id) {
+        if(EntGL.Objects.objects[id]) 
+            return EntGL.Objects.objects[id];
+        else return null;
+    },
 
-EntObjects.getInfo = function(id){
-    return EntObjects.get(id).getDescription();
-}
+    getInfo: function(id){
+        return EntGL.Objects.get(id).getDescription();
+    },
 
-EntObjects.getLink = function(id){
-    return EntObjects.instance.generateLink(id);
+    getLink: function(id){
+        return EntGL.Objects.generateLink(id);
+    }
 }

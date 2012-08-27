@@ -9,9 +9,9 @@ EntRelation.prototype = new EntElement();
 EntRelation.prototype.constructor = EntRelation;
 
 EntRelation.prototype.getSource = function(){
-    return EntObjects.get(this.idSource);
+    return EntGL.Objects.get(this.idSource);
 }
 
 EntRelation.prototype.getDestination = function(){
-    return EntObject.get(this.idDestination);
+    return EntGL.Object.get(this.idDestination);
 }

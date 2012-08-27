@@ -100,7 +100,7 @@ EntGL.Interaction = {
     clickOnObject: function(id){
         var instance = EntGL.Interaction;
         if(instance.containerManager) {
-            var str = EntObjects.getInfo(id);
+            var str = EntGL.Objects.getInfo(id);
             instance.containerManager.writeInfo(str);            
         }           
     },

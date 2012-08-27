@@ -20,7 +20,7 @@ EntEvent.prototype.getDescription = function(){
     if(this.relations.length>0){
         text += "<ul>";
         for(var i in this.objects){
-            var e = EntObjects.instance.generateLink(this.objects[i]);
+            var e = EntGL.Objects.generateLink(this.objects[i]);
             text += "<li>" + e + "</li>";
         }        
         text += "</ul>";

@@ -87,7 +87,7 @@ GraphicalSettings.prototype = {
                     var oldElem = primitive.getElement(), newElem;
                     scene.remove(oldElem);
                     system.remove(oldElem);
-                    primitive.linkToModel(EntObjects.get(oldElem.modelReference))
+                    primitive.linkToModel(EntGL.Objects.get(oldElem.modelReference))
                     newElem = primitive.create();
                     newElem.position = oldElem.position;
                     scene.add(newElem);

@@ -31,7 +31,7 @@ function SimulationConeTree(){
                     Math.floor(Math.random() * levelDef[precLev].estr);
             }
             var idFather = 'part' + idF;
-            if(EntObjects.get(idFather)) rel.push(idFather);
+            if(EntGL.Objects.get(idFather)) rel.push(idFather);
             else alert(idFather + " non esiste!: " + levelDef[precLev].row + " - " 
                 + (Math.floor(Math.random() * levelDef[precLev].estr)) );
         }

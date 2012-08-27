@@ -30,19 +30,18 @@ EntGL.Controller = {
     
     completeDownload :function(){
         // set the timeline to the first event
-        EntGL.Controller.model.init();                
+        EntGL.Model.init();                
         var graphic = EntGL.Controller.graphics,
-            event = EntGL.Controller.model.currentEventId;
+            event = EntGL.Model.currentEventId;
         graphic.updateModel(event);
         EntGL.Interaction.mouse 
             = graphic.createMouseSelector();
     },
     downloadModel: function(){
-        var url = this.configuration.infoModelLoad(this.downloadIndex),
-            model = this.model;
+        var url = this.configuration.infoModelLoad(this.downloadIndex);
         $.getJSON(url, function(data){
             // parse and elaborate data
-            model.addObjects(data.items);
+            EntGL.model.addObjects(data.items);
             if(!data.idPacket==0){
             }
             // if download not already completed make callback
@@ -55,7 +54,7 @@ EntGL.Controller = {
     changeModel: function(idModel){
         var conf = EntGL.Controller.configuration;
         // clear old data
-        EntGL.Controller.model.reset();
+        EntGL.Model.reset();
         EntGL.Controller.graphics.reset();
         // prepare configuration
         if(conf.infoModelUrl){
@@ -75,9 +74,9 @@ EntGL.Controller = {
         requestAnimationFrame( EntGL.Controller.update );
         var instance = EntGL.Controller;
         EntGL.Interaction.update();
-        if(instance.model.hasChange()){
+        if(EntGL.Model.hasChange()){
             instance.graphics.updateModel(
-                instance.model.currentEventId);
+                EntGL.Model.currentEventId);
         }
         instance.graphics.update();    
     },
@@ -90,7 +89,7 @@ EntGL.Controller = {
             EntGL.ContainerMng.enablePanels(panels);
         });
 
-        this.model = new EntModel();
+        EntGL.Model.init();
         this.graphics = new EntGraphics();
         EntGL.ContainerMng.add(this.graphics.renderer.domElement);    
         EntGL.Interaction.init(this.graphics); 

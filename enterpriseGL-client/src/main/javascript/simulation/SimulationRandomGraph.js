@@ -11,7 +11,7 @@ function SimulationRandomGraph(){
         for(var j =0;j<rndInd;j++) {
             var rndId = Math.round(Math.random()*numPart);
             var id = "part" + rndId;
-            if(EntObjects.get(id)) relCasual.push(id);
+            if(EntGL.Objects.get(id)) relCasual.push(id);
         }
         part.setProperties({
             id: 'part' + i,

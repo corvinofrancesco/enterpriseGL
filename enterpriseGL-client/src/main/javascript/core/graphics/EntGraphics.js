@@ -103,13 +103,13 @@ EntGraphics.prototype = {
     /**
      * Update the model from enterprise object
      * 
-     * This method is called by @see EntModel when it have to change enterprise
+     * This method is called by @see EntGL.Controller when it have to change enterprise
      * objects rapresentations
      * 
      * @param entEventId identificator of enterprise event, so it can rapresent the modifications to be applied
      */
     updateModel : function(entEventId){
-        var ev = EntObjects.get(entEventId);
+        var ev = EntGL.Objects.get(entEventId);
         if(!ev) return; // if invalid event, exit
         var elements = (new Array()).concat(ev.objects);
         // control existent particles
@@ -117,18 +117,18 @@ EntGraphics.prototype = {
             var p = ev.posInObjects(i);
             if(p!=-1){
                 elements.splice(p,1);
-                var gPart = EntObjects.get(p);
+                var gPart = EntGL.Objects.get(p);
                 this.settings.register(GraphicalSettings.EventType.UPDATE,gPart);
                 //this.updateParticle(p);
             } else {
-                var gPart = EntObjects.get(p);
+                var gPart = EntGL.Objects.get(p);
                 this.settings.register(GraphicalSettings.EventType.REMOVE,gPart);                
                 //this.removeParticle(p);
             }
         }
         // read particles only for passed event
         for(var i in elements){
-            var elem = EntObjects.get(elements[i]);
+            var elem = EntGL.Objects.get(elements[i]);
             //var elem = elements[i];           
             if(elem) {
                 //TODO get current element

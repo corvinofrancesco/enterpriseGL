@@ -1,31 +1,28 @@
 /**
  * Class for data model loading and comunication to the server
  */
-function  EntModel(){
-    this.timeline = [];
-    this.currentEventId = "event0"; 
-    this.currentEventPos = 0;
-    this.lastCheckSize = 0;
-    this._hasChange = false;
-    new EntObjects();
-}
+EntGL.Model = {
+    timeline: [],
+    currentEventId : "event0", 
+    currentEventPos : 0,
+    lastCheckSize : 0,
+    _hasChange : false,
 
-EntModel.prototype = {
-    
     /**
      * Go to the init event of system
      */
     init : function(){
         this.getTimeLine();
-        this.currentEventPos = 0;                            
-        this.currentEventId = this.timeline[0].id;                            
+        this.setToEvent(this.timeline[0].id);
+//        this.currentEventPos = 0;                            
+//        this.currentEventId = this.timeline[0].id;                            
     },
     
     /**
      * @return the array of events order by crescent data
      */
     getTimeLine: function() {
-        this.timeline = EntObjects.instance.getEvents();
+        this.timeline = EntGL.Objects.getEvents();
         if(this.timeline.length==0) {
             this.timeline = [new EntEvent()];
         }
@@ -67,7 +64,7 @@ EntModel.prototype = {
     setToEvent: function(eventId,pos){
         this._hasChange = true;
         // control if the event is valid
-        if(EntObjects.get(eventId)){
+        if(EntGL.Objects.get(eventId)){
             this.currentEventId = eventId;
             if(pos){
                 if(this.timeline[pos].id == eventId){
@@ -97,7 +94,7 @@ EntModel.prototype = {
      * Reset the enterprise objects
      */
     reset : function(){
-        EntObjects.instance.objects = {};
+        EntGL.Objects.objects = {};
         this.lastCheckSize = 0;
     },
     
@@ -122,8 +119,8 @@ EntModel.prototype = {
             this._hasChange = false;
             return true;
         }
-        var size = 0;
-        for (key in EntObjects.instance.objects) size++;       
+        var size = 0, key;
+        for (key in EntGL.Objects.objects) size++;       
         if(this.lastCheckSize != size) {
             this.lastCheckSize = size;
             return true;

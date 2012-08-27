@@ -7,7 +7,7 @@ describe('EntModel Test',function(){
         isUpdated: function(){return true;},
         wait: function(){}
     };
-    var model = new EntModel();
+    var model = EntGL.Model;
     model.graphics = graphMoch;
     model.loader = loaderMoch;
     

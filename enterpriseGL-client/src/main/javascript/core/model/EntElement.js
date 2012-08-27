@@ -18,10 +18,10 @@ EntElement.prototype = {
     },
     
     register: function(){
-        EntObjects.register(this);        
+        EntGL.Objects.register(this);        
     },
     
     unregister: function(){
-        EntObjects.unregister(this);        
+        EntGL.Objects.unregister(this);        
     }
 }
