@@ -2,7 +2,15 @@ var EntGL = EntGL || {};
 
 EntGL.ElementType = {
     PARTICLE: "particle", EVENT: "event", RELATION: "relation", AGGREGATION: "aggregation"
-}
+};
+
+EntGL.DistributionAlgs = {
+    Default: "DistributionAlg", Graph: "DistributionGraph"
+};
+
+EntGL.Simulations = {
+    ConeTree: "SimulationConeTree", LittleSystem: "SimulationLittleSystems", Random: "SimulationRandomGraph", TwoParticle: "SimulationTwoParticles"
+};
 
 EntGL.SettingsDefault = function(){
     

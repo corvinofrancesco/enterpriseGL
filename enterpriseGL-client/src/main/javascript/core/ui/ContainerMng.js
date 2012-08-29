@@ -4,6 +4,7 @@
 EntGL.ContainerMng = {
     panelTimelineId: "timelinePanel",
     panelControlsId: "panelControls",
+    panels: {},
     
     init: function(config){
         this.container = $("#" + config.main );    
@@ -81,8 +82,10 @@ EntGL.ContainerMng = {
         $("#" + elemId + "-content").empty();
         $("#" + elemId + "-content").prepend(text);
         // TODO control insert text
-        $("a.textLink").click(EntGL.ContainerMng
-            .askServerAction(this.attr("href")));
+        $("a.textLink").click(function(){
+                EntGL.ContainerMng
+                    .askServerAction(this.attr("href"));
+            });
     },    
     
     errorAction: function(xhr){
@@ -108,9 +111,9 @@ EntGL.ContainerMng = {
     
     createPanel: function(uriPanel){
         var panel = new EntGL.Panel();
-      // search uniPanel in registered panels 
-      // create Panel is registered
-      // 
+        // search uniPanel in registered panels
+        if(this.panels[uriPanel]) panel = this.panels[uriPanel];
+        // create Panel is registered
         panel.panelId = uriPanel;
         this.changeAction(
             this.panelControlsId,
