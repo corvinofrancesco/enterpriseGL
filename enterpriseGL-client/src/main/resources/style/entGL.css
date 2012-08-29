@@ -16,6 +16,7 @@ root {
 
 #descriptionBox {
     right: 10px;
+    top: 40px;
     background-color: transparent;
     width: 40%;
     position: absolute;

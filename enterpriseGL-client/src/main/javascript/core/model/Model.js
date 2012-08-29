@@ -115,14 +115,11 @@ EntGL.Model = {
     },
     
     hasChange: function(){
-        if(this._hasChange){
-            this._hasChange = false;
-            return true;
-        }
         var size = 0, key;
         for (key in EntGL.Objects.objects) size++;       
-        if(this.lastCheckSize != size) {
+        if((this._hasChange)||(this.lastCheckSize != size)) {
             this.lastCheckSize = size;
+            this._hasChange = false;
             return true;
         }
         return false;

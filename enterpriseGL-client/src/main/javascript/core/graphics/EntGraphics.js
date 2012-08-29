@@ -1,51 +1,50 @@
 /**
  * Class used to load graphics elements of enterprise rapresentation
  */
-function EntGraphics(configuration) {
-    this.width = window.innerWidth || 800;
-    this.height = window.innerHeight || 600;    
+EntGL.Graphics = {
+    init: function(configuration) {
+        this.width = window.innerWidth || 800;
+        this.height = window.innerHeight || 600;    
 
-    if(!configuration) configuration =new EntGraphicsConfig();
-    this.configuration = configuration;
+        if(!configuration) configuration =new EntGraphicsConfig();
+        this.configuration = configuration;
 
-    /// init renderer
-    this.renderer = new THREE.WebGLRenderer( {
-        antialias: true
-    } );
-    this.renderer.sortObjects = false;
-    this.renderer.setSize( this.width, this.height );
-    this.renderer.shadowMapEnabled = true;
-    this.renderer.shadowMapSoft = true;
-    
-    /// configure scene
-    this.scene = new THREE.Scene();
-    // configure camera
-    this.camera = configuration.cameraConfig(this.scene,this.width,this.height);
-    // controls configurations
-    this.controls = configuration.controlsConfig(this.camera, this.renderer.domElement);
-    // light configurations
-    this.scene.add( new THREE.AmbientLight( 0x505050 ) );
-    this.scene.add(configuration.lightConfig(this.camera));    
-    // plane configuration
-    this.scene.add(this.plane = configuration.planeConfig());
-    /// init projector
-    this.projector = new THREE.Projector();
-    /// init objects
-    this.system = new GraphicalSystem();
-    
-    this.settings = new GraphicalSettings();
-    var settingDefault = new EntGL.SettingsDefault();
-    this.settings.addSettings(settingDefault.popolate());//EntSetting.defaultValues());
-    
-    this.relations = {};
-}
+        /// init renderer
+        this.renderer = new THREE.WebGLRenderer( {
+            antialias: true
+        } );
+        this.renderer.sortObjects = false;
+        this.renderer.setSize( this.width, this.height );
+        this.renderer.shadowMapEnabled = true;
+        this.renderer.shadowMapSoft = true;
 
-EntGraphics.prototype = {
+        /// configure scene
+        this.scene = new THREE.Scene();
+        // configure camera
+        this.camera = configuration.cameraConfig(this.scene,this.width,this.height);
+        // controls configurations
+        this.controls = configuration.controlsConfig(this.camera, this.renderer.domElement);
+        // light configurations
+        this.scene.add( new THREE.AmbientLight( 0x505050 ) );
+        this.scene.add(configuration.lightConfig(this.camera));    
+        // plane configuration
+        this.scene.add(this.plane = configuration.planeConfig());
+        /// init projector
+        this.projector = new THREE.Projector();
+        /// init objects
+        this.system = new GraphicalSystem();
+
+        this.settings = new GraphicalSettings();
+        var settingDefault = new EntGL.SettingsDefault();
+        this.settings.addSettings(settingDefault.popolate());//EntSetting.defaultValues());
+
+        this.relations = {};
+    },
     
     /**
      * Getter required by mouse selector to intersect the elements in the scene
      */
-    get objects(){
+    objects: function(){
         return this.system.objects;
     },
     
@@ -114,14 +113,14 @@ EntGraphics.prototype = {
         var elements = (new Array()).concat(ev.objects);
         // control existent particles
         for(var i in this.system.particles){
-            var p = ev.posInObjects(i);
+            var p = ev.posInObjects(i), gPart;
             if(p!=-1){
                 elements.splice(p,1);
-                var gPart = EntGL.Objects.get(p);
+                gPart = EntGL.Objects.get(p);
                 this.settings.register(GraphicalSettings.EventType.UPDATE,gPart);
                 //this.updateParticle(p);
             } else {
-                var gPart = EntGL.Objects.get(p);
+                gPart = EntGL.Objects.get(p);
                 this.settings.register(GraphicalSettings.EventType.REMOVE,gPart);                
                 //this.removeParticle(p);
             }
@@ -136,7 +135,6 @@ EntGraphics.prototype = {
                 this.addParticle(elem);
             }
         }
-        //this.updateRelations();
     },
     
     updateParticle: function(p){

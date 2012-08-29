@@ -55,12 +55,12 @@ EntGL.Controller = {
         var conf = EntGL.Controller.configuration;
         // clear old data
         EntGL.Model.reset();
-        EntGL.Controller.graphics.reset();
+        EntGL.Graphics.reset();
         // prepare configuration
         if(conf.infoModelUrl){
             $.getJSON(conf.infoModelUrl(idModel), function(data){
                 //TODO Configure the graphics builder with data received
-                EntGL.Controller.graphics.system.changeDistribution(
+                EntGL.Graphics.system.changeDistribution(
                     DistributionAlg.Algoritms(data.typeDiagram));
             });        
         } else conf.defaultModel();
@@ -71,26 +71,25 @@ EntGL.Controller = {
         }
     },
     update: function(){
-        requestAnimationFrame( EntGL.Controller.update );
-        var instance = EntGL.Controller;
         EntGL.Interaction.update();
         if(EntGL.Model.hasChange()){
-            instance.graphics.updateModel(
+            EntGL.Graphics.updateModel(
                 EntGL.Model.currentEventId);
         }
-        instance.graphics.update();    
+        EntGL.Graphics.update();    
+        requestAnimationFrame( EntGL.Controller.update );
     },
     start: function(){
         EntGL.ContainerMng.init({
             info:"descriptionBox",
             main:"container"});
 
-        EntGL.Model.init();
-        this.graphics = new EntGraphics();
-        EntGL.ContainerMng.add(this.graphics.renderer.domElement);    
-        EntGL.Interaction.init(this.graphics); 
-        EntGL.Interaction.containerManager = EntGL.ContainerMng;        
         this.configuration.defaultModel();
+        EntGL.Model.init();
+        EntGL.Graphics.init();
+        EntGL.ContainerMng.add(EntGL.Graphics.renderer.domElement);    
+        EntGL.Interaction.init(EntGL.Graphics); 
+        EntGL.Interaction.containerManager = EntGL.ContainerMng;        
         // call only after all documents are loaded
         $(document).ready(function(){
             EntGL.ContainerMng.enablePanels(
