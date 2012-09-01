@@ -34,8 +34,7 @@ EntGL.Controller = {
         var graphic = EntGL.Controller.graphics,
             event = EntGL.Model.currentEventId;
         graphic.updateModel(event);
-        EntGL.Interaction.mouse 
-            = graphic.createMouseSelector();
+        EntGL.Interaction.mouse = new EntGL.MouseSelector();
     },
     downloadModel: function(){
         var url = this.configuration.infoModelLoad(this.downloadIndex);

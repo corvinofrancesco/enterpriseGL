@@ -53,15 +53,6 @@ EntGL.Graphics = {
     },
     
     /**
-     * Object used by @see EntGL.Interaction class to manage the selections
-     * of objects
-     */
-    createMouseSelector : function(){
-        return new MouseSelector(this.camera,this.plane,EntGL.System.objects,
-            this.width,this.height);
-    },    
-   
-    /**
      * Update the graphics
      * 
      * Function called by @see EntCanvasManager in the update function

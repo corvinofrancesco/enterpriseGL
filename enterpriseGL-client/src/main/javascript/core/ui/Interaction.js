@@ -10,7 +10,7 @@ EntGL.Interaction = {
         dom.addEventListener( 'mouseup', this.onMouseUp, false );
         window.addEventListener( 'resize', this.onResize, false );
 
-        this.mouse = graphics.createMouseSelector();
+        this.mouse = new EntGL.MouseSelector();
         this.offset = new THREE.Vector3();
         this.intersectedElem = null;
         this.selectElem = null;
@@ -26,7 +26,7 @@ EntGL.Interaction = {
     onResize: function(event){
         var graphics= EntGL.Interaction.graphicsManager;
         graphics.resize(window.innerWidth,window.innerHeight );
-        this.mouse = graphics.createMouseSelector();
+        this.mouse = new EntGL.MouseSelector();
     },
 
     onMouseMove: function(event){

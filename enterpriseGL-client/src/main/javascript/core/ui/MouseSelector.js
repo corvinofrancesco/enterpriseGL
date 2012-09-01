@@ -3,18 +3,18 @@
  * @param camera object with information of current position of point of view
  * @param plane graphical object with 
  */
-function MouseSelector(camera,plane,objects,w,h){
-    this.camera = camera;
-    this.plane = plane;
-    this.objects = objects;
-    this.width = w;
-    this.height = h;
+EntGL.MouseSelector = function(){
+    this.camera = EntGL.Graphics.camera;
+    this.plane = EntGL.Graphics.plane;
+    this.objects = EntGL.System.objects;
+    this.width = EntGL.Graphics.width;
+    this.height = EntGL.Graphics.height;
     /// init projector
     this.projector = new THREE.Projector();
     this.ray = null;
 }
 
-MouseSelector.prototype = {
+EntGL.MouseSelector.prototype = {
     /**
      * Update the position of mouse
      * @param domx x position of mouse in the document
