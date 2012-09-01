@@ -1,5 +1,7 @@
 var EntGL = EntGL || {};
 
+EntGL.params = {};
+
 EntGL.ElementType = {
     PARTICLE: "particle", EVENT: "event", RELATION: "relation", AGGREGATION: "aggregation"
 };

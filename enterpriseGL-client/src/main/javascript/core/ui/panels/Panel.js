@@ -4,15 +4,6 @@ EntGL.Panel = function(tree){
     this.tree = tree || {};
 }
 
-EntGL.Field = function(funToString){
-    if(funToString instanceof Function)
-        this.toString = funToString;
-};
-
-EntGL.Field.prototype.toString = function(){
-    return "";
-}
-
 EntGL.Panel.Style = {
     Class: "EntGLPanel",
 }
