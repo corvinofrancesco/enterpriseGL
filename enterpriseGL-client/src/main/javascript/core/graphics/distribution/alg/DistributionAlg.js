@@ -143,7 +143,7 @@ DistributionAlg.prototype = {
     /**
      * Update the distribution algorithm passing new graphical system
      * It controls particles in the system and changes the configurations of regions
-     * @param system an object @see GraphicalSystem (optional)
+     * @param system an object @see EntGL.System (optional)
      */
     update: function(system){
         if(arguments.length>0) this.setSystemRepos(system);

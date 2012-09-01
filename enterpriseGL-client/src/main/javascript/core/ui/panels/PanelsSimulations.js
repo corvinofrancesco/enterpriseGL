@@ -16,7 +16,7 @@ EntGL.ContainerMng.panels.Simulations = new EntGL.Panel({
     change: new EntGL.Field(function(){
         var value = EntGL.Controller.configuration.simulations || "DistributionAlg";
         return "<input type='button' value='change' " + 
-            "onclick='EntGL.Graphics.system.changeDistribution( new " + 
+            "onclick='EntGL.System.changeDistribution( new " + 
             value + "())' >";
     })
 });

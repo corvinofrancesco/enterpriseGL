@@ -1,25 +1,23 @@
 /**
  * This class manage whole sistem of particles (interaction and forces)
  */
-function GraphicalSystem(){
+EntGL.System = {
     // system objects
-    this.particles = {};
+    particles: {},
+    numparticles: 0,    
     // objects for graphical elaboration
-    this.objects = [];
-    // phisics configurations 
-    this._distributionAlg = new DistributionAlg();//Graph();
-    this._distributionAlg.setSystemRepos(this);
-    this.forces = {
-        /// atraction between particles in relation
-        relAttr: attractionForce(0.02,2),
-        centreforce: gravitation(0.009)
-    };
-    // other global variables
-    this.numparticles = 0;    
-            
-}
+    objects: [],
+    init: function (){
+        // phisics configurations 
+        this._distributionAlg = new DistributionAlg();//Graph();
+        this._distributionAlg.setSystemRepos(this);
+        this.forces = {
+            /// atraction between particles in relation
+            relAttr: attractionForce(0.02,2),
+            centreforce: gravitation(0.009)
+        }
 
-GraphicalSystem.prototype = {
+    },
 
 
     /***************************************************************************

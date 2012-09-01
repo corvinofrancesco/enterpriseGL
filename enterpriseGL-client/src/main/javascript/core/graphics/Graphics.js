@@ -31,8 +31,6 @@ EntGL.Graphics = {
         this.scene.add(this.plane = configuration.planeConfig());
         /// init projector
         this.projector = new THREE.Projector();
-        /// init objects
-        this.system = new GraphicalSystem();
 
         this.settings = new GraphicalSettings();
         var settingDefault = new EntGL.SettingsDefault();
@@ -42,21 +40,15 @@ EntGL.Graphics = {
     },
     
     /**
-     * Getter required by mouse selector to intersect the elements in the scene
-     */
-    objects: function(){
-        return this.system.objects;
-    },
-    
-    /**
      * Remove all painted object in the scene
      */
     reset: function(){
-        for(var i in this.system.particles){
-            var id = this.system.particles[i];
-            this.removeParticle(id);
+        var i, part;
+        for(i in EntGL.System.particles){
+            part = EntGL.System.particles[i];
+            this.removeParticle(part);
         }
-        this.system.reset();
+        EntGL.System.reset();
         this.settings.clearDiedEvents();
     },
     
@@ -65,7 +57,7 @@ EntGL.Graphics = {
      * of objects
      */
     createMouseSelector : function(){
-        return new MouseSelector(this.camera,this.plane,this.system.objects,
+        return new MouseSelector(this.camera,this.plane,EntGL.System.objects,
             this.width,this.height);
     },    
    
@@ -76,7 +68,7 @@ EntGL.Graphics = {
      */
     update : function(){
         this.controls.update();
-        this.system.update();
+        EntGL.System.update();
         //this.updateRelations();
         var events = this.settings.getEvents(), i = 0;
         while(events.length>0){
@@ -84,7 +76,7 @@ EntGL.Graphics = {
             if(curr.isDied()) {
                 //this.settings.remove(i);
             }
-            else curr.applyOn(this.scene,this.system);
+            else curr.applyOn(this.scene,EntGL.System);
             i++;
         }
         this.renderer.render(this.scene,this.camera);
@@ -112,7 +104,7 @@ EntGL.Graphics = {
         if(!ev) return; // if invalid event, exit
         var elements = (new Array()).concat(ev.objects);
         // control existent particles
-        for(var i in this.system.particles){
+        for(var i in EntGL.System.particles){
             var p = ev.posInObjects(i), gPart;
             if(p!=-1){
                 elements.splice(p,1);
@@ -150,8 +142,8 @@ EntGL.Graphics = {
      * for security the primitive from system.
      */
     removeParticle: function(p){
-        var gPart = this.system.particles[p.modelReference];
-        this.system.remove(p.modelReference);
+        var gPart = EntGL.System.particles[p.modelReference];
+        EntGL.System.remove(p.modelReference);
         this.settings.register( GraphicalSettings.EventType.REMOVE,gPart)
     },
     

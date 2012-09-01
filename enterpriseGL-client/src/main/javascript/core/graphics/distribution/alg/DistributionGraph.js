@@ -108,7 +108,7 @@ DistributionGraph.prototype.createRegion = function(leaf,index,centre,otherLeaf)
  * Update the distribution algorithm passing new graphical system
  * It controls particles in the system and changes the configurations of regions
  * Complexity with n number of particles -> O(n * O(insert) )
- * @param system an object @see GraphicalSystem (optional)
+ * @param system an object @see EntGL.System (optional)
  */
 DistributionGraph.prototype.update = function(system){
     if(arguments.length>0) this.setSystemRepos(system);

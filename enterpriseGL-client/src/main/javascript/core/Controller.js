@@ -60,7 +60,7 @@ EntGL.Controller = {
         if(conf.infoModelUrl){
             $.getJSON(conf.infoModelUrl(idModel), function(data){
                 //TODO Configure the graphics builder with data received
-                EntGL.Graphics.system.changeDistribution(
+                EntGL.System.changeDistribution(
                     DistributionAlg.Algoritms(data.typeDiagram));
             });        
         } else conf.defaultModel();
@@ -87,6 +87,7 @@ EntGL.Controller = {
         this.configuration.defaultModel();
         EntGL.Model.init();
         EntGL.Graphics.init();
+        EntGL.System.init();
         EntGL.ContainerMng.add(EntGL.Graphics.renderer.domElement);    
         EntGL.Interaction.init(EntGL.Graphics); 
         EntGL.Interaction.containerManager = EntGL.ContainerMng;        

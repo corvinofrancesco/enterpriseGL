@@ -1,7 +1,7 @@
 describe('GraphicalSystem Test', function(){
     
     describe('Testing system management of particles', function(){
-        var sys = new GraphicalSystem();
+        var sys = EntGL.System; sys.init();
         sys.event = function(ev,props){};
         sys.add({
             type: "particle",
