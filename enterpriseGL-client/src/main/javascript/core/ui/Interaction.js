@@ -2,8 +2,8 @@
  * Classe responsabilie dell'interazione con l'utente
  */
 EntGL.Interaction = {
-    init: function(graphics){
-        var dom = graphics.renderer.domElement;
+    init: function(){
+        var dom = EntGL.Graphics.renderer.domElement;
 
         dom.addEventListener( 'mousemove', this.onMouseMove, false );
         dom.addEventListener( 'mousedown', this.onMouseDown, false );
@@ -14,7 +14,6 @@ EntGL.Interaction = {
         this.offset = new THREE.Vector3();
         this.intersectedElem = null;
         this.selectElem = null;
-        this.graphicsManager = graphics;
         this.containerManager = null;
 
     },
@@ -24,7 +23,7 @@ EntGL.Interaction = {
     },
     
     onResize: function(event){
-        var graphics= EntGL.Interaction.graphicsManager;
+        var graphics = EntGL.Graphics;
         graphics.resize(window.innerWidth,window.innerHeight );
         this.mouse = new EntGL.MouseSelector();
     },
@@ -33,7 +32,7 @@ EntGL.Interaction = {
         event.preventDefault();
 
         var mouse = EntGL.Interaction.mouse,
-            graphics =  EntGL.Interaction.graphicsManager, 
+            graphics =  EntGL.Graphics, 
             instance = EntGL.Interaction;
 
         mouse.update(event.clientX,event.clientY);
@@ -65,7 +64,7 @@ EntGL.Interaction = {
     onMouseDown: function(event){
         event.preventDefault();
 
-        var graphics =  EntGL.Interaction.graphicsManager,
+        var graphics =  EntGL.Graphics,
             mouse = EntGL.Interaction.mouse,
             instance = EntGL.Interaction,
             objsInPos = mouse.getObjects();
@@ -87,7 +86,7 @@ EntGL.Interaction = {
     onMouseUp: function(event){
         event.preventDefault();
 
-        var graphics =  EntGL.Interaction.graphicsManager,
+        var graphics =  EntGL.Graphics,
             instance = EntGL.Interaction;
         graphics.controls.enabled = true;
 

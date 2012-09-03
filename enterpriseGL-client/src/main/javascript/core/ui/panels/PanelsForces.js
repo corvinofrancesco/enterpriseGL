@@ -8,7 +8,7 @@ EntGL.Controller.register({
 EntGL.ContainerMng.panels.Forces = new EntGL.Panel({
     create : EntGL.Fields.Select("defaultForce", {
         actration: "actration", 
-        gravitationa: "gravitational"}
+        gravitational: "gravitational"}
     ),
     createBut : EntGL.Fields.Button("create","EntGL.Controller.invoke(\"addforce\")")
 });

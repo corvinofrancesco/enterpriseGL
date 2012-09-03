@@ -88,7 +88,7 @@ EntGL.Controller = {
         EntGL.Graphics.init();
         EntGL.System.init();
         EntGL.ContainerMng.add(EntGL.Graphics.renderer.domElement);    
-        EntGL.Interaction.init(EntGL.Graphics); 
+        EntGL.Interaction.init(); 
         EntGL.Interaction.containerManager = EntGL.ContainerMng;        
         // call only after all documents are loaded
         $(document).ready(function(){

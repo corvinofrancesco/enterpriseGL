@@ -5,6 +5,7 @@ EntGL.System = {
     // system objects
     particles: {},
     numparticles: 0,    
+    forces: {},
     // objects for graphical elaboration
     objects: [],
     init: function (){
@@ -121,35 +122,34 @@ EntGL.System = {
      * the system.
      */
     updateAccelerations : function() {
-        for(var i in this.particles){
-            this.particles[i].accelerations = new THREE.Vector3(0,0,0);
-            this.particles[i].velocity = new THREE.Vector3(0,0,0);
+        var index, force, pindex;
+        for(index in this.particles){
+            this.particles[index].accelerations = new THREE.Vector3(0,0,0);
+            this.particles[index].velocity = new THREE.Vector3(0,0,0);
         }
         this._distributionAlg.update(this);
-        for(var findex in this.forces){
+        for(index in this.forces){
             // funzione che calcola la forza da applicare
-            var force = this.forces[findex].force;
-            switch(this.forces[findex].type) {
-                case Force.types.GLOBAL:
-                    // configura l'algoritmo globale 
-                    // con i parametri della forza
-                    this._distributionAlg.configureFor(
-                        this.forces[findex]);
-                    // aggiunge il calcolo delle forze
-                    for(var j in this.particles){
-                        var a = this.globalAlg.getForceFor(this.particles[j]);
-                        this.particles[j].accelerations.addSelf(a);
+            force = this.forces[index].force;
+            switch(this.forces[index].type) {
+                case EntGL.Force.types.GLOBAL:
+                    for(pindex in this.particles){
+                        force(this.particles[pindex],this,
+                            this._distributionAlg.root());
                     }
                     break;
-                case Force.types.ONRELATIONS:
-                    for(var k in this.particles){
-                        force(this.particles[k],this);
+                case EntGL.Force.types.ONRELATIONS:
+                    for(pindex in this.particles){
+                        var part = this.particles[pindex],
+                            rindex;
+                        for(rindex in part.relations)
+                            force(part,part.relations[rindex],this);
                     }
                     break;
-                case Force.types.LOCAL:                
+                case EntGL.Force.types.LOCAL:                
                 default:
-                    for(var k in this.particles){
-                        force(this.particles[k]);
+                    for(pindex in this.particles){
+                        force(this.particles[pindex]);
                     }
                 break;                    
             }
