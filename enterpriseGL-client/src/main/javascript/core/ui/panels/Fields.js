@@ -35,3 +35,13 @@ EntGL.Fields.Button = function(title,action){
         
     });
 }
+
+EntGL.Fields.List = function(title, list){
+    return new EntGL.Field(function(){
+        var html = "<h3>" + title + "</h3>";
+        for(var i in list){
+            
+        }
+        return html;
+    });
+}
