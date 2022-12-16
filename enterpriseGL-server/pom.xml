@@ -11,7 +11,7 @@
 
     <properties>
         <struts2.version>2.3.4</struts2.version>
-        <spring.version>3.1.1.RELEASE</spring.version>
+        <spring.version>5.2.20.RELEASE</spring.version>
 		<org.slf4j.version>1.6.1</org.slf4j.version>
     </properties>
 
